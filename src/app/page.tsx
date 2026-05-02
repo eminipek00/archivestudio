@@ -1,25 +1,39 @@
+"use client";
+
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import FilterBar from "@/components/FilterBar";
 import AssetGrid from "@/components/AssetGrid";
+import { useLanguage } from "@/utils/LanguageContext";
+import { Archive } from "lucide-react";
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
-    <main className="min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
-      <Hero />
-      <FilterBar />
-      <AssetGrid />
+      <main className="flex-grow">
+        <Hero />
+        <FilterBar />
+        <AssetGrid />
+      </main>
       
-      <footer className="py-16 border-t border-border-custom bg-card/30 backdrop-blur-sm text-center mt-20">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <h3 className="text-xl font-black tracking-tighter uppercase mb-4">sytexarchive</h3>
-          <p className="text-muted-foreground text-xs font-medium">
-            &copy; {new Date().getFullYear()} sytexarchive. Tüm hakları saklıdır. <br />
-            Premium Resources for Professional Editors.
+      <footer className="border-t border-border-custom bg-background/50 py-12">
+        <div className="container mx-auto px-4 text-center">
+          <div className="flex items-center justify-center gap-2 mb-6 opacity-50 grayscale hover:grayscale-0 transition-all">
+            <Archive size={24} className="text-primary" />
+            <span className="text-xl font-black tracking-tighter uppercase italic">sytexarchive</span>
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">
+            {t('footerSub')}
+          </p>
+          <div className="w-12 h-0.5 bg-primary/20 mx-auto mb-6" />
+          <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
+            &copy; {new Date().getFullYear()} sytexarchive. {t('footer')}
           </p>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

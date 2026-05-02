@@ -1,154 +1,149 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 import Navbar from "@/components/Navbar";
-import { Settings, LogOut, Package, Heart, Shield, Trash2, Key, MailCheck } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { User, Lock, Trash2, Camera, ShieldCheck, Mail } from "lucide-react";
+import { useLanguage } from "@/utils/LanguageContext";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const { t } = useLanguage();
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
-  }, []);
+    const getData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      if (user) {
+        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        setProfile(data);
+      }
+    };
+    getData();
+  }, [supabase]);
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/";
-  };
-
-  const handlePasswordReset = async () => {
-    if (!user?.email) return;
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
-    });
-    if (error) setMessage(`Hata: ${error.message}`);
-    else setMessage("Şifre sıfırlama bağlantısı e-postanıza gönderildi.");
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) alert(error.message);
+    else {
+      alert("Şifre başarıyla güncellendi!");
+      setNewPassword("");
+    }
     setLoading(false);
   };
 
   const handleDeleteAccount = async () => {
-    const confirm = window.confirm("Hesabınızı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.");
-    if (!confirm) return;
-    
-    // Not: Gerçek silme işlemi için bir Edge Function veya Admin API gerekir.
-    // Client SDK ile kullanıcı kendi hesabını silemez (security risk).
-    // Buraya bir uyarı veya yönlendirme ekleyelim.
-    setMessage("Hesap silme işlemi için lütfen destek ekibiyle iletişime geçin veya yönetici paneline başvurun.");
+    if (confirm("Hesabınızı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
+      setLoading(true);
+      // Not: Client-side deletion is restricted. Usually needs an API route with admin privileges.
+      // For now we'll just sign out and show a message or use an API route.
+      alert("Hesap silme talebi alındı. Güvenlik gereği lütfen destekle iletişime geçin.");
+      setLoading(false);
+    }
   };
 
-  const handleVerifyEmail = async () => {
-    if (!user?.email) return;
-    setLoading(true);
-    // Sytex Archive özel doğrulaması için email tetikleme
-    const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: user.email,
-    });
-    if (error) setMessage(`Hata: ${error.message}`);
-    else setMessage("Doğrulama kodu tekrar gönderildi. Lütfen e-postanızı kontrol edin.");
-    setLoading(false);
-  };
-
-  if (!user) return <div className="min-h-screen flex items-center justify-center font-black">Yükleniyor...</div>;
+  if (!user) return null;
 
   return (
-    <main className="min-h-screen pb-20 bg-background">
+    <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
-      
-      <div className="pt-40 px-6 max-w-4xl mx-auto">
-        <div className="glass-panel p-10 rounded-[3rem] shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-primary/20 to-blue-600/20 -z-10" />
+      <main className="flex-grow container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          <div className="flex flex-col md:flex-row items-center gap-10">
-            <div className="relative group">
-              <div className="w-40 h-40 rounded-[2.5rem] border-8 border-background overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-105">
-                <img 
-                  src={user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} 
-                  alt="Avatar" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-
-            <div className="flex-1 text-center md:text-left space-y-4">
-              <div>
-                <h1 className="text-4xl font-black tracking-tight">{user.user_metadata?.full_name || user.email?.split('@')[0]}</h1>
-                <p className="text-muted-foreground font-medium">{user.email}</p>
-              </div>
-              
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <div className="px-4 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-wider">
-                  sytexarchive Editor
-                </div>
-                {!user.email_confirmed_at && (
-                    <button 
-                        onClick={handleVerifyEmail}
-                        className="px-4 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:bg-amber-500/20 transition-all"
-                    >
-                        <MailCheck size={12} />
-                        Hesabı Doğrula
-                    </button>
-                )}
-                {user.email_confirmed_at && (
-                    <div className="px-4 py-1.5 rounded-xl bg-green-500/10 border border-green-500/20 text-green-500 text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                        <Shield size={12} />
-                        Doğrulanmış
+          {/* Sol Panel: Profil Kartı */}
+          <div className="md:col-span-1 space-y-6">
+            <div className="glass-panel p-8 rounded-[2.5rem] text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-24 bg-primary/10" />
+                <div className="relative pt-4">
+                    <div className="w-24 h-24 rounded-[2rem] border-4 border-background mx-auto overflow-hidden shadow-xl mb-4">
+                        {profile?.avatar_url ? (
+                            <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+                                <User size={40} />
+                            </div>
+                        )}
                     </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 w-full md:w-auto">
-              <button 
-                onClick={handlePasswordReset}
-                disabled={loading}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-card border border-border-custom rounded-2xl font-bold hover:bg-muted transition-all disabled:opacity-50"
-              >
-                <Key size={18} />
-                Şifre Değiştir
-              </button>
-              <button 
-                onClick={handleSignOut}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-muted border border-border-custom rounded-2xl font-bold hover:bg-card transition-all"
-              >
-                <LogOut size={18} />
-                Çıkış Yap
-              </button>
+                    <h2 className="text-xl font-black uppercase italic tracking-tighter">{profile?.full_name || 'Kullanıcı'}</h2>
+                    <p className="text-[10px] font-black uppercase text-primary tracking-widest mt-1">
+                        {user.email === 'ipekmuhammetemin@gmail.com' ? t('admin') : t('editor')}
+                    </p>
+                </div>
+                
+                <div className="mt-8 pt-8 border-t border-border-custom space-y-3">
+                    <div className="flex items-center gap-3 px-4 py-2 bg-muted/30 rounded-xl text-left">
+                        <Mail size={16} className="text-muted-foreground" />
+                        <div className="overflow-hidden">
+                            <p className="text-[9px] font-black uppercase text-muted-foreground">E-Posta</p>
+                            <p className="text-xs font-bold truncate">{user.email}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
           </div>
 
-          {message && (
-              <div className="mt-8 p-4 bg-primary/10 border border-primary/20 rounded-2xl text-center text-sm font-bold text-primary">
-                  {message}
-              </div>
-          )}
+          {/* Sağ Panel: Ayarlar */}
+          <div className="md:col-span-2 space-y-6">
+            {/* Şifre Değiştir */}
+            <div className="glass-panel p-8 rounded-[2.5rem] shadow-xl">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                        <Lock size={20} />
+                    </div>
+                    <h3 className="text-lg font-black uppercase italic tracking-tighter">{t('changePassword')}</h3>
+                </div>
+                
+                <form onSubmit={handleUpdatePassword} className="space-y-4">
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Yeni Şifre</label>
+                        <input 
+                            type="password" 
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            placeholder="••••••••"
+                            className="w-full bg-muted/50 border border-border-custom rounded-xl py-4 px-5 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
+                            required
+                        />
+                    </div>
+                    <button 
+                        type="submit"
+                        disabled={loading}
+                        className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                    >
+                        Şifreyi Güncelle
+                    </button>
+                </form>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="bg-muted/30 p-6 rounded-[2rem] border border-border-custom text-center space-y-1">
-              <Package className="mx-auto text-primary mb-2" size={24} />
-              <p className="text-2xl font-black">24</p>
-              <p className="text-xs text-muted-foreground font-bold uppercase">Yüklemeler</p>
-            </div>
-            <div className="bg-muted/30 p-6 rounded-[2rem] border border-border-custom text-center space-y-1">
-              <Heart className="mx-auto text-red-500 mb-2" size={24} />
-              <p className="text-2xl font-black">156</p>
-              <p className="text-xs text-muted-foreground font-bold uppercase">Beğeniler</p>
-            </div>
-            <div className="bg-muted/30 p-6 rounded-[2rem] border border-border-custom text-center space-y-1">
-              <Trash2 className="mx-auto text-muted-foreground mb-2 cursor-pointer hover:text-red-500 transition-colors" size={24} onClick={handleDeleteAccount} />
-              <p className="text-xs text-muted-foreground font-bold uppercase">Hesabı Sil</p>
+            {/* Tehlikeli Alan */}
+            <div className="glass-panel p-8 rounded-[2.5rem] border-red-500/20 bg-red-500/5 shadow-xl">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-red-500/10 rounded-lg text-red-500">
+                        <Trash2 size={20} />
+                    </div>
+                    <h3 className="text-lg font-black uppercase italic tracking-tighter text-red-500">{t('deleteAccount')}</h3>
+                </div>
+                <p className="text-xs font-medium text-red-500/70 mb-6 leading-relaxed">
+                    Hesabınızı sildiğinizde tüm verileriniz, yüklemeleriniz ve tercihleriniz kalıcı olarak kaldırılacaktır. Bu işlem geri alınamaz.
+                </p>
+                <button 
+                    onClick={handleDeleteAccount}
+                    className="border border-red-500/20 hover:bg-red-500 hover:text-white text-red-500 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all"
+                >
+                    Hesabı Tamamen Sil
+                </button>
             </div>
           </div>
+
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 };
 
