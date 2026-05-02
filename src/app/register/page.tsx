@@ -6,7 +6,6 @@ import { Archive, Mail, ArrowRight, Lock, User, Camera, AtSign, Eye, EyeOff, X }
 import Link from "next/link";
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from "@/utils/imageUtils";
-import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -15,7 +14,6 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
-  const router = useRouter();
   
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -60,9 +58,16 @@ const RegisterPage = () => {
     setLoading(true);
     setMessage("");
 
-    let avatarUrl = "";
+    // Sahte E-posta Kontrolü (Basit)
+    const validDomains = ["gmail.com", "hotmail.com", "outlook.com", "icloud.com", "yahoo.com", "yandex.com"];
+    const emailDomain = email.split("@")[1];
+    if (!validDomains.includes(emailDomain)) {
+      setMessage("Hata: Lütfen geçerli bir e-posta sağlayıcısı kullanın (Gmail, Hotmail vb.)");
+      setLoading(false);
+      return;
+    }
 
-    // 1. Avatar yükleme (Client tarafında, auth olmadan yükleme için bucket public olmalı)
+    let avatarUrl = "";
     if (finalAvatar) {
       const fileName = `${Date.now()}-${username}.jpg`;
       const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, finalAvatar);
@@ -71,34 +76,20 @@ const RegisterPage = () => {
       }
     }
 
-    // 2. Kullanıcıyı oluştur (Supabase Auth - E-posta onayı KAPALI olmalı)
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: fullName, username: username, avatar_url: avatarUrl },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
-    if (signUpError) {
-      setMessage(`Hata: ${signUpError.message}`);
-      setLoading(false);
-      return;
-    }
-
-    // 3. Bizim özel kodumuzu gönder
-    const res = await fetch("/api/auth/send-code", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-
-    if (res.ok) {
-      router.push(`/verify?email=${email}`);
+    if (error) {
+      setMessage(`Hata: ${error.message}`);
     } else {
-      setMessage("Hata: Doğrulama kodu gönderilemedi.");
+      setStep(3);
     }
-    
     setLoading(false);
   };
 
@@ -113,9 +104,9 @@ const RegisterPage = () => {
           <Link href="/" className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-2xl mb-4 shadow-lg shadow-primary/30">
             <Archive size={28} className="text-white" />
           </Link>
-          <h1 className="text-2xl font-black tracking-tight uppercase">sytexarchive</h1>
+          <h1 className="text-2xl font-black tracking-tight uppercase italic">sytexarchive</h1>
           <p className="text-muted-foreground mt-1 text-[10px] font-black uppercase tracking-widest">
-            {step === 1 ? "Hesap Oluştur" : "Profilini Tamamla"}
+            {step === 1 ? "Hesap Oluştur" : step === 2 ? "Profilini Tamamla" : "Kayıt Başarılı"}
           </p>
         </div>
 
@@ -149,7 +140,7 @@ const RegisterPage = () => {
                     İleri <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
             </form>
-        ) : (
+        ) : step === 2 ? (
             <form onSubmit={handleRegister} className="space-y-5">
                 <div className="flex flex-col items-center gap-4 mb-6">
                     <div className="relative group">
@@ -164,7 +155,6 @@ const RegisterPage = () => {
                     </div>
                     <p className="text-[10px] font-bold text-muted-foreground uppercase">Profil Fotoğrafı Seç</p>
                 </div>
-
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">Kullanıcı Adı</label>
                     <div className="relative">
@@ -172,16 +162,23 @@ const RegisterPage = () => {
                         <input type="text" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="kullanici_adi" required />
                     </div>
                 </div>
-
                 {message && <p className="text-[10px] font-black text-center py-2 rounded-lg text-red-500 bg-red-500/10">{message}</p>}
-
                 <div className="flex gap-3">
                     <button type="button" onClick={() => setStep(1)} className="flex-1 bg-muted hover:bg-border-custom text-foreground py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all">Geri</button>
                     <button type="submit" disabled={loading} className="flex-[2] bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-primary/20 disabled:opacity-50">
-                        {loading ? "Kaydediliyor..." : "Kayıt Ol & Kod Gönder"}
+                        {loading ? "Kaydediliyor..." : "Kayıt Ol"}
                     </button>
                 </div>
             </form>
+        ) : (
+            <div className="text-center py-10 space-y-6">
+                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto border-2 border-green-500/20"><Archive size={40} className="text-green-500" /></div>
+                <div className="space-y-2">
+                    <h2 className="text-xl font-black uppercase italic">E-Postanı Onayla!</h2>
+                    <p className="text-sm text-muted-foreground font-medium px-4">Kaydın alındı. Lütfen mailine gelen doğrulama linkine tıkla ve sonra giriş yap.</p>
+                </div>
+                <Link href="/login" className="inline-block w-full bg-primary text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest text-center">Giriş Sayfasına Git</Link>
+            </div>
         )}
 
         {/* Cropping Modal */}
@@ -196,10 +193,6 @@ const RegisterPage = () => {
                         <Cropper image={image} crop={crop} zoom={zoom} aspect={1} onCropChange={setCrop} onCropComplete={onCropComplete} onZoomChange={setZoom} />
                     </div>
                     <div className="p-8 space-y-6 bg-card">
-                        <div className="space-y-2">
-                            <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Zoom</p>
-                            <input type="range" value={zoom} min={1} max={3} step={0.1} aria-labelledby="Zoom" onChange={(e) => setZoom(Number(e.target.value))} className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary" />
-                        </div>
                         <button onClick={handleCropSave} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-primary/30">Kırpmayı Tamamla & Kaydet</button>
                     </div>
                 </div>
