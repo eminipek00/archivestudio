@@ -30,7 +30,7 @@ export default function Home() {
           </p>
           <div className="w-12 h-0.5 bg-primary/20 mx-auto mb-6" />
           <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
-            &copy; {new Date().getFullYear()} sytexarchive. {t('footer')}
+            &copy; {new Date().getFullYear()} sytexarchive. {t('footer')} | <span className="text-primary/40">v1.1.0</span>
           </p>
         </div>
       </footer>

@@ -25,7 +25,18 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const t = (key: string) => {
-    return translations[language][key] || key;
+    const keys = key.split('.');
+    let result = translations[language];
+    
+    for (const k of keys) {
+      if (result && result[k]) {
+        result = result[k];
+      } else {
+        return key; // Bulamazsa anahtarı döndür
+      }
+    }
+    
+    return typeof result === 'string' ? result : key;
   };
 
   return (

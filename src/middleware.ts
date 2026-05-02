@@ -1,8 +1,8 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Next.js 16+ 'proxy' convention
-export async function proxy(request: NextRequest) {
+// Next.js standard middleware convention
+export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -57,7 +57,8 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user && request.nextUrl.pathname === '/') {
+  // Ana sayfayı herkese açtık, sadece profil gibi özel sayfalar için kontrol ekleyebilirsin.
+  if (!user && request.nextUrl.pathname.startsWith('/profile')) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
