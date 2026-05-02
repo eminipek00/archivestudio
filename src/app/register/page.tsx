@@ -1,0 +1,122 @@
+"use client";
+
+import React, { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { Archive, Mail, ArrowRight, Lock, User } from "lucide-react";
+import Link from "next/link";
+
+const RegisterPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const supabase = createClient();
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setMessage(`Hata: ${error.message}`);
+    } else {
+      setMessage("Kayıt başarılı! Lütfen e-postanızı kontrol edin.");
+      // Eğer özel resend api'sini kullanmak istersen buraya fetch ekleyebilirsin
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-background">
+      <div className="max-w-[400px] w-full space-y-8 glass-panel p-8 md:p-10 rounded-[2rem] shadow-2xl">
+        <div className="text-center">
+          <Link href="/" className="inline-flex items-center justify-center w-14 h-14 bg-primary rounded-2xl mb-4 shadow-lg shadow-primary/30">
+            <Archive size={28} className="text-white" />
+          </Link>
+          <h1 className="text-2xl font-black tracking-tight uppercase">sytexarchive</h1>
+          <p className="text-muted-foreground mt-1 text-xs font-bold uppercase tracking-widest">Yeni Hesap Oluştur</p>
+        </div>
+
+        <form onSubmit={handleRegister} className="space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">Ad Soyad</label>
+            <div className="relative">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <input 
+                type="text" 
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full bg-muted/50 border border-border-custom rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
+                placeholder="Adınız Soyadınız"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">E-Posta</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-muted/50 border border-border-custom rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
+                placeholder="E-posta adresiniz"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">Şifre</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-muted/50 border border-border-custom rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+          </div>
+
+          {message && (
+            <p className={`text-[10px] font-black text-center py-2 rounded-lg ${message.includes('Hata') ? 'text-red-500 bg-red-500/10' : 'text-green-500 bg-green-500/10'}`}>
+              {message}
+            </p>
+          )}
+
+          <button 
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary hover:bg-primary/90 text-white py-3.5 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {loading ? "Kaydediliyor..." : "Kayıt Ol"}
+            <ArrowRight size={16} />
+          </button>
+        </form>
+
+        <p className="text-center text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+          Zaten hesabın var mı? <Link href="/login" className="text-primary hover:underline">Giriş Yap</Link>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default RegisterPage;
