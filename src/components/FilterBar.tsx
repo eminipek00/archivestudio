@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { assets } from "@/data/assets";
 
 const categories = [
   "Tümü",
@@ -15,17 +16,17 @@ const FilterBar = () => {
   const [activeTab, setActiveTab] = useState("Tümü");
 
   return (
-    <div className="px-6 mb-12">
-      <div className="max-w-7xl mx-auto overflow-x-auto no-scrollbar">
-        <div className="flex items-center gap-3 min-w-max pb-2">
+    <div className="sticky top-24 z-40 px-6 mb-16 py-4">
+      <div className="max-w-[1600px] mx-auto">
+        <div className="glass-panel p-2 rounded-2xl inline-flex items-center gap-1 shadow-lg">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveTab(category)}
-              className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 border ${
+              className={`px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 ${
                 activeTab === category
-                  ? "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]"
-                  : "bg-white/5 text-gray-400 border-white/5 hover:border-white/20 hover:bg-white/10"
+                  ? "bg-primary text-white shadow-lg shadow-primary/30 scale-105"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               {category}

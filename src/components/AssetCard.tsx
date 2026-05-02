@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Download, User } from "lucide-react";
+import { Download, Heart, Eye, ArrowUpRight } from "lucide-react";
 import { Asset } from "@/data/assets";
 
 interface AssetCardProps {
@@ -10,47 +10,63 @@ interface AssetCardProps {
 
 const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
   return (
-    <div className="group relative bg-card rounded-2xl overflow-hidden border border-border-custom hover:border-white/20 transition-all duration-500 hover:-translate-y-1 shadow-lg hover:shadow-2xl">
-      {/* Preview Image Area */}
-      <div className="relative h-48 w-full overflow-hidden">
+    <div className="group relative bg-card border border-border-custom rounded-[2.5rem] p-4 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] hover:border-primary/30">
+      {/* Visual Area */}
+      <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden mb-6">
         <img
           src={asset.image}
           alt={asset.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
         
-        {/* Type Tag */}
-        <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold tracking-wider text-white uppercase">
-          {asset.type}
+        {/* Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="absolute top-4 left-4 flex gap-2">
+          <div className="px-3 py-1.5 rounded-xl bg-background/80 backdrop-blur-md border border-border-custom text-[10px] font-black tracking-widest text-foreground uppercase">
+            {asset.type}
+          </div>
         </div>
+
+        <button className="absolute bottom-4 right-4 w-12 h-12 flex items-center justify-center rounded-2xl bg-primary text-white scale-0 group-hover:scale-100 transition-transform duration-500 shadow-xl shadow-primary/40 hover:bg-primary/90">
+          <ArrowUpRight size={24} />
+        </button>
       </div>
 
-      {/* Content */}
-      <div className="p-5 space-y-4">
-        <div>
-          <h3 className="text-white font-semibold text-lg line-clamp-1 group-hover:text-accent transition-colors">
-            {asset.title}
-          </h3>
-          <p className="text-gray-500 text-xs mt-1">{asset.category}</p>
-        </div>
-
-        <div className="flex items-center justify-between pt-2 border-t border-white/5">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full overflow-hidden bg-white/10">
-              <img src={asset.authorAvatar} alt={asset.author} className="w-full h-full object-cover" />
-            </div>
-            <span className="text-gray-400 text-xs font-medium">{asset.author}</span>
+      {/* Details */}
+      <div className="px-2 pb-2 space-y-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1">{asset.category}</p>
+            <h3 className="text-xl font-black text-foreground line-clamp-1">
+              {asset.title}
+            </h3>
           </div>
-          
-          <button className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 hover:bg-accent hover:border-accent hover:text-white text-gray-400 transition-all group/btn">
-            <Download size={16} className="group-hover/btn:scale-110 transition-transform" />
+          <button className="text-muted-foreground hover:text-red-500 transition-colors">
+            <Heart size={20} />
           </button>
         </div>
-      </div>
 
-      {/* Hover Overlay Glow */}
-      <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-sm" />
+        <div className="flex items-center justify-between pt-4 border-t border-border-custom">
+          <div className="flex items-center gap-3 group/author cursor-pointer">
+            <div className="w-8 h-8 rounded-full border-2 border-border-custom overflow-hidden group-hover/author:border-primary transition-all">
+              <img src={asset.authorAvatar} alt={asset.author} className="w-full h-full object-cover" />
+            </div>
+            <span className="text-xs font-bold text-muted-foreground group-hover/author:text-foreground transition-colors">{asset.author}</span>
+          </div>
+
+          <div className="flex items-center gap-4 text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <Eye size={14} />
+              <span className="text-[10px] font-bold">1.2k</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Download size={14} />
+              <span className="text-[10px] font-bold">450</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
