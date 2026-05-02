@@ -65,6 +65,13 @@ const ProfilePage = () => {
     } catch (err: any) { alert("Hata: " + err.message); } finally { setLoading(false); }
   };
 
+  const handleDeleteAccount = async () => {
+    if (confirm("DİKKAT: Hesabınızı silmek üzeresiniz. Bu işlem geri alınamaz!")) {
+        const { error } = await supabase.from('profiles').delete().eq('id', user.id);
+        if (!error) { await supabase.auth.signOut(); window.location.href = "/"; }
+    }
+  };
+
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
