@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Archive, Mail, ArrowRight, Lock, User, Camera, AtSign, CheckCircle2 } from "lucide-react";
+import { Archive, Mail, ArrowRight, Lock, User, Camera, AtSign, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -26,20 +27,7 @@ const RegisterPage = () => {
     setLoading(true);
     setMessage("");
 
-    // Kullanıcı adı kontrolü (opsiyonel ama iyi olur)
-    const { data: existingUser } = await supabase
-      .from('profiles')
-      .select('username')
-      .eq('username', username)
-      .single();
-
-    if (existingUser) {
-      setMessage("Hata: Bu kullanıcı adı zaten alınmış.");
-      setLoading(false);
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -55,7 +43,7 @@ const RegisterPage = () => {
     if (error) {
       setMessage(`Hata: ${error.message}`);
     } else {
-      setStep(3); // Başarılı adımına geç
+      setStep(3);
     }
     setLoading(false);
   };
@@ -63,7 +51,6 @@ const RegisterPage = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-background">
       <div className="max-w-[400px] w-full space-y-8 glass-panel p-8 md:p-10 rounded-[2rem] shadow-2xl relative overflow-hidden">
-        {/* Step Indicator */}
         <div className="absolute top-0 left-0 w-full h-1 bg-muted flex">
             <div className={`h-full bg-primary transition-all duration-500 ${step === 1 ? 'w-1/3' : step === 2 ? 'w-2/3' : 'w-full'}`} />
         </div>
@@ -79,7 +66,7 @@ const RegisterPage = () => {
         </div>
 
         {step === 1 && (
-            <form onSubmit={handleNextStep} className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
+            <form onSubmit={handleNextStep} className="space-y-5">
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">Ad Soyad</label>
                     <div className="relative">
@@ -115,13 +102,20 @@ const RegisterPage = () => {
                     <div className="relative">
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                         <input 
-                            type="password" 
+                            type={showPassword ? "text" : "password"} 
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
+                            className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-12 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
                             placeholder="••••••••"
                             required
                         />
+                        <button 
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
                     </div>
                 </div>
 
@@ -136,7 +130,7 @@ const RegisterPage = () => {
         )}
 
         {step === 2 && (
-            <form onSubmit={handleRegister} className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500">
+            <form onSubmit={handleRegister} className="space-y-5">
                 <div className="flex flex-col items-center gap-4 mb-6">
                     <div className="relative group">
                         <div className="w-24 h-24 rounded-[2rem] bg-muted border-2 border-dashed border-border-custom flex items-center justify-center overflow-hidden transition-all group-hover:border-primary">
@@ -172,12 +166,6 @@ const RegisterPage = () => {
                     </div>
                 </div>
 
-                {message && (
-                    <p className="text-[10px] font-black text-center py-2 rounded-lg text-red-500 bg-red-500/10">
-                    {message}
-                    </p>
-                )}
-
                 <div className="flex gap-3">
                     <button 
                         type="button"
@@ -198,19 +186,19 @@ const RegisterPage = () => {
         )}
 
         {step === 3 && (
-            <div className="text-center py-10 space-y-6 animate-in zoom-in duration-500">
+            <div className="text-center py-10 space-y-6">
                 <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto border-2 border-green-500/20">
                     <CheckCircle2 size={40} className="text-green-500" />
                 </div>
                 <div className="space-y-2">
                     <h2 className="text-xl font-black uppercase">Harika!</h2>
                     <p className="text-sm text-muted-foreground font-medium px-4">
-                        Kaydın başarıyla alındı. Lütfen e-postanı doğrula ve <b>@{username}</b> ile giriş yap.
+                        Kaydın başarıyla alındı. Lütfen e-postanı doğrula ve giriş yap.
                     </p>
                 </div>
                 <Link 
                     href="/login"
-                    className="inline-block w-full bg-primary text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest"
+                    className="inline-block w-full bg-primary text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest text-center"
                 >
                     Giriş Sayfasına Git
                 </Link>

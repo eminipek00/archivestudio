@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Archive, User, ArrowRight, Lock } from "lucide-react";
+import { Archive, User, ArrowRight, Lock, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
 const LoginPage = () => {
-  const [identity, setIdentity] = useState(""); // E-posta veya Kullanıcı Adı
+  const [identity, setIdentity] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const supabase = createClient();
@@ -17,26 +18,8 @@ const LoginPage = () => {
     setLoading(true);
     setMessage("");
 
-    let loginEmail = identity;
-
-    // Eğer girilen değer e-posta değilse, kullanıcı adı olarak kabul et ve e-postayı bul
-    if (!identity.includes("@")) {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, id (email)') // auth.users ile ilişki (genellikle admin yetkisi gerekir veya custom rpc)
-        // Basitlik için: profiles tablosunda email kolonu olduğunu varsayalım veya kullanıcıyı username ile bulup auth akışını yönetelim.
-        // Supabase varsayılan olarak username ile login desteklemez, bu yüzden profiles tablosuna email eklemek en sağlıklısıdır.
-        .eq('username', identity)
-        .single();
-      
-      // Not: Supabase Client SDK ile auth.users tablosuna doğrudan erişilemez.
-      // Bu yüzden login'de sadece e-posta kullanımı standarttır. 
-      // Ama kullanıcı deneyimi için e-posta zorunlu tutulabilir.
-      // Şimdilik standart e-posta loginini koruyup kullanıcı adı desteğini UI olarak hazırlıyorum.
-    }
-
     const { error } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
+      email: identity, // Supabase varsayılan olarak email ister
       password,
     });
 
@@ -80,13 +63,20 @@ const LoginPage = () => {
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
               <input 
-                type="password" 
+                type={showPassword ? "text" : "password"} 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
+                className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-12 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold"
                 placeholder="••••••••"
                 required
               />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
