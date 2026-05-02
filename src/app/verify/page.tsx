@@ -53,7 +53,7 @@ const VerifyContent = () => {
     const result = await res.json();
 
     if (result.success) {
-      router.push("/?verified=true");
+      router.push("/");
     } else {
       setMessage("Hata: Geçersiz veya hatalı kod.");
     }
