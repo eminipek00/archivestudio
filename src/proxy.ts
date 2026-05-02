@@ -1,7 +1,8 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+// Next.js 16+ 'proxy' convention
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -56,7 +57,6 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Eğer kullanıcı giriş yapmamışsa ve ana sayfaya erişmeye çalışıyorsa login'e yönlendir
   if (!user && request.nextUrl.pathname === '/') {
     return NextResponse.redirect(new URL('/login', request.url))
   }
