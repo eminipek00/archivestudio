@@ -38,7 +38,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            {children}
+            <div className="flex flex-col min-h-screen">
+              {children}
+            </div>
           </LanguageProvider>
         </ThemeProvider>
       </body>

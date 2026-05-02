@@ -11,7 +11,7 @@ export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <>
       <Navbar />
       <main className="flex-grow">
         <Hero />
@@ -19,7 +19,7 @@ export default function Home() {
         <AssetGrid />
       </main>
       
-      <footer className="border-t border-border-custom bg-background/50 py-12">
+      <footer className="border-t border-border-custom bg-background/50 py-12 mt-auto">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-6 opacity-50 grayscale hover:grayscale-0 transition-all">
             <Archive size={24} className="text-primary" />
@@ -34,6 +34,6 @@ export default function Home() {
           </p>
         </div>
       </footer>
-    </div>
+    </>
   );
 }
