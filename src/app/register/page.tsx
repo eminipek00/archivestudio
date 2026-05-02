@@ -2,10 +2,11 @@
 
 import React, { useState, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Archive, Mail, ArrowRight, Lock, User, Camera, AtSign, Eye, EyeOff, X } from "lucide-react";
+import { Archive, Mail, ArrowRight, Lock, User, Camera, AtSign, Eye, EyeOff, X, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from "@/utils/imageUtils";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
   const [step, setStep] = useState(1);
@@ -14,6 +15,7 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const router = useRouter();
   
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -58,11 +60,11 @@ const RegisterPage = () => {
     setLoading(true);
     setMessage("");
 
-    // Sahte E-posta Kontrolü (Basit)
+    // Geçerli Domain Kontrolü (Hala aktif, güvenliği elden bırakmıyoruz)
     const validDomains = ["gmail.com", "hotmail.com", "outlook.com", "icloud.com", "yahoo.com", "yandex.com"];
     const emailDomain = email.split("@")[1];
     if (!validDomains.includes(emailDomain)) {
-      setMessage("Hata: Lütfen geçerli bir e-posta sağlayıcısı kullanın (Gmail, Hotmail vb.)");
+      setMessage("Hata: Lütfen geçerli bir e-posta (Gmail, Hotmail vb.) kullanın.");
       setLoading(false);
       return;
     }
@@ -81,7 +83,6 @@ const RegisterPage = () => {
       password,
       options: {
         data: { full_name: fullName, username: username, avatar_url: avatarUrl },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
@@ -89,6 +90,10 @@ const RegisterPage = () => {
       setMessage(`Hata: ${error.message}`);
     } else {
       setStep(3);
+      // 2 saniye sonra ana sayfaya uçur
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     }
     setLoading(false);
   };
@@ -106,7 +111,7 @@ const RegisterPage = () => {
           </Link>
           <h1 className="text-2xl font-black tracking-tight uppercase italic">sytexarchive</h1>
           <p className="text-muted-foreground mt-1 text-[10px] font-black uppercase tracking-widest">
-            {step === 1 ? "Hesap Oluştur" : step === 2 ? "Profilini Tamamla" : "Kayıt Başarılı"}
+            {step === 1 ? "Hesap Oluştur" : step === 2 ? "Profilini Tamamla" : "Kayıt Tamamlandı"}
           </p>
         </div>
 
@@ -116,21 +121,21 @@ const RegisterPage = () => {
                     <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">Ad Soyad</label>
                     <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                        <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="Adınız Soyadınız" required />
+                        <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-muted/50 border border-border-custom rounded-xl py-4 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="Adınız Soyadınız" required />
                     </div>
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">E-Posta</label>
                     <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="E-posta adresiniz" required />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-muted/50 border border-border-custom rounded-xl py-4 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="E-posta adresiniz" required />
                     </div>
                 </div>
                 <div className="space-y-1.5">
                     <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">Parola</label>
                     <div className="relative">
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                        <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-12 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="••••••••" required />
+                        <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-muted/50 border border-border-custom rounded-xl py-4 pl-11 pr-12 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="••••••••" required />
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors">
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
@@ -159,25 +164,24 @@ const RegisterPage = () => {
                     <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground ml-1">Kullanıcı Adı</label>
                     <div className="relative">
                         <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className="w-full bg-muted/50 border border-border-custom rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="kullanici_adi" required />
+                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className="w-full bg-muted/50 border border-border-custom rounded-xl py-4 pl-11 pr-4 focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm font-bold" placeholder="kullanici_adi" required />
                     </div>
                 </div>
                 {message && <p className="text-[10px] font-black text-center py-2 rounded-lg text-red-500 bg-red-500/10">{message}</p>}
                 <div className="flex gap-3">
                     <button type="button" onClick={() => setStep(1)} className="flex-1 bg-muted hover:bg-border-custom text-foreground py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all">Geri</button>
                     <button type="submit" disabled={loading} className="flex-[2] bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-primary/20 disabled:opacity-50">
-                        {loading ? "Kaydediliyor..." : "Kayıt Ol"}
+                        {loading ? "Tamamlanıyor..." : "Kaydı Bitir"}
                     </button>
                 </div>
             </form>
         ) : (
             <div className="text-center py-10 space-y-6">
-                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto border-2 border-green-500/20"><Archive size={40} className="text-green-500" /></div>
+                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto border-2 border-green-500/20"><CheckCircle2 size={40} className="text-green-500" /></div>
                 <div className="space-y-2">
-                    <h2 className="text-xl font-black uppercase italic">E-Postanı Onayla!</h2>
-                    <p className="text-sm text-muted-foreground font-medium px-4">Kaydın alındı. Lütfen mailine gelen doğrulama linkine tıkla ve sonra giriş yap.</p>
+                    <h2 className="text-xl font-black uppercase italic">Hoş Geldin!</h2>
+                    <p className="text-sm text-muted-foreground font-medium px-4">Kaydın başarıyla tamamlandı. Yönlendiriliyorsun...</p>
                 </div>
-                <Link href="/login" className="inline-block w-full bg-primary text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest text-center">Giriş Sayfasına Git</Link>
             </div>
         )}
 
