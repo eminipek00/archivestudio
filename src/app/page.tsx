@@ -10,42 +10,44 @@ export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-background">
+    <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
       {/* Sabit Üst Menü */}
       <Navbar />
       
-      {/* Kaydırılabilir Orta Alan */}
-      <main className="flex-grow overflow-y-auto custom-scrollbar">
-        <div id="assets" className="container mx-auto">
+      {/* Orta Alan - KAYDIRMA ÇUBUĞU GİZLENDİ */}
+      <main className="flex-grow overflow-y-auto no-scrollbar scroll-smooth">
+        <div id="assets" className="container mx-auto pb-10">
           <Hero />
           <FilterBar />
           <AssetGrid />
-          {/* Alttaki boşluğu doldurmak için görünmez bir alan */}
-          <div className="h-20" />
         </div>
       </main>
       
-      {/* Sabit ve Minicik Alt Bar (License) */}
-      <footer className="z-[2000] bg-[#000000] border-t border-border-custom py-2 px-6 flex items-center justify-between">
+      {/* Sabit Alt Bar */}
+      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
-            <span className="text-[9px] font-black uppercase italic tracking-tighter text-white/40">sytexarchive</span>
-            <span className="text-[8px] font-bold text-white/20 uppercase tracking-widest hidden sm:inline">| Profesyonel Editör Kaynakları</span>
+            <span className="text-[8px] font-black uppercase italic tracking-tighter text-white/30">sytexarchive</span>
         </div>
-        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">
+        <p className="text-[8px] font-bold text-white/10 uppercase tracking-widest">
           &copy; {new Date().getFullYear()} sytexarchive. Tüm hakları saklıdır.
         </p>
       </footer>
 
+      {/* TÜM KAYDIRMA ÇUBUKLARINI VE MAVİ ÇİZGİLERİ SİLEN ÖZEL KOD */}
       <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+        /* Kaydırma çubuğunu tamamen gizle ama kaydırma özelliğini koru (mouse wheel çalışır) */
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
+        .no-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #3b82f6;
-          border-radius: 10px;
+        
+        /* Sayfa genelinde kaymayı engelle */
+        body {
+          overflow: hidden !important;
+          height: 100vh;
         }
       `}</style>
     </div>
