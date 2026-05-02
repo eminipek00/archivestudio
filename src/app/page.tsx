@@ -5,40 +5,49 @@ import Hero from "@/components/Hero";
 import FilterBar from "@/components/FilterBar";
 import AssetGrid from "@/components/AssetGrid";
 import { useLanguage } from "@/utils/LanguageContext";
-import { Archive } from "lucide-react";
 
 export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="h-screen flex flex-col overflow-hidden bg-background">
+      {/* Sabit Üst Menü */}
       <Navbar />
       
-      <main className="flex-grow">
-        <div id="assets">
+      {/* Kaydırılabilir Orta Alan */}
+      <main className="flex-grow overflow-y-auto custom-scrollbar">
+        <div id="assets" className="container mx-auto">
           <Hero />
           <FilterBar />
           <AssetGrid />
+          {/* Alttaki boşluğu doldurmak için görünmez bir alan */}
+          <div className="h-20" />
         </div>
       </main>
       
-      <footer className="border-t border-border-custom bg-[#000000] py-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="bg-primary p-2 rounded-xl">
-                <Archive size={24} className="text-white" />
-            </div>
-            <span className="text-2xl font-black tracking-tighter uppercase italic text-white">sytexarchive</span>
-          </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-4 italic">
-            Profesyonel Editörler İçin Premium Kaynaklar.
-          </p>
-          <div className="max-w-xs mx-auto h-px bg-white/10 mb-6" />
-          <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">
-            &copy; {new Date().getFullYear()} sytexarchive. Tüm hakları saklıdır.
-          </p>
+      {/* Sabit ve Minicik Alt Bar (License) */}
+      <footer className="z-[2000] bg-[#000000] border-t border-border-custom py-2 px-6 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+            <span className="text-[9px] font-black uppercase italic tracking-tighter text-white/40">sytexarchive</span>
+            <span className="text-[8px] font-bold text-white/20 uppercase tracking-widest hidden sm:inline">| Profesyonel Editör Kaynakları</span>
         </div>
+        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">
+          &copy; {new Date().getFullYear()} sytexarchive. Tüm hakları saklıdır.
+        </p>
       </footer>
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #3b82f6;
+          border-radius: 10px;
+        }
+      `}</style>
     </div>
   );
 }
