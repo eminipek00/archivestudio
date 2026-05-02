@@ -85,7 +85,7 @@ const ProfilePage = () => {
               
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <div className="px-4 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-wider">
-                  Sytex Editor
+                  sytexarchive Editor
                 </div>
                 {!user.email_confirmed_at && (
                     <button 

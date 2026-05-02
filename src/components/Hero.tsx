@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Play, Layers, Zap } from "lucide-react";
+import { Sparkles, Play, Layers, Zap, Archive } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -23,7 +23,7 @@ const Hero = () => {
 
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-foreground">
               PREMIUM <br />
-              <span className="text-primary italic">DIGITAL</span> <br />
+              <span className="text-primary italic uppercase">SYTEX</span> <br />
               ARCHIVE
             </h1>
 

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sytex Archive | Premium Editör Kaynakları",
+  title: "sytexarchive | Premium Editör Kaynakları",
   description: "Video editörleri için premium sahne paketleri, presetler ve dijital varlıklar.",
 };
 

@@ -41,7 +41,7 @@ const LoginPage = () => {
             <Archive size={32} className="text-white" />
           </Link>
           <h1 className="text-3xl font-black tracking-tight">Tekrar Hoş Geldin</h1>
-          <p className="text-muted-foreground mt-2 font-medium">Sytex Archive'e giriş yapın</p>
+          <p className="text-muted-foreground mt-2 font-medium">sytexarchive'e giriş yapın</p>
         </div>
 
         <div className="space-y-4">

@@ -41,8 +41,8 @@ const Navbar = () => {
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:shadow-[0_0_20px_rgba(59,130,246,0.6)] transition-all duration-500 rotate-3 group-hover:rotate-0">
             <Archive size={22} className="text-white" />
           </div>
-          <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent hidden sm:block">
-            SYTEX
+          <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent hidden sm:block uppercase">
+            sytexarchive
           </span>
         </Link>
 
