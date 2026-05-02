@@ -16,6 +16,7 @@ const ProfilePage = () => {
   const [newPassword, setNewPassword] = useState("");
   
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -53,8 +54,8 @@ const ProfilePage = () => {
     try {
         const { error } = await supabase.from('profiles').upsert({
             id: user.id,
-            full_name: fullName, // Zaten toUpperCase yapıldı
-            username: username, // Artık lowerCase zorunlu değil
+            full_name: fullName,
+            username: username,
             email: user.email,
             updated_at: new Date().toISOString()
         });
@@ -77,7 +78,11 @@ const ProfilePage = () => {
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) alert(error.message);
-    else { alert("Şifre güncellendi!"); setNewPassword(""); }
+    else { 
+        alert("Şifre güncellendi!"); 
+        setNewPassword(""); 
+        setIsEditingPassword(false);
+    }
     setLoading(false);
   };
 
@@ -180,21 +185,31 @@ const ProfilePage = () => {
             </form>
 
             <div className="space-y-6">
-                {/* GÜVENLİK (ŞİFRE GÖSTERME ÖZELLİKLİ) */}
-                <form onSubmit={handleUpdatePassword} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-muted rounded-xl"><Lock size={20} /></div>
-                        <h3 className="text-lg font-black uppercase italic tracking-tighter">Güvenlik</h3>
+                {/* GÜVENLİK (DÜZENLEMELİ) */}
+                <form onSubmit={handleUpdatePassword} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6 relative overflow-hidden">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-muted rounded-xl"><Lock size={20} /></div>
+                            <h3 className="text-lg font-black uppercase italic tracking-tighter">Güvenlik</h3>
+                        </div>
+                        {!isEditingPassword && (
+                            <button type="button" onClick={() => setIsEditingPassword(true)} className="flex items-center gap-2 text-[10px] font-black uppercase text-muted-foreground hover:text-primary transition-colors">
+                                <Edit3 size={14} />
+                                Şifre Düzenle
+                            </button>
+                        )}
                     </div>
+                    
                     <div className="relative">
                         <input 
                             type={showPassword ? "text" : "password"} 
+                            disabled={!isEditingPassword}
                             value={newPassword} 
                             onChange={(e) => setNewPassword(e.target.value)} 
-                            className="w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold pr-12" 
+                            className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold pr-12 transition-all ${!isEditingPassword ? 'opacity-50 grayscale' : 'ring-2 ring-primary/10 border-primary/30'}`} 
                             placeholder="Yeni Şifre" 
                         />
-                        {newPassword.length > 0 && (
+                        {isEditingPassword && newPassword.length > 0 && (
                             <button 
                                 type="button" 
                                 onClick={() => setShowPassword(!showPassword)}
@@ -204,7 +219,13 @@ const ProfilePage = () => {
                             </button>
                         )}
                     </div>
-                    <button type="submit" disabled={!newPassword} className="w-full bg-muted hover:bg-border-custom py-4 rounded-xl font-black text-[10px] uppercase tracking-widest disabled:opacity-30">ŞİFREYİ GÜNCELLE</button>
+                    
+                    {isEditingPassword && (
+                        <button type="submit" disabled={!newPassword || loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest animate-in fade-in zoom-in duration-300">
+                            {loading ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />}
+                            ŞİFREYİ GÜNCELLE
+                        </button>
+                    )}
                 </form>
 
                 <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[2.5rem] flex items-center justify-between gap-4">
@@ -219,7 +240,7 @@ const ProfilePage = () => {
         </div>
       </main>
 
-      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between">
+      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0">
         <span className="text-[8px] font-black uppercase italic tracking-tighter text-white/30">sytexarchive</span>
         <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">&copy; {new Date().getFullYear()} sytexarchive</p>
       </footer>
