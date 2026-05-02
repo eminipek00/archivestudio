@@ -15,17 +15,17 @@ const FilterBar = () => {
   const [activeTab, setActiveTab] = useState("Tümü");
 
   return (
-    <div className="w-full px-4 mb-8">
-      <div className="container mx-auto flex justify-center">
-        <div className="glass-panel p-1.5 rounded-2xl flex items-center gap-1 overflow-x-auto no-scrollbar max-w-full">
+    <div className="py-6 bg-background">
+      <div className="container flex justify-center">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 max-w-full">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveTab(category)}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+              className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 activeTab === category
-                  ? "bg-primary text-white shadow-lg shadow-primary/20"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-primary text-white"
+                  : "bg-muted text-muted-foreground hover:bg-border-custom hover:text-foreground"
               }`}
             >
               {category}
