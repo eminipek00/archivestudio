@@ -14,23 +14,28 @@ export default function Home() {
     <>
       <Navbar />
       <main className="flex-grow">
-        <Hero />
-        <FilterBar />
-        <AssetGrid />
+        <div id="assets">
+          <Hero />
+          <FilterBar />
+          <AssetGrid />
+        </div>
       </main>
       
-      <footer className="border-t border-border-custom bg-background/50 py-12 mt-auto">
+      {/* Footer - DAHA DA AŞAĞIYA MONTE EDİLDİ */}
+      <footer className="border-t border-border-custom bg-background/50 py-24 mt-32">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-6 opacity-50 grayscale hover:grayscale-0 transition-all">
-            <Archive size={24} className="text-primary" />
-            <span className="text-xl font-black tracking-tighter uppercase italic">sytexarchive</span>
+          <div className="flex items-center justify-center gap-3 mb-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="bg-primary/20 p-2 rounded-xl">
+                <Archive size={32} className="text-primary" />
+            </div>
+            <span className="text-3xl font-black tracking-tighter uppercase italic">sytexarchive</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">
+          <div className="max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent mb-8" />
+          <p className="text-xs font-black uppercase tracking-[0.4em] text-muted-foreground mb-6 opacity-60">
             {t('footerSub')}
           </p>
-          <div className="w-12 h-0.5 bg-primary/20 mx-auto mb-6" />
-          <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
-            &copy; {new Date().getFullYear()} sytexarchive. {t('footer')} | <span className="text-primary/40">v1.1.0</span>
+          <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+            &copy; {new Date().getFullYear()} sytexarchive. {t('footer')} | <span className="text-primary/30">v1.1.2</span>
           </p>
         </div>
       </footer>
