@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/client";
-import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle } from "lucide-react";
+import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle, Edit3, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/utils/LanguageContext";
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from "@/utils/imageUtils";
@@ -15,6 +15,8 @@ const ProfilePage = () => {
   const [username, setUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   
@@ -49,25 +51,18 @@ const ProfilePage = () => {
     if (!user) return;
     setLoading(true);
     try {
-        const cleanedUsername = username.toLowerCase().trim().replace(/\s/g, '');
         const { error } = await supabase.from('profiles').upsert({
             id: user.id,
-            full_name: fullName,
-            username: cleanedUsername,
+            full_name: fullName, // Zaten toUpperCase yapıldı
+            username: username, // Artık lowerCase zorunlu değil
             email: user.email,
             updated_at: new Date().toISOString()
         });
         if (error) throw error;
         setSuccess(true);
+        setIsEditingProfile(false);
         setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) { alert("Hata: " + err.message); } finally { setLoading(false); }
-  };
-
-  const handleDeleteAccount = async () => {
-    if (confirm("DİKKAT: Hesabınızı silmek üzeresiniz. Bu işlem geri alınamaz!")) {
-        const { error } = await supabase.from('profiles').delete().eq('id', user.id);
-        if (!error) { await supabase.auth.signOut(); window.location.href = "/"; }
-    }
   };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -125,41 +120,84 @@ const ProfilePage = () => {
                 </label>
             </div>
             <div>
-                <h1 className="text-2xl font-black uppercase italic tracking-tighter">{fullName || 'Yeni Editör'}</h1>
-                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">@{username || 'kullanici'}</p>
+                <h1 className="text-2xl font-black uppercase italic tracking-tighter">{profile?.full_name || 'YENİ EDİTÖR'}</h1>
+                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">@{profile?.username || 'kullanici'}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary rounded-xl text-white"><UserSquare2 size={20} /></div>
-                    <h3 className="text-lg font-black uppercase italic tracking-tighter">Hesap Yönetimi</h3>
+            {/* HESAP YÖNETİMİ */}
+            <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6 relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary rounded-xl text-white"><UserSquare2 size={20} /></div>
+                        <h3 className="text-lg font-black uppercase italic tracking-tighter">Hesap Yönetimi</h3>
+                    </div>
+                    {!isEditingProfile && (
+                        <button type="button" onClick={() => setIsEditingProfile(true)} className="flex items-center gap-2 text-[10px] font-black uppercase text-primary hover:underline">
+                            <Edit3 size={14} />
+                            Düzenle
+                        </button>
+                    )}
                 </div>
+                
                 <div className="space-y-4">
                     <div className="space-y-1">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">İsim Soyisim</label>
-                        <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold" />
+                        <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">İsim Soyisim (Hep Büyük)</label>
+                        <input 
+                            type="text" 
+                            disabled={!isEditingProfile}
+                            value={fullName} 
+                            onChange={(e) => setFullName(e.target.value.toUpperCase())} 
+                            className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-50 grayscale' : 'ring-2 ring-primary/10 border-primary/30'}`} 
+                        />
                     </div>
                     <div className="space-y-1">
                         <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Kullanıcı Adı</label>
-                        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold" />
+                        <input 
+                            type="text" 
+                            disabled={!isEditingProfile}
+                            value={username} 
+                            onChange={(e) => setUsername(e.target.value)} 
+                            className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-50 grayscale' : 'ring-2 ring-primary/10 border-primary/30'}`} 
+                        />
                     </div>
                 </div>
-                <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
-                    {loading ? <Loader2 className="animate-spin" size={16} /> : (success ? <CheckCircle size={16} /> : <Save size={16} />)}
-                    {success ? "KAYDEDİLDİ" : "GÜNCELLE"}
-                </button>
+
+                {isEditingProfile && (
+                    <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300">
+                        {loading ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                        GÜNCELLEMELERİ KAYDET
+                    </button>
+                )}
             </form>
 
             <div className="space-y-6">
+                {/* GÜVENLİK (ŞİFRE GÖSTERME ÖZELLİKLİ) */}
                 <form onSubmit={handleUpdatePassword} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-muted rounded-xl"><Lock size={20} /></div>
                         <h3 className="text-lg font-black uppercase italic tracking-tighter">Güvenlik</h3>
                     </div>
-                    <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold" placeholder="Yeni Şifre" />
-                    <button type="submit" className="w-full bg-muted hover:bg-border-custom py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">ŞİFREYİ GÜNCELLE</button>
+                    <div className="relative">
+                        <input 
+                            type={showPassword ? "text" : "password"} 
+                            value={newPassword} 
+                            onChange={(e) => setNewPassword(e.target.value)} 
+                            className="w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold pr-12" 
+                            placeholder="Yeni Şifre" 
+                        />
+                        {newPassword.length > 0 && (
+                            <button 
+                                type="button" 
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                        )}
+                    </div>
+                    <button type="submit" disabled={!newPassword} className="w-full bg-muted hover:bg-border-custom py-4 rounded-xl font-black text-[10px] uppercase tracking-widest disabled:opacity-30">ŞİFREYİ GÜNCELLE</button>
                 </form>
 
                 <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[2.5rem] flex items-center justify-between gap-4">
@@ -176,13 +214,8 @@ const ProfilePage = () => {
 
       <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between">
         <span className="text-[8px] font-black uppercase italic tracking-tighter text-white/30">sytexarchive</span>
-        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">&copy; {new Date().getFullYear()} sytexarchive. Tüm hakları saklıdır.</p>
+        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">&copy; {new Date().getFullYear()} sytexarchive</p>
       </footer>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
-      `}</style>
     </div>
   );
 };
