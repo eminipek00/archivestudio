@@ -5,17 +5,24 @@ import AssetGrid from "@/components/AssetGrid";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen selection:bg-primary/30">
       <Navbar />
-      <Hero />
-      <FilterBar />
-      <AssetGrid />
+      <div className="flex flex-col gap-10">
+        <Hero />
+        <div className="relative z-20 -mt-20">
+          <FilterBar />
+          <AssetGrid />
+        </div>
+      </div>
       
-      {/* Footer */}
-      <footer className="py-10 border-t border-white/5 text-center">
-        <p className="text-gray-600 text-sm">
-          &copy; {new Date().getFullYear()} Archive Studio. Tüm hakları saklıdır.
-        </p>
+      <footer className="py-16 border-t border-border-custom bg-card/30 backdrop-blur-sm text-center mt-20">
+        <div className="max-w-[1400px] mx-auto px-6">
+          <h3 className="text-xl font-black tracking-tighter uppercase mb-4">sytexarchive</h3>
+          <p className="text-muted-foreground text-xs font-medium">
+            &copy; {new Date().getFullYear()} sytexarchive. Tüm hakları saklıdır. <br />
+            Premium Resources for Professional Editors.
+          </p>
+        </div>
       </footer>
     </main>
   );
