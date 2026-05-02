@@ -85,7 +85,7 @@ const LoginPage = () => {
               />
               <span className="text-[11px] font-bold text-muted-foreground group-hover:text-foreground transition-colors">Beni Hatırla</span>
             </label>
-            <Link href="/forgot-password" weight="bold" className="text-[11px] font-bold text-primary hover:underline">Şifremi Unuttum</Link>
+            <Link href="/forgot-password" className="text-[11px] font-bold text-primary hover:underline">Şifremi Unuttum</Link>
           </div>
 
           {message && <p className="text-red-500 text-[10px] font-black text-center bg-red-500/10 py-2 rounded-lg">{message}</p>}
