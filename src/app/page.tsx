@@ -11,8 +11,9 @@ export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
+      
       <main className="flex-grow">
         <div id="assets">
           <Hero />
@@ -21,24 +22,23 @@ export default function Home() {
         </div>
       </main>
       
-      {/* Footer - DAHA DA AŞAĞIYA MONTE EDİLDİ */}
-      <footer className="border-t border-border-custom bg-background/50 py-24 mt-32">
+      <footer className="border-t border-border-custom bg-[#000000] py-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-3 mb-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-            <div className="bg-primary/20 p-2 rounded-xl">
-                <Archive size={32} className="text-primary" />
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="bg-primary p-2 rounded-xl">
+                <Archive size={24} className="text-white" />
             </div>
-            <span className="text-3xl font-black tracking-tighter uppercase italic">sytexarchive</span>
+            <span className="text-2xl font-black tracking-tighter uppercase italic text-white">sytexarchive</span>
           </div>
-          <div className="max-w-xs mx-auto h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent mb-8" />
-          <p className="text-xs font-black uppercase tracking-[0.4em] text-muted-foreground mb-6 opacity-60">
-            {t('footerSub')}
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-4 italic">
+            Profesyonel Editörler İçin Premium Kaynaklar.
           </p>
-          <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
-            &copy; {new Date().getFullYear()} sytexarchive. {t('footer')} | <span className="text-primary/30">v1.1.2</span>
+          <div className="max-w-xs mx-auto h-px bg-white/10 mb-6" />
+          <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">
+            &copy; {new Date().getFullYear()} sytexarchive. Tüm hakları saklıdır.
           </p>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
