@@ -21,33 +21,44 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 p-4">
-      <div className="max-w-[1400px] mx-auto flex items-center justify-between glass-panel rounded-2xl px-6 py-2">
+    <nav className="sticky top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border-custom px-4 py-3">
+      <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-4">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <Archive size={20} className="text-primary" />
-          <span className="text-sm font-black uppercase tracking-widest hidden sm:block">sytexarchive</span>
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <Archive size={16} className="text-white" />
+          </div>
+          <span className="text-sm font-black uppercase tracking-widest hidden lg:block">sytexarchive</span>
         </Link>
 
-        <div className="flex-1 max-w-md mx-4 relative hidden md:block">
+        {/* Search Bar - Better Width Control */}
+        <div className="flex-1 max-w-lg relative group">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
           <input
             type="text"
-            placeholder="Ara..."
-            className="w-full bg-muted/50 border border-border-custom rounded-xl py-1.5 pl-10 pr-4 text-xs focus:outline-none"
+            placeholder="Arama yapın..."
+            className="w-full bg-muted/50 border border-border-custom rounded-xl py-2 pl-10 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Actions */}
+        <div className="flex items-center gap-3 flex-shrink-0">
           <ThemeToggle />
+          <div className="h-6 w-[1px] bg-border-custom hidden sm:block" />
           <Link href="/upload" className="text-xs font-bold hover:text-primary transition-colors hidden sm:block">Yükle</Link>
+          
           {user ? (
-            <Link href="/profile" className="w-8 h-8 rounded-full overflow-hidden border border-border-custom">
-              <img src={user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} alt="Avatar" />
+            <Link href="/profile" className="w-9 h-9 rounded-xl overflow-hidden border border-border-custom p-0.5">
+              <img 
+                src={user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} 
+                alt="Avatar" 
+                className="w-full h-full object-cover rounded-lg"
+              />
             </Link>
           ) : (
-            <Link href="/login" className="text-xs font-bold hover:text-primary transition-colors flex items-center gap-1">
-              <LogIn size={14} />
-              Giriş
+            <Link href="/login" className="text-xs font-bold hover:text-primary transition-colors flex items-center gap-1.5">
+              <LogIn size={16} />
+              <span className="hidden sm:inline">Giriş</span>
             </Link>
           )}
         </div>

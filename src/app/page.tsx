@@ -5,15 +5,11 @@ import AssetGrid from "@/components/AssetGrid";
 
 export default function Home() {
   return (
-    <main className="min-h-screen selection:bg-primary/30">
+    <main className="min-h-screen bg-background">
       <Navbar />
-      <div className="flex flex-col gap-10">
-        <Hero />
-        <div className="relative z-20 -mt-20">
-          <FilterBar />
-          <AssetGrid />
-        </div>
-      </div>
+      <Hero />
+      <FilterBar />
+      <AssetGrid />
       
       <footer className="py-16 border-t border-border-custom bg-card/30 backdrop-blur-sm text-center mt-20">
         <div className="max-w-[1400px] mx-auto px-6">
