@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,6 @@ export const metadata: Metadata = {
   description: "Video editörleri için premium sahne paketleri, presetler ve dijital varlıklar.",
 };
 
-import { ThemeProvider } from "@/components/ThemeProvider";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,9 +27,9 @@ export default function RootLayout({
     <html
       lang="tr"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/30">
+      <body className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/30">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

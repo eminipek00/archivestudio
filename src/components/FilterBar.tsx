@@ -15,21 +15,23 @@ const FilterBar = () => {
   const [activeTab, setActiveTab] = useState("Tümü");
 
   return (
-    <div className="w-full px-6 mb-12 flex justify-center">
-      <div className="glass-panel p-2 rounded-2xl flex items-center gap-1 shadow-lg overflow-x-auto no-scrollbar max-w-full">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setActiveTab(category)}
-            className={`px-5 py-2.5 rounded-xl text-[11px] font-black tracking-wider uppercase transition-all duration-300 whitespace-nowrap ${
-              activeTab === category
-                ? "bg-primary text-white shadow-lg shadow-primary/30"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
+    <div className="w-full px-4 mb-8">
+      <div className="container mx-auto flex justify-center">
+        <div className="glass-panel p-1.5 rounded-2xl flex items-center gap-1 overflow-x-auto no-scrollbar max-w-full">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveTab(category)}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                activeTab === category
+                  ? "bg-primary text-white shadow-lg shadow-primary/20"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
