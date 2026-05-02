@@ -1,24 +1,26 @@
 "use client";
 
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import FilterBar from "@/components/FilterBar";
 import AssetGrid from "@/components/AssetGrid";
 import { useLanguage } from "@/utils/LanguageContext";
+import { Toast, useToast } from "@/components/Toast";
 
 export default function Home() {
   const { t } = useLanguage();
+  const { toast, showToast, hideToast } = useToast();
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
       {/* Sabit Üst Menü */}
       <Navbar />
       
-      {/* Orta Alan - KAYDIRMA ÇUBUĞU GİZLENDİ */}
+      {/* Orta Alan */}
       <main className="flex-grow overflow-y-auto no-scrollbar scroll-smooth">
         <div id="assets" className="container mx-auto pb-10">
           <Hero />
-          <FilterBar />
+          {/* FilterBar kaldırıldı, Hero'ya taşındı */}
           <AssetGrid />
         </div>
       </main>
@@ -33,22 +35,13 @@ export default function Home() {
         </p>
       </footer>
 
-      {/* TÜM KAYDIRMA ÇUBUKLARINI VE MAVİ ÇİZGİLERİ SİLEN ÖZEL KOD */}
+      {/* Özel Uyarı Mesajı */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
+
       <style jsx global>{`
-        /* Kaydırma çubuğunu tamamen gizle ama kaydırma özelliğini koru (mouse wheel çalışır) */
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-        }
-        
-        /* Sayfa genelinde kaymayı engelle */
-        body {
-          overflow: hidden !important;
-          height: 100vh;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { overflow: hidden !important; height: 100vh; }
       `}</style>
     </div>
   );
