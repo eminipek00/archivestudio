@@ -42,7 +42,7 @@ const Navbar = () => {
             <Archive size={22} className="text-white" />
           </div>
           <span className="text-2xl font-black tracking-tighter bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent hidden sm:block">
-            ARCHIVE
+            SYTEX
           </span>
         </Link>
 

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Archive, Github, Mail, ArrowRight, Lock, User } from "lucide-react";
+import { Archive, Mail, ArrowRight, Lock } from "lucide-react";
 import Link from "next/link";
 
 const LoginPage = () => {
@@ -30,15 +30,6 @@ const LoginPage = () => {
     setLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,var(--muted),transparent)]">
       <div className="max-w-md w-full space-y-8 glass-panel p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
@@ -50,24 +41,10 @@ const LoginPage = () => {
             <Archive size={32} className="text-white" />
           </Link>
           <h1 className="text-3xl font-black tracking-tight">Tekrar Hoş Geldin</h1>
-          <p className="text-muted-foreground mt-2 font-medium">Archive Studio'ya giriş yapın</p>
+          <p className="text-muted-foreground mt-2 font-medium">Sytex Archive'e giriş yapın</p>
         </div>
 
         <div className="space-y-4">
-          <button 
-            onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 bg-card border border-border-custom py-3.5 rounded-2xl font-bold hover:bg-muted transition-all active:scale-95"
-          >
-            <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
-            Google ile Devam Et
-          </button>
-          
-          <div className="flex items-center gap-4 py-2">
-            <div className="h-[1px] flex-1 bg-border-custom" />
-            <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Veya</span>
-            <div className="h-[1px] flex-1 bg-border-custom" />
-          </div>
-
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-wider text-muted-foreground ml-1">E-Posta</label>
