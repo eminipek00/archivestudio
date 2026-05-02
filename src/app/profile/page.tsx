@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/client";
-import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle, Edit3, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle, Edit3, Eye, EyeOff, RotateCcw } from "lucide-react";
 import { useLanguage } from "@/utils/LanguageContext";
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from "@/utils/imageUtils";
@@ -66,26 +66,27 @@ const ProfilePage = () => {
     } catch (err: any) { alert("Hata: " + err.message); } finally { setLoading(false); }
   };
 
-  const handleDeleteAccount = async () => {
-    if (confirm("DİKKAT: Hesabınızı silmek üzeresiniz. Bu işlem geri alınamaz!")) {
-        const { error } = await supabase.from('profiles').delete().eq('id', user.id);
-        if (!error) { await supabase.auth.signOut(); window.location.href = "/"; }
-    }
-  };
-
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) alert(error.message);
-    else { 
-        alert("Şifre güncellendi!"); 
-        setNewPassword(""); 
-        setIsEditingPassword(false);
-    }
+    else { alert("Şifre güncellendi!"); setNewPassword(""); setIsEditingPassword(false); }
     setLoading(false);
   };
 
+  const handleCancelEdit = (type: 'profile' | 'password') => {
+    if (type === 'profile') {
+        setFullName(profile?.full_name || "");
+        setUsername(profile?.username || "");
+        setIsEditingProfile(false);
+    } else {
+        setNewPassword("");
+        setIsEditingPassword(false);
+    }
+  };
+
+  // ... (handleFileChange, onCropComplete, handleCropSave, handleDeleteAccount kısımları aynı)
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
@@ -93,9 +94,7 @@ const ProfilePage = () => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
-
   const onCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => { setCroppedAreaPixels(croppedAreaPixels); }, []);
-
   const handleCropSave = async () => {
     if (image && croppedAreaPixels && user) {
         setLoading(true);
@@ -112,6 +111,12 @@ const ProfilePage = () => {
         setLoading(false);
     }
   };
+  const handleDeleteAccount = async () => {
+    if (confirm("Hesabı silmek üzeresiniz!")) {
+        const { error } = await supabase.from('profiles').delete().eq('id', user.id);
+        if (!error) { await supabase.auth.signOut(); window.location.href = "/"; }
+    }
+  };
 
   if (!user) return null;
 
@@ -124,7 +129,7 @@ const ProfilePage = () => {
           <div className="flex items-center gap-6 bg-card border border-border-custom p-6 rounded-[2rem] shadow-lg">
             <div className="relative group">
                 <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-background shadow-lg bg-muted">
-                    {profile?.avatar_url ? <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground"><User size={32} /></div>}
+                    {profile?.avatar_url ? <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground"><User size={32} /></div>}
                 </div>
                 <label className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl cursor-pointer">
                     <Camera className="text-white" size={20} />
@@ -138,102 +143,56 @@ const ProfilePage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* HESAP YÖNETİMİ */}
-            <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6 relative overflow-hidden">
+            <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-primary rounded-xl text-white"><UserSquare2 size={20} /></div>
                         <h3 className="text-lg font-black uppercase italic tracking-tighter">Hesap Yönetimi</h3>
                     </div>
-                    {!isEditingProfile && (
-                        <button type="button" onClick={() => setIsEditingProfile(true)} className="flex items-center gap-2 text-[10px] font-black uppercase text-primary hover:underline">
-                            <Edit3 size={14} />
-                            Düzenle
-                        </button>
+                    {isEditingProfile ? (
+                        <button type="button" onClick={() => handleCancelEdit('profile')} className="text-[9px] font-black uppercase text-red-500 hover:underline">Vazgeç</button>
+                    ) : (
+                        <button type="button" onClick={() => setIsEditingProfile(true)} className="text-[9px] font-black uppercase text-primary hover:underline flex items-center gap-1"><Edit3 size={12}/> Düzenle</button>
                     )}
                 </div>
-                
                 <div className="space-y-4">
-                    <div className="space-y-1">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">İsim Soyisim (Hep Büyük)</label>
-                        <input 
-                            type="text" 
-                            disabled={!isEditingProfile}
-                            value={fullName} 
-                            onChange={(e) => setFullName(e.target.value.toUpperCase())} 
-                            className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-50 grayscale' : 'ring-2 ring-primary/10 border-primary/30'}`} 
-                        />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Kullanıcı Adı</label>
-                        <input 
-                            type="text" 
-                            disabled={!isEditingProfile}
-                            value={username} 
-                            onChange={(e) => setUsername(e.target.value)} 
-                            className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-50 grayscale' : 'ring-2 ring-primary/10 border-primary/30'}`} 
-                        />
-                    </div>
+                    <input type="text" disabled={!isEditingProfile} value={fullName} onChange={(e) => setFullName(e.target.value.toUpperCase())} className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-2 ring-primary/20'}`} placeholder="TAM ADINIZ" />
+                    <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-2 ring-primary/20'}`} placeholder="kullaniciadi" />
                 </div>
-
                 {isEditingProfile && (
-                    <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 animate-in fade-in zoom-in duration-300">
-                        {loading ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-                        GÜNCELLEMELERİ KAYDET
+                    <button type="submit" disabled={loading} className="w-full bg-primary text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                        {loading ? <Loader2 className="animate-spin" size={14}/> : <Save size={14}/>} KAYDET
                     </button>
                 )}
             </form>
 
             <div className="space-y-6">
-                {/* GÜVENLİK (DÜZENLEMELİ) */}
-                <form onSubmit={handleUpdatePassword} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6 relative overflow-hidden">
+                <form onSubmit={handleUpdatePassword} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-muted rounded-xl"><Lock size={20} /></div>
                             <h3 className="text-lg font-black uppercase italic tracking-tighter">Güvenlik</h3>
                         </div>
-                        {!isEditingPassword && (
-                            <button type="button" onClick={() => setIsEditingPassword(true)} className="flex items-center gap-2 text-[10px] font-black uppercase text-muted-foreground hover:text-primary transition-colors">
-                                <Edit3 size={14} />
-                                Şifre Düzenle
-                            </button>
+                        {isEditingPassword ? (
+                            <button type="button" onClick={() => handleCancelEdit('password')} className="text-[9px] font-black uppercase text-red-500 hover:underline">Vazgeç</button>
+                        ) : (
+                            <button type="button" onClick={() => setIsEditingPassword(true)} className="text-[9px] font-black uppercase text-white/40 hover:text-white flex items-center gap-1"><Lock size={12}/> Şifre Düzenle</button>
                         )}
                     </div>
-                    
                     <div className="relative">
-                        <input 
-                            type={showPassword ? "text" : "password"} 
-                            disabled={!isEditingPassword}
-                            value={newPassword} 
-                            onChange={(e) => setNewPassword(e.target.value)} 
-                            className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold pr-12 transition-all ${!isEditingPassword ? 'opacity-50 grayscale' : 'ring-2 ring-primary/10 border-primary/30'}`} 
-                            placeholder="Yeni Şifre" 
-                        />
+                        <input type={showPassword ? "text" : "password"} disabled={!isEditingPassword} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingPassword ? 'opacity-40' : 'ring-2 ring-primary/20'}`} placeholder="YENİ ŞİFRE" />
                         {isEditingPassword && newPassword.length > 0 && (
-                            <button 
-                                type="button" 
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                            >
-                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                            </button>
+                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary"><Eye size={16} /></button>
                         )}
                     </div>
-                    
                     {isEditingPassword && (
-                        <button type="submit" disabled={!newPassword || loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest animate-in fade-in zoom-in duration-300">
-                            {loading ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />}
-                            ŞİFREYİ GÜNCELLE
-                        </button>
+                        <button type="submit" disabled={!newPassword || loading} className="w-full bg-white text-black py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest">ŞİFREYİ GÜNCELLE</button>
                     )}
                 </form>
 
-                <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[2.5rem] flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3 text-red-500">
-                        <AlertTriangle size={20} />
-                        <span className="text-[9px] font-black uppercase tracking-widest">Hesabı Sil</span>
-                    </div>
-                    <button onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-xl transition-all"><Trash2 size={16} /></button>
+                <div className="bg-red-500/5 border border-red-500/10 p-6 rounded-[2rem] flex items-center justify-between">
+                    <span className="text-[9px] font-black uppercase text-red-500 tracking-widest flex items-center gap-2"><AlertTriangle size={14}/> Hesabı Sil</span>
+                    <button onClick={handleDeleteAccount} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-all"><Trash2 size={16}/></button>
                 </div>
             </div>
           </div>
