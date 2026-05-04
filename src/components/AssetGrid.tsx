@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import AssetCard from './AssetCard';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
-import { Loader2, FolderOpen } from 'lucide-react';
+import { Loader2, FolderOpen, Database, TrendingUp, Users } from 'lucide-react';
 
 interface AssetGridProps {
   searchQuery: string;
@@ -21,7 +21,19 @@ const AssetGrid = ({ searchQuery, activeCategory }: AssetGridProps) => {
   useEffect(() => {
     const fetchAssets = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('assets').select('*').order('created_at', { ascending: false });
+      // AUTHOR_ID İLE PROFILES TABLOSUNU BAĞLIYORUZ (JOIN)
+      const { data, error } = await supabase
+        .from('assets')
+        .select(`
+          *,
+          profiles:author_id (
+            username,
+            avatar_url,
+            full_name
+          )
+        `)
+        .order('created_at', { ascending: false });
+        
       if (!error && data) setAssets(data);
       setLoading(false);
     };
@@ -59,25 +71,43 @@ const AssetGrid = ({ searchQuery, activeCategory }: AssetGridProps) => {
     );
   }
 
-  if (filteredAssets.length === 0) {
-    return (
-      <div className="w-full py-20 flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-500">
-          <div className="p-6 bg-muted rounded-[2.5rem] border border-border-custom">
-            <FolderOpen size={48} className="text-muted-foreground opacity-20" />
-          </div>
-          <div className="text-center">
-            <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Sonuç Bulunamadı lo!</h3>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">BAŞKA BİR ARAMA YAPMAYI DENEYİN.</p>
-          </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      {filteredAssets.map((asset) => (
-        <AssetCard key={asset.id} asset={asset} isAdmin={isAdmin} onDelete={handleDelete} />
-      ))}
+    <div className="space-y-8">
+        {/* ÜST İSTATİSTİK BARI (KÜÇÜK VE ŞIK) */}
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-12 px-4 py-6 bg-[#111] border-y border-border-custom">
+            <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg text-primary"><Database size={16}/></div>
+                <div className="flex flex-col">
+                    <span className="text-xl font-black text-white italic leading-none">{assets.length}</span>
+                    <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">TOPLAM ASSET</span>
+                </div>
+            </div>
+            <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/10 rounded-lg text-green-500"><TrendingUp size={16}/></div>
+                <div className="flex flex-col">
+                    <span className="text-xl font-black text-white italic leading-none">{filteredAssets.length}</span>
+                    <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">FİLTRELENEN</span>
+                </div>
+            </div>
+        </div>
+
+        {filteredAssets.length === 0 ? (
+            <div className="w-full py-20 flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-500">
+                <div className="p-6 bg-muted rounded-[2.5rem] border border-border-custom">
+                    <FolderOpen size={48} className="text-muted-foreground opacity-20" />
+                </div>
+                <div className="text-center">
+                    <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Sonuç Bulunamadı lo!</h3>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">BAŞKA BİR ARAMA YAPMAYI DENEYİN.</p>
+                </div>
+            </div>
+        ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                {filteredAssets.map((asset) => (
+                    <AssetCard key={asset.id} asset={asset} isAdmin={isAdmin} onDelete={handleDelete} />
+                ))}
+            </div>
+        )}
     </div>
   );
 };

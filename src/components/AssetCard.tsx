@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle, Trash2, Edit3, Save, Camera } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle, Trash2, Edit3, Save, Camera, Heart } from 'lucide-react';
 import { useLanguage } from '@/utils/LanguageContext';
 import { createClient } from '@/utils/supabase/client';
 import { Toast, useToast } from './Toast';
@@ -15,6 +15,10 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
   const [editUrl, setEditUrl] = useState(asset.image_url);
   const [loading, setLoading] = useState(false);
   
+  // LIKE STATES
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 50) + 10); // Simülasyon
+  
   const supabase = createClient();
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -24,7 +28,6 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
         text: `Sytex Archive üzerinden şu pakete bak: ${asset.title}`,
         url: window.location.origin + `?id=${asset.id}`
     };
-
     try {
         if (navigator.share) { await navigator.share(shareData); } 
         else { await navigator.clipboard.writeText(shareData.url); showToast("Bağlantı kopyalandı lo!", "success"); }
@@ -51,36 +54,70 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
     setLoading(false);
   };
 
+  const handleLike = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setLiked(!liked);
+      setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+  };
+
+  // Uploader Bilgileri
+  const uploader = asset.profiles || { username: 'Sytex Editor', avatar_url: '/logo.png' };
+
   return (
     <>
-      {/* ASSET KARTI */}
-      <div onClick={() => setShowModal(true)} className="group relative bg-card border border-border-custom rounded-[2.5rem] overflow-hidden hover:border-primary transition-all duration-500 cursor-pointer hover:shadow-2xl hover:shadow-primary/10">
+      {/* ASSET KARTI - TAMAMEN YENİLENDİ */}
+      <div onClick={() => setShowModal(true)} className="group relative bg-card border border-border-custom rounded-[2.5rem] overflow-hidden hover:border-primary transition-all duration-500 cursor-pointer hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full">
         <div className="aspect-video relative overflow-hidden">
           <img src={asset.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80'} alt={asset.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          
+          {/* DOSYA TİPİ BADGE */}
+          <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md text-white text-[7px] font-black px-2.5 py-1 rounded-lg uppercase tracking-tighter flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+            {asset.file_type || 'PAKET'}
+          </div>
+
           {isAdmin && (
             <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); setShowModal(true); }} className="p-2 bg-primary text-white rounded-xl hover:scale-110 transition-all"><Edit3 size={16} /></button>
-                <button onClick={handleDelete} className="p-2 bg-red-500 text-white rounded-xl hover:scale-110 transition-all"><Trash2 size={16} /></button>
+                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); setShowModal(true); }} className="p-2 bg-primary text-white rounded-xl hover:scale-110 transition-all shadow-lg"><Edit3 size={14} /></button>
+                <button onClick={handleDelete} className="p-2 bg-red-500 text-white rounded-xl hover:scale-110 transition-all shadow-lg"><Trash2 size={14} /></button>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 flex items-center gap-2"><PlayCircle size={20} className="text-white" /><span className="text-[10px] font-black uppercase text-white tracking-widest">Önizle</span></div>
-          </div>
+          
           <div className="absolute top-4 right-4 bg-primary text-white text-[8px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest shadow-lg">{asset.category}</div>
         </div>
-        <div className="p-6">
-          <h3 className="text-sm font-black uppercase italic tracking-tighter text-white mb-2 line-clamp-1">{asset.title}</h3>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-white/30"><FileText size={14} /><span className="text-[9px] font-bold uppercase tracking-widest">{asset.file_type || 'PAKET'}</span></div>
-            <div className="p-2 rounded-xl bg-muted text-white/40 group-hover:bg-primary group-hover:text-white transition-all"><Download size={16} /></div>
+
+        <div className="p-5 flex flex-col flex-grow justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-black uppercase italic tracking-tighter text-white mb-3 line-clamp-1 group-hover:text-primary transition-colors">{asset.title}</h3>
+            
+            {/* YÜKLEYEN PROFİLİ (KULLANICININ İSTEDİĞİ) */}
+            <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors">
+                <div className="w-7 h-7 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                    <img src={uploader.avatar_url || '/logo.png'} alt={uploader.username} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none mb-0.5">Uploader</span>
+                    <span className="text-[10px] font-black text-white uppercase italic leading-none">@{uploader.username}</span>
+                </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-border-custom/50">
+            {/* LIKE BUTONU */}
+            <button onClick={handleLike} className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all ${liked ? 'bg-red-500/10 text-red-500' : 'bg-white/5 text-white/20 hover:bg-white/10 hover:text-white'}`}>
+                <Heart size={14} fill={liked ? "currentColor" : "none"} />
+                <span className="text-[10px] font-black">{likeCount}</span>
+            </button>
+
+            <div className="p-2.5 rounded-xl bg-muted text-white/40 group-hover:bg-primary group-hover:text-white transition-all shadow-inner"><Download size={16} /></div>
           </div>
         </div>
       </div>
 
-      {/* DETAY / DÜZENLEME MODALI */}
+      {/* DETAY MODALI */}
       {showModal && (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-2xl" onClick={() => { setShowModal(false); setIsEditing(false); }} />
+          <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl" onClick={() => { setShowModal(false); setIsEditing(false); }} />
           
           <div className="relative bg-card border border-border-custom w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row animate-in zoom-in slide-in-from-bottom-8 duration-500">
             <div className="w-full md:w-3/5 aspect-video md:aspect-auto bg-muted relative">
@@ -108,10 +145,14 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                     ) : (
                         <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white leading-none">{asset.title}</h2>
                     )}
-                    <div className="space-y-4 pt-4">
-                        <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom">
-                            <div className="p-2 bg-muted rounded-xl"><User size={18} className="text-white/40" /></div>
-                            <div><p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none">YÜKLEYEN</p><p className="text-xs font-black text-white uppercase italic">{isAdmin ? 'ADMIN' : 'EDITOR'}</p></div>
+                    
+                    <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom shadow-inner">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                            <img src={uploader.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover" />
+                        </div>
+                        <div>
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none mb-1">UPLOADED BY</p>
+                            <p className="text-xs font-black text-white uppercase italic">@{uploader.username}</p>
                         </div>
                     </div>
                 </div>
@@ -120,7 +161,7 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                     {isEditing ? (
                         <button onClick={handleUpdate} disabled={loading} className="w-full bg-green-500 hover:bg-green-600 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-95">
                             {loading ? <div className="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent" /> : <Save size={20} />}
-                            DEĞİŞİKLİKLERİ KAYDET
+                            KAYDET
                         </button>
                     ) : (
                         <a href={asset.download_url} target="_blank" className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95">
@@ -128,7 +169,7 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                         </a>
                     )}
                     <button onClick={handleShare} className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all">
-                        <Share2 size={16} />ARKADAŞINLA PAYLAŞ
+                        <Share2 size={16} />PAYLAŞ
                     </button>
                 </div>
             </div>
