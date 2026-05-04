@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/client";
-import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle, Edit3, Heart, Trophy, Database, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle, Edit3, Heart, Trophy, Database, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/utils/LanguageContext";
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from "@/utils/imageUtils";
@@ -15,6 +15,8 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<any>(null);
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [showFavorites, setShowFavorites] = useState(true);
   const [assetCount, setAssetCount] = useState(0);
   const [favoriteAssets, setFavoriteAssets] = useState<any[]>([]);
@@ -33,7 +35,6 @@ const ProfilePage = () => {
   const [isCropping, setIsCropping] = useState(false);
 
   const fetchFavorites = useCallback(async (userId: string) => {
-      // GLOBAL LIKES TABLOSUNDAN ÇEK
       const { data: likesData } = await supabase.from('likes').select('asset_id').eq('user_id', userId);
       if (likesData && likesData.length > 0) {
           const ids = likesData.map(l => l.asset_id);
@@ -74,7 +75,8 @@ const ProfilePage = () => {
     if (!user) return;
     setLoading(true);
     try {
-        const { error } = await supabase.from('profiles').upsert({
+        // 1. PROFİL BİLGİLERİNİ GÜNCELLE
+        const { error: profileError } = await supabase.from('profiles').upsert({
             id: user.id,
             full_name: fullName,
             username: username,
@@ -82,8 +84,16 @@ const ProfilePage = () => {
             email: user.email,
             updated_at: new Date().toISOString()
         });
-        if (error) throw error;
+        if (profileError) throw profileError;
+
+        // 2. ŞİFRE DEĞİŞTİRME (EĞER BİR ŞEY YAZILDIYSA)
+        if (newPassword.length >= 6) {
+            const { error: authError } = await supabase.auth.updateUser({ password: newPassword });
+            if (authError) throw authError;
+        }
+
         setIsEditingProfile(false);
+        setNewPassword("");
     } catch (err: any) { alert(err.message); } finally { setLoading(false); window.location.reload(); }
   };
 
@@ -156,7 +166,7 @@ const ProfilePage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div className="space-y-8">
-                {/* HESAP YÖNETİMİ */}
+                {/* HESAP YÖNETİMİ (ŞİFRE ALANI EKLENDİ) */}
                 <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6">
                     <div className="flex items-center justify-between border-b border-white/5 pb-4">
                         <div className="flex items-center gap-3">
@@ -174,8 +184,19 @@ const ProfilePage = () => {
                             <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('username')}</label>
                             <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
                         </div>
+
+                        {/* YENİ ŞİFRE ALANI */}
+                        <div className="space-y-1 relative">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">YENİ ŞİFRE (OPSİYONEL)</label>
+                            <div className="relative">
+                                <input type={showPassword ? "text" : "password"} disabled={!isEditingProfile} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 pr-12 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={!isEditingProfile} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors">
+                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
+                            </div>
+                        </div>
                         
-                        {/* GİZLİLİK ANAHTARI (TOGGLE) */}
+                        {/* GİZLİLİK ANAHTARI */}
                         <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 mt-2">
                             <div className="flex items-center gap-3">
                                 {showFavorites ? <Eye size={16} className="text-primary" /> : <EyeOff size={16} className="text-white/20" />}
@@ -205,7 +226,7 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            {/* FAVORİ VARLIKLARIM (DATABASE LİSTE) */}
+            {/* FAVORİ VARLIKLARIM */}
             <div className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6 min-h-[400px]">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                     <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><Heart size={20} fill="currentColor" /></div>
