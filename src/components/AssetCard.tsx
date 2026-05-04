@@ -1,102 +1,116 @@
 "use client";
 
-import React from "react";
-import { Download, Heart, Eye, ArrowUpRight, Trash2 } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
+import React, { useState } from 'react';
+import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle } from 'lucide-react';
+import { useLanguage } from '@/utils/LanguageContext';
 
-interface AssetCardProps {
-  asset: any;
-}
+const AssetCard = ({ asset }: { asset: any }) => {
+  const { t } = useLanguage();
+  const [showModal, setShowModal] = useState(false);
 
-const AssetCard: React.FC<AssetCardProps> = ({ asset }) => {
-  const supabase = createClient();
-
-  const handleDownload = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      alert("Bu dosyayı indirmek için lütfen giriş yapın.");
-      window.location.href = "/login";
-      return;
-    }
-
-    // İndirme linkine yönlendir
-    window.open(asset.download_url, '_blank');
-  };
-
-  const handleDelete = async () => {
-    if (confirm("Bu asseti silmek istediğinize emin misiniz?")) {
-      const { error } = await supabase.from('assets').delete().eq('id', asset.id);
-      if (!error) window.location.reload();
-    }
-  };
+  const isExternal = asset.download_url?.includes('http');
 
   return (
-    <div className="group relative bg-card border border-border-custom rounded-[2.5rem] p-4 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] hover:border-primary/30 animate-in fade-in zoom-in-95 duration-500">
-      {/* Visual Area */}
-      <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden mb-6 bg-muted/20">
-        {asset.image_url ? (
-            <img
-            src={asset.image_url}
-            alt={asset.title}
-            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-            />
-        ) : (
-            <div className="w-full h-full flex items-center justify-center italic font-black text-muted-foreground/20 uppercase text-xs">No Preview</div>
-        )}
-        
-        {/* Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        
-        <div className="absolute top-4 left-4 flex gap-2">
-          <div className="px-3 py-1.5 rounded-xl bg-background/80 backdrop-blur-md border border-border-custom text-[10px] font-black tracking-widest text-foreground uppercase">
+    <>
+      {/* ASSET KARTI */}
+      <div 
+        onClick={() => setShowModal(true)}
+        className="group relative bg-card border border-border-custom rounded-[2.5rem] overflow-hidden hover:border-primary transition-all duration-500 cursor-pointer hover:shadow-2xl hover:shadow-primary/10"
+      >
+        <div className="aspect-video relative overflow-hidden">
+          <img 
+            src={asset.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80'} 
+            alt={asset.title} 
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 flex items-center gap-2">
+                <PlayCircle size={20} className="text-white" />
+                <span className="text-[10px] font-black uppercase text-white tracking-widest">Önizlemeyi Gör</span>
+            </div>
+          </div>
+          <div className="absolute top-4 right-4 bg-primary text-white text-[8px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest shadow-lg">
             {asset.category}
           </div>
         </div>
 
-        <button 
-          onClick={handleDownload}
-          className="absolute bottom-4 right-4 w-12 h-12 flex items-center justify-center rounded-2xl bg-primary text-white scale-0 group-hover:scale-100 transition-transform duration-500 shadow-xl shadow-primary/40 hover:bg-primary/90"
-        >
-          <Download size={24} />
-        </button>
-      </div>
-
-      {/* Details */}
-      <div className="px-2 pb-2 space-y-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h3 className="text-xl font-black text-foreground line-clamp-1 italic uppercase tracking-tighter">
-              {asset.title}
-            </h3>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between pt-4 border-t border-border-custom">
-          <div className="flex items-center gap-3 group/author">
-            <div className="w-8 h-8 rounded-full border-2 border-border-custom overflow-hidden shadow-sm">
-              <img 
-                src={asset.profiles?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=placeholder"} 
-                alt="Author" 
-                className="w-full h-full object-cover" 
-              />
+        <div className="p-6">
+          <h3 className="text-sm font-black uppercase italic tracking-tighter text-white mb-2 line-clamp-1">{asset.title}</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-white/30">
+                <FileText size={14} />
+                <span className="text-[9px] font-bold uppercase tracking-widest">{asset.file_type || 'PAKET'}</span>
             </div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{asset.profiles?.username || 'Kullanıcı'}</span>
-          </div>
-
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Eye size={14} />
-              <span className="text-[10px] font-bold">{asset.views_count || 0}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Download size={14} />
-              <span className="text-[10px] font-bold">{asset.downloads_count || 0}</span>
+            <div className="p-2 rounded-xl bg-muted text-white/40 group-hover:bg-primary group-hover:text-white transition-all">
+                <Download size={16} />
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* DETAY MODALI (PREMIUM MODAL) */}
+      {showModal && (
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-2xl" onClick={() => setShowModal(false)} />
+          
+          <div className="relative bg-card border border-border-custom w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row animate-in zoom-in slide-in-from-bottom-8 duration-500">
+            {/* Modal Sol: Resim */}
+            <div className="w-full md:w-3/5 aspect-video md:aspect-auto bg-muted relative">
+                <img src={asset.image_url} alt={asset.title} className="w-full h-full object-cover" />
+                <button 
+                  onClick={() => setShowModal(false)}
+                  className="absolute top-6 left-6 p-3 bg-black/50 hover:bg-black backdrop-blur-md text-white rounded-2xl transition-all md:hidden"
+                >
+                  <X size={20} />
+                </button>
+            </div>
+
+            {/* Modal Sağ: İçerik */}
+            <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-between space-y-8 bg-[#050505]">
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic bg-primary/5 px-4 py-2 rounded-xl border border-primary/10">{asset.category}</span>
+                        <button onClick={() => setShowModal(false)} className="hidden md:block text-white/20 hover:text-white transition-colors"><X size={24} /></button>
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white leading-none">{asset.title}</h2>
+                    
+                    <div className="space-y-4 pt-4">
+                        <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom">
+                            <div className="p-2 bg-muted rounded-xl"><User size={18} className="text-white/40" /></div>
+                            <div>
+                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none">YÜKLEYEN</p>
+                                <p className="text-xs font-black text-white uppercase italic">sytexarchive Editor</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom">
+                            <div className="p-2 bg-muted rounded-xl"><Calendar size={18} className="text-white/40" /></div>
+                            <div>
+                                <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none">TARİH</p>
+                                <p className="text-xs font-black text-white uppercase italic">{new Date(asset.created_at).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <a 
+                      href={asset.download_url} 
+                      target="_blank" 
+                      className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                    >
+                        {isExternal ? <ExternalLink size={20} /> : <Download size={20} />}
+                        {isExternal ? 'DIŞ BAĞLANTIYA GİT' : 'DOSYAYI İNDİR'}
+                    </a>
+                    <button className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all">
+                        <Share2 size={16} />
+                        ARKADAŞINLA PAYLAŞ
+                    </button>
+                </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

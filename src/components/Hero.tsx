@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { useLanguage } from '@/utils/LanguageContext';
 
-const Hero = () => {
+interface HeroProps {
+  activeCategory: string;
+  onCategoryChange: (category: string) => void;
+}
+
+const Hero = ({ activeCategory, onCategoryChange }: HeroProps) => {
   const { t } = useLanguage();
-  const [activeCategory, setActiveCategory] = useState(t('tags.all'));
 
   const categories = [
     t('tags.all'),
@@ -20,12 +24,12 @@ const Hero = () => {
   return (
     <section className="relative pt-12 pb-8 overflow-hidden">
       <div className="container px-4 mx-auto relative z-10 text-center">
-        {/* ARAMA YERİNE GELEN KATEGORİLER */}
+        {/* KATEGORİ BUTONLARI (FİLTRELEME) */}
         <div className="flex flex-wrap justify-center gap-3 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
           {categories.map((tag) => (
             <button 
               key={tag} 
-              onClick={() => setActiveCategory(tag)}
+              onClick={() => onCategoryChange(tag)}
               className={`px-8 py-4 rounded-2xl border transition-all font-black text-[10px] uppercase tracking-widest shadow-xl active:scale-95 ${activeCategory === tag ? 'bg-primary border-primary text-white shadow-primary/30 scale-105' : 'bg-[#111] border-border-custom text-white/50 hover:border-primary/50'}`}
             >
               {tag}

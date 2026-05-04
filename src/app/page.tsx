@@ -10,22 +10,26 @@ import { Toast, useToast } from "@/components/Toast";
 export default function Home() {
   const { t } = useLanguage();
   const { toast, showToast, hideToast } = useToast();
+  
+  // MERKEZİ STATE: Arama ve Kategori artık burada yönetiliyor
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState(t('tags.all'));
 
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
-      {/* Sabit Üst Menü */}
-      <Navbar />
+      {/* Navbar'a arama fonksiyonunu gönderdik */}
+      <Navbar onSearch={setSearchQuery} />
       
-      {/* Orta Alan */}
       <main className="flex-grow overflow-y-auto no-scrollbar scroll-smooth">
         <div id="assets" className="container mx-auto pb-10">
-          <Hero />
-          {/* FilterBar kaldırıldı, Hero'ya taşındı */}
-          <AssetGrid />
+          {/* Hero'ya kategori seçim fonksiyonunu gönderdik */}
+          <Hero activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+          
+          {/* AssetGrid artık arama ve kategoriye göre süzülüyor */}
+          <AssetGrid searchQuery={searchQuery} activeCategory={activeCategory} />
         </div>
       </main>
       
-      {/* Sabit Alt Bar */}
       <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
             <span className="text-[8px] font-black uppercase italic tracking-tighter text-white/30">sytexarchive</span>
@@ -35,7 +39,6 @@ export default function Home() {
         </p>
       </footer>
 
-      {/* Özel Uyarı Mesajı */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
 
       <style jsx global>{`

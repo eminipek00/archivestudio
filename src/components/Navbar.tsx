@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Star, Zap } from 'lucide-react';
+import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
@@ -9,7 +9,11 @@ import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
 import { Toast, useToast } from './Toast';
 
-const Navbar = () => {
+interface NavbarProps {
+  onSearch?: (query: string) => void;
+}
+
+const Navbar = ({ onSearch }: NavbarProps) => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
@@ -73,7 +77,12 @@ const Navbar = () => {
             <div className="absolute inset-y-0 left-4 flex items-center text-white/30 group-focus-within:text-primary transition-colors">
                 <Search size={18} />
             </div>
-            <input type="text" placeholder={t('searchPlaceholder')} className="w-full bg-[#111] border border-border-custom rounded-2xl py-2.5 pl-12 pr-4 text-[10px] font-bold text-white focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
+            <input 
+              type="text" 
+              placeholder={t('searchPlaceholder')} 
+              onChange={(e) => onSearch && onSearch(e.target.value)}
+              className="w-full bg-[#111] border border-border-custom rounded-2xl py-2.5 pl-12 pr-4 text-[10px] font-bold text-white focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all" 
+            />
         </div>
 
         <div className="flex items-center gap-4">
