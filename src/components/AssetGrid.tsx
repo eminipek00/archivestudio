@@ -79,7 +79,7 @@ const AssetGrid = ({ searchQuery, activeCategory }: AssetGridProps) => {
                     <FolderOpen size={48} className="text-muted-foreground opacity-20" />
                 </div>
                 <div className="text-center">
-                    <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">Sonuç Bulunamadı lo!</h3>
+                    <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">{t('noResults')}</h3>
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">BAŞKA BİR ARAMA YAPMAYI DENEYİN.</p>
                 </div>
             </div>
