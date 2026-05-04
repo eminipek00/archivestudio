@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2 } from "lucide-react";
+import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useLanguage } from "@/utils/LanguageContext";
 import { Toast, useToast } from "@/components/Toast";
@@ -21,11 +21,24 @@ const UploadPage = () => {
   const { t } = useLanguage();
   const { toast, showToast, hideToast } = useToast();
   const supabase = createClient();
-  const categories = [t('tags.all'), t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
+  
+  const categories = [t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
 
   const MAX_FILE_SIZE_MB = 20;
-  // PROFESYONEL DOSYA FİLTRESİ
   const ACCEPTED_FILE_TYPES = ".zip,.rar,.7z,.aep,.prproj,.psd,.ai,.cube,.mp4,.mov,.png,.jpg,.xml";
+
+  // KATEGORİYE GÖRE DİNAMİK YAZI VE İKON MANTIĞI
+  const getCategoryContext = (cat: string) => {
+    const c = cat.toLowerCase();
+    if (c.includes('sahne') || c.includes('scene')) return { label: 'PAKET SEÇ', icon: <Box size={28} /> };
+    if (c.includes('after') || c.includes('ae')) return { label: 'AEP SEÇ', icon: <FileCode2 size={28} /> };
+    if (c.includes('alight') || c.includes('am')) return { label: 'XML SEÇ', icon: <FileCode2 size={28} /> };
+    if (c.includes('lut')) return { label: 'LUT SEÇ', icon: <FileArchive size={28} /> };
+    if (c.includes('overlay')) return { label: 'VİDEO SEÇ', icon: <Film size={28} /> };
+    return { label: 'ASSET SEÇ', icon: <FileArchive size={28} /> };
+  };
+
+  const currentContext = getCategoryContext(category);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -88,48 +101,50 @@ const UploadPage = () => {
     <div className="h-screen flex flex-col overflow-hidden bg-background">
       <Navbar />
       <main className="flex-grow overflow-y-auto px-4 py-8 custom-scrollbar">
-        <div className="max-w-4xl mx-auto bg-card border border-border-custom p-8 md:p-12 rounded-[3rem] shadow-2xl relative overflow-hidden">
+        <div className="max-w-4xl mx-auto bg-card border border-border-custom p-6 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl relative overflow-hidden">
           {step === 1 ? (
-              <form onSubmit={handleUpload} className="space-y-8">
+              <form onSubmit={handleUpload} className="space-y-6 md:space-y-8">
                 <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
-                        <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">Sınır: {MAX_FILE_SIZE_MB}MB</p>
+                        <h1 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
+                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">Sınır: {MAX_FILE_SIZE_MB}MB</p>
                     </div>
-                    <span className="text-[9px] font-black uppercase text-primary bg-primary/5 px-4 py-2 rounded-xl border border-primary/10 tracking-widest italic">{t('admin')}</span>
+                    <span className="text-[8px] md:text-[9px] font-black uppercase text-primary bg-primary/5 px-3 md:px-4 py-2 rounded-xl border border-primary/10 tracking-widest italic">{t('admin')}</span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                     <div className="space-y-6">
                         <div className="relative aspect-video rounded-3xl bg-muted overflow-hidden border-2 border-dashed border-border-custom hover:border-primary transition-all">
                             {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">KAPAK RESMİ</span></div>}
                             <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" required />
                         </div>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white" placeholder="VARLIK BAŞLIĞI" required />
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white focus:ring-1 focus:ring-primary/50 outline-none" placeholder="VARLIK BAŞLIĞI" required />
                     </div>
 
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-2">
-                            {categories.filter(c => c !== t('tags.all')).map(c => (
-                                <button key={c} type="button" onClick={() => setCategory(c)} className={`px-3 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${category === c ? 'bg-primary border-primary text-white shadow-lg' : 'bg-muted border-border-custom text-white/40'}`}>{c}</button>
+                            {categories.map(c => (
+                                <button key={c} type="button" onClick={() => setCategory(c)} className={`px-3 py-3 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest border transition-all ${category === c ? 'bg-primary border-primary text-white shadow-lg' : 'bg-muted border-border-custom text-white/40'}`}>{c}</button>
                             ))}
                         </div>
                         
                         <div className="p-1 bg-[#111] rounded-2xl flex gap-1 border border-border-custom">
-                            <button type="button" onClick={() => setUseExternal(false)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${!useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>Dosya Yükle</button>
-                            <button type="button" onClick={() => setUseExternal(true)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>Link Kullan</button>
+                            <button type="button" onClick={() => setUseExternal(false)} className={`flex-1 py-3 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all ${!useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>Dosya Yükle</button>
+                            <button type="button" onClick={() => setUseExternal(true)} className={`flex-1 py-3 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all ${useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>Link Kullan</button>
                         </div>
 
                         {useExternal ? (
                             <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                                <label className="text-[9px] font-black text-primary uppercase ml-2 italic flex items-center gap-2"><LinkIcon size={12}/> BULUT DEPOLAMA LİNKİ</label>
-                                <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white" placeholder="https://..." required />
+                                <label className="text-[9px] font-black text-primary uppercase ml-2 italic flex items-center gap-2"><LinkIcon size={12}/> BULUT LİNKİ</label>
+                                <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white focus:ring-1 focus:ring-primary/50 outline-none" placeholder="https://..." required />
                             </div>
                         ) : (
                             <div className="relative group animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div className={`w-full py-8 rounded-2xl border-2 border-dashed transition-all flex flex-col items-center gap-2 bg-muted/30 ${assetFile ? 'border-primary bg-primary/5' : 'border-border-custom group-hover:border-primary/50'}`}>
-                                    <FileArchive size={28} className={assetFile ? 'text-primary' : 'text-muted-foreground'}/>
-                                    <span className="text-[9px] font-black uppercase tracking-widest">{assetFile ? assetFile.name : 'Asset Seç'}</span>
+                                    <div className={assetFile ? 'text-primary' : 'text-muted-foreground animate-bounce'}>
+                                        {currentContext.icon}
+                                    </div>
+                                    <span className="text-[9px] font-black uppercase tracking-widest">{assetFile ? assetFile.name : currentContext.label}</span>
                                     <input type="file" accept={ACCEPTED_FILE_TYPES} onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required={!useExternal} />
                                 </div>
                             </div>
@@ -145,7 +160,7 @@ const UploadPage = () => {
           ) : (
             <div className="text-center py-20 space-y-4">
                 <div className="w-20 h-20 bg-green-500/10 rounded-3xl flex items-center justify-center mx-auto text-green-500"><CheckCircle2 size={40} /></div>
-                <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">{t('uploadSuccess')}</h2>
+                <h2 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-white">{t('uploadSuccess')}</h2>
             </div>
           )}
         </div>
