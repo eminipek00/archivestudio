@@ -130,7 +130,7 @@ const ProfilePage = () => {
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
       <Navbar />
-      <main className="flex-grow overflow-y-auto px-4 py-8 custom-scrollbar">
+      <main className="flex-grow overflow-y-auto px-4 py-8 pt-28 custom-scrollbar">
         <div className="max-w-4xl mx-auto space-y-8">
           
           <div className="flex flex-col md:flex-row items-center gap-8 bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl relative overflow-hidden">
