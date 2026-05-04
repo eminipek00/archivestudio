@@ -90,16 +90,16 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
           <div>
             <h3 className="text-sm font-black uppercase italic tracking-tighter text-white mb-3 line-clamp-1 group-hover:text-primary transition-colors">{asset.title}</h3>
             
-            {/* YÜKLEYEN PROFİLİ (KULLANICININ İSTEDİĞİ) */}
-            <div className="flex items-center gap-3 p-2 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors">
-                <div className="w-7 h-7 rounded-lg overflow-hidden border border-white/10 shrink-0">
+            {/* YÜKLEYEN PROFİLİ (TIKLANABİLİR) */}
+            <Link href={`/user/${asset.author_id}`} onClick={(e) => e.stopPropagation()} className="flex items-center gap-3 p-2 rounded-2xl bg-white/5 hover:bg-primary/20 hover:border-primary/30 border border-transparent transition-all group/uploader">
+                <div className="w-7 h-7 rounded-lg overflow-hidden border border-white/10 shrink-0 group-hover/uploader:scale-110 transition-transform">
                     <img src={uploader.avatar_url || '/logo.png'} alt={uploader.username} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col">
                     <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none mb-0.5">Uploader</span>
-                    <span className="text-[10px] font-black text-white uppercase italic leading-none">@{uploader.username}</span>
+                    <span className="text-[10px] font-black text-white uppercase italic leading-none group-hover/uploader:text-primary transition-colors">@{uploader.username}</span>
                 </div>
-            </div>
+            </Link>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-border-custom/50">
@@ -146,15 +146,15 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                         <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white leading-none">{asset.title}</h2>
                     )}
                     
-                    <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom shadow-inner">
-                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0">
+                    <Link href={`/user/${asset.author_id}`} onClick={() => setShowModal(false)} className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom shadow-inner hover:bg-primary/10 transition-all group/modal-uploader">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0 group-hover/modal-uploader:scale-110 transition-transform">
                             <img src={uploader.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover" />
                         </div>
                         <div>
                             <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none mb-1">UPLOADED BY</p>
-                            <p className="text-xs font-black text-white uppercase italic">@{uploader.username}</p>
+                            <p className="text-xs font-black text-white uppercase italic group-hover/modal-uploader:text-primary transition-colors">@{uploader.username}</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 <div className="space-y-4">
