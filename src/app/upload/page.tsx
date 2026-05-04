@@ -25,7 +25,7 @@ const UploadPage = () => {
 
   const MAX_FILE_SIZE_MB = 20;
   // PROFESYONEL DOSYA FİLTRESİ
-  const ACCEPTED_FILE_TYPES = ".zip,.rar,.7z,.aep,.prproj,.psd,.ai,.cube,.mp4,.mov,.png,.jpg";
+  const ACCEPTED_FILE_TYPES = ".zip,.rar,.7z,.aep,.prproj,.psd,.ai,.cube,.mp4,.mov,.png,.jpg,.xml";
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
