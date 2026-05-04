@@ -7,6 +7,7 @@ import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle,
 import { useLanguage } from "@/utils/LanguageContext";
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from "@/utils/imageUtils";
+import { Logo } from "@/components/Logo";
 
 const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
@@ -66,65 +67,51 @@ const ProfilePage = () => {
     } catch (err: any) { alert("Hata: " + err.message); } finally { setLoading(false); }
   };
 
-  const handleDeleteAccount = async () => {
-    if (confirm(t('confirmDelete'))) {
-        const { error } = await supabase.from('profiles').delete().eq('id', user.id);
-        if (!error) { await supabase.auth.signOut(); window.location.href = "/"; }
-    }
-  };
-
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) alert(error.message);
-    else { 
-        alert("Success!"); 
-        setNewPassword(""); 
-        setIsEditingPassword(false);
-    }
-    setLoading(false);
-  };
-
-  const handleCancelEdit = (type: 'profile' | 'password') => {
-    if (type === 'profile') {
-        setFullName(profile?.full_name || "");
-        setUsername(profile?.username || "");
-        setIsEditingProfile(false);
-    } else {
-        setNewPassword("");
-        setIsEditingPassword(false);
-    }
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const reader = new FileReader();
-      reader.addEventListener('load', () => { setImage(reader.result as string); setIsCropping(true); });
+      reader.addEventListener('load', () => { 
+        setImage(reader.result as string); 
+        setIsCropping(true); 
+      });
       reader.readAsDataURL(e.target.files[0]);
     }
   };
 
-  const onCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => { setCroppedAreaPixels(croppedAreaPixels); }, []);
+  const onCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => { 
+    setCroppedAreaPixels(croppedAreaPixels); 
+  }, []);
 
   const handleCropSave = async () => {
     if (image && croppedAreaPixels && user) {
         setLoading(true);
-        const croppedImage = await getCroppedImg(image, croppedAreaPixels);
-        if (croppedImage) {
-            const fileName = `avatars/${Date.now()}-${user.id}.jpg`;
-            const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, croppedImage);
-            if (!uploadError) {
+        try {
+            const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+            if (croppedImage) {
+                const fileName = `avatars/${Date.now()}-${user.id}.jpg`;
+                const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, croppedImage);
+                
+                if (uploadError) throw uploadError;
+
                 const avatarUrl = supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
-                await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', user.id);
-                window.location.reload();
+                const { error: updateError } = await supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', user.id);
+                
+                if (updateError) throw updateError;
+                
+                setIsCropping(false);
+                window.location.reload(); // Başarılı olunca sayfayı yenile ki Navbar güncellensin
             }
+        } catch (err: any) {
+            alert("Yükleme hatası lo: " + err.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
   };
 
   if (!user) return null;
+
+  const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
@@ -134,17 +121,27 @@ const ProfilePage = () => {
           
           <div className="flex items-center gap-6 bg-card border border-border-custom p-6 rounded-[2rem] shadow-lg">
             <div className="relative group">
-                <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-background shadow-lg bg-muted">
-                    {profile?.avatar_url ? <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground"><User size={32} /></div>}
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2.5rem] overflow-hidden border-4 border-background shadow-2xl bg-muted transition-transform hover:scale-105">
+                    {profile?.avatar_url ? (
+                        <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-[#111] p-4">
+                            {isAdmin ? <Logo className="w-full h-full" /> : <User size={48} className="text-white/20" />}
+                        </div>
+                    )}
                 </div>
-                <label className="absolute inset-0 bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl cursor-pointer">
-                    <Camera className="text-white" size={20} />
+                <label className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-[2.5rem] cursor-pointer">
+                    <Camera className="text-white mb-2" size={24} />
+                    <span className="text-[8px] font-black uppercase text-white tracking-widest">{t('edit')}</span>
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </label>
             </div>
             <div>
-                <h1 className="text-2xl font-black uppercase italic tracking-tighter">{profile?.full_name || t('editor')}</h1>
-                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">@{profile?.username || 'user'}</p>
+                <div className="flex items-center gap-3">
+                    <h1 className="text-3xl font-black uppercase italic tracking-tighter text-white">{profile?.full_name || 'Sytex Editor'}</h1>
+                    {isAdmin && <span className="text-[8px] font-black bg-primary text-white px-2 py-1 rounded-lg uppercase italic tracking-widest">ADMIN</span>}
+                </div>
+                <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mt-1">@{profile?.username || 'user'}</p>
             </div>
           </div>
 
@@ -155,71 +152,67 @@ const ProfilePage = () => {
                         <div className="p-2 bg-primary rounded-xl text-white"><UserSquare2 size={20} /></div>
                         <h3 className="text-lg font-black uppercase italic tracking-tighter">{t('accountManagement')}</h3>
                     </div>
-                    {isEditingProfile ? (
-                        <button type="button" onClick={() => handleCancelEdit('profile')} className="text-[9px] font-black uppercase text-red-500 hover:underline">{t('cancel')}</button>
-                    ) : (
-                        <button type="button" onClick={() => setIsEditingProfile(true)} className="text-[9px] font-black uppercase text-primary hover:underline flex items-center gap-1"><Edit3 size={12}/> {t('edit')}</button>
-                    )}
+                    <button type="button" onClick={() => setIsEditingProfile(!isEditingProfile)} className="text-[9px] font-black uppercase text-primary hover:underline">{isEditingProfile ? t('cancel') : t('edit')}</button>
                 </div>
-                
                 <div className="space-y-4">
                     <div className="space-y-1">
                         <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">{t('fullName')}</label>
-                        <input type="text" disabled={!isEditingProfile} value={fullName} onChange={(e) => setFullName(e.target.value.toUpperCase())} className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-2 ring-primary/20'}`} />
+                        <input type="text" disabled={!isEditingProfile} value={fullName} onChange={(e) => setFullName(e.target.value.toUpperCase())} className={`w-full bg-muted border border-border-custom rounded-xl py-3.5 px-5 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-2 ring-primary/20 bg-background'}`} />
                     </div>
                     <div className="space-y-1">
                         <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">{t('username')}</label>
-                        <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-2 ring-primary/20'}`} />
+                        <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-xl py-3.5 px-5 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-2 ring-primary/20 bg-background'}`} />
                     </div>
                 </div>
-
                 {isEditingProfile && (
-                    <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
-                        {loading ? <Loader2 className="animate-spin" size={14}/> : <Save size={14}/>} {t('save')}
+                    <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                        {loading ? <Loader2 className="animate-spin" size={16}/> : <Save size={16}/>} {t('save').toUpperCase()}
                     </button>
                 )}
             </form>
 
             <div className="space-y-6">
-                <form onSubmit={handleUpdatePassword} className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl space-y-6 relative overflow-hidden">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-muted rounded-xl"><Lock size={20} /></div>
-                            <h3 className="text-lg font-black uppercase italic tracking-tighter">{t('security')}</h3>
+                <div className="bg-card border border-border-custom p-8 rounded-[2.5rem] shadow-xl flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-muted rounded-xl text-white/40"><AtSign size={20} /></div>
+                        <div>
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none">E-POSTA ADRESİ</p>
+                            <p className="text-xs font-bold text-white">{user.email}</p>
                         </div>
-                        {isEditingPassword ? (
-                            <button type="button" onClick={() => handleCancelEdit('password')} className="text-[9px] font-black uppercase text-red-500 hover:underline">{t('cancel')}</button>
-                        ) : (
-                            <button type="button" onClick={() => setIsEditingPassword(true)} className="text-[9px] font-black uppercase text-white/40 hover:text-white flex items-center gap-1"><Lock size={12}/> {t('edit')}</button>
-                        )}
                     </div>
-                    
-                    <div className="relative">
-                        <input type={showPassword ? "text" : "password"} disabled={!isEditingPassword} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-xl py-3 px-4 text-xs font-bold transition-all ${!isEditingPassword ? 'opacity-40' : 'ring-2 ring-primary/20'}`} placeholder={t('newPassword')} />
-                        {isEditingPassword && newPassword.length > 0 && (
-                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-primary"><Eye size={16} /></button>
-                        )}
+                    <Lock size={16} className="text-white/10" />
+                </div>
+                <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[2.5rem] flex items-center justify-between group hover:bg-red-500/10 transition-all cursor-pointer">
+                    <div className="flex items-center gap-4">
+                        <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><AlertTriangle size={20}/></div>
+                        <span className="text-[10px] font-black uppercase text-red-500 tracking-widest">{t('dangerZone')}</span>
                     </div>
-                    {isEditingPassword && (
-                        <button type="submit" disabled={!newPassword || loading} className="w-full bg-white text-black py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest">
-                            {t('update')}
-                        </button>
-                    )}
-                </form>
-
-                <div className="bg-red-500/5 border border-red-500/10 p-6 rounded-[2rem] flex items-center justify-between">
-                    <span className="text-[9px] font-black uppercase text-red-500 tracking-widest flex items-center gap-2"><AlertTriangle size={14}/> {t('dangerZone')}</span>
-                    <button onClick={handleDeleteAccount} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-all"><Trash2 size={16}/></button>
+                    <button onClick={() => { if(confirm(t('confirmDelete'))) supabase.from('profiles').delete().eq('id', user.id).then(() => supabase.auth.signOut().then(() => window.location.href="/")) }} className="p-2 bg-red-500 text-white rounded-xl hover:scale-110 transition-all"><Trash2 size={16}/></button>
                 </div>
             </div>
           </div>
         </div>
+
+        {/* CROP MODAL */}
+        {isCropping && (
+            <div className="fixed inset-0 z-[5000] bg-black/95 flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
+                <div className="relative w-full max-w-xl aspect-square bg-muted rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+                    <Cropper image={image!} crop={crop} zoom={zoom} aspect={1} onCropChange={setCrop} onCropComplete={onCropComplete} onZoomChange={setZoom} />
+                </div>
+                <div className="mt-8 w-full max-w-xl space-y-6">
+                    <input type="range" value={zoom} min={1} max={3} step={0.1} onChange={(e) => setZoom(Number(e.target.value))} className="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-primary" />
+                    <div className="flex gap-4">
+                        <button onClick={() => setIsCropping(false)} className="flex-1 py-4 rounded-2xl bg-muted text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">{t('cancel')}</button>
+                        <button onClick={handleCropSave} disabled={loading} className="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-primary/20">
+                            {loading ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />} {t('update').toUpperCase()}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
       </main>
 
-      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0">
-        <span className="text-[8px] font-black uppercase italic tracking-tighter text-white/30">sytexarchive</span>
-        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">&copy; {new Date().getFullYear()} sytexarchive</p>
-      </footer>
+      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0 text-[8px] font-black uppercase text-white/30 italic"><span>sytexarchive</span><p>&copy; {new Date().getFullYear()} sytexarchive</p></footer>
     </div>
   );
 };
