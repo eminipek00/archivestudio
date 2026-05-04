@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
-import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box, FileType } from "lucide-react";
+import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box, FileType, ShieldAlert } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useLanguage } from "@/utils/LanguageContext";
 import { Toast, useToast } from "@/components/Toast";
+import { useRouter } from "next/navigation";
 
 const UploadPage = () => {
   const [loading, setLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Sahne Paketleri");
@@ -21,12 +24,37 @@ const UploadPage = () => {
   const { t } = useLanguage();
   const { toast, showToast, hideToast } = useToast();
   const supabase = createClient();
+  const router = useRouter();
   
   const categories = [t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
+  const ADMIN_EMAIL = "ipekmuhammetemin@gmail.com";
+
+  // ROUTE PROTECTION: Sadece Admin girebilir
+  useEffect(() => {
+    const checkAccess = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+      
+      if (user.email === ADMIN_EMAIL || profile?.is_admin) {
+        setIsAdmin(true);
+      } else {
+        showToast("Bu sayfaya erişim yetkiniz yok lo!", "error");
+        setTimeout(() => router.push("/"), 2000);
+      }
+      setIsVerifying(false);
+    };
+
+    checkAccess();
+  }, [supabase, router]);
 
   const MAX_FILE_SIZE_MB = 20;
 
-  // KATEGORİ BAZLI VARSAYILAN KAPAKLAR (Eğer kullanıcı yüklemezse)
   const DEFAULT_THUMBS: Record<string, string> = {
     "Sahne Paketleri": "https://images.unsplash.com/photo-1492619334760-227b9a52a218?w=800&q=80",
     "After Effects": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
@@ -118,6 +146,16 @@ const UploadPage = () => {
     } catch (err: any) { showToast(err.message, "error"); } finally { setLoading(false); }
   };
 
+  if (isVerifying) {
+    return (
+        <div className="h-screen w-full bg-black flex items-center justify-center">
+            <Loader2 size={40} className="text-primary animate-spin" />
+        </div>
+    );
+  }
+
+  if (!isAdmin) return null;
+
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
       <Navbar />
@@ -128,9 +166,12 @@ const UploadPage = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
-                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">Otomatik Kapak Sistemi Aktif</p>
+                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">Yalnızca Yetkili Erişimi</p>
                     </div>
-                    <span className="text-[8px] md:text-[9px] font-black uppercase text-primary bg-primary/5 px-3 md:px-4 py-2 rounded-xl border border-primary/10 tracking-widest italic">{t('admin')}</span>
+                    <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 text-primary">
+                        <ShieldAlert size={14} />
+                        <span className="text-[9px] font-black uppercase tracking-widest italic">SECURE ADMIN AREA</span>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
