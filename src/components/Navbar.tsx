@@ -9,7 +9,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
 
-const Navbar = () => {
+interface NavbarProps {
+  onSearch?: (query: string) => void;
+}
+
+const Navbar = ({ onSearch }: NavbarProps) => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [showLangMenu, setShowLangMenu] = useState(false);
