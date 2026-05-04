@@ -29,7 +29,7 @@ export default function Home() {
     <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
       <Navbar onSearch={setSearchQuery} />
       
-      <main className="flex-grow overflow-y-auto no-scrollbar scroll-smooth">
+      <main className="flex-grow overflow-y-auto no-scrollbar scroll-smooth pt-24">
         <div id="assets" className="container mx-auto pb-10">
           <Hero 
             activeCategory={activeCategory} 
