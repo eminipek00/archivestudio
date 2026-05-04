@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search } from 'lucide-react';
+import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit2, Check } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
@@ -20,11 +20,19 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
   
+  // LOGO POSITIONER STATES (SENİN ÖZEL AYARIN)
+  const [isEditingLogo, setIsEditingLogo] = useState(false);
+  const [logoPos, setLogoPos] = useState({ x: 20, y: -1 });
+
   const { language, setLanguage, t } = useLanguage();
   const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {
+    // LocalStorage'dan senin ayarını çek
+    const savedPos = localStorage.getItem('sytexLogoPos');
+    if (savedPos) setLogoPos(JSON.parse(savedPos));
+
     const getUser = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
@@ -35,6 +43,11 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     };
     getUser();
   }, [supabase]);
+
+  const saveLogoPos = () => {
+    localStorage.setItem('sytexLogoPos', JSON.stringify(logoPos));
+    setIsEditingLogo(false);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -70,16 +83,33 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     <nav className="fixed top-0 left-0 right-0 z-[5000] py-4 bg-[#050505] border-b border-border-custom shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-8">
         
-        {/* LOGO AREA - RESTORED TO ORIGINAL */}
-        <Link href="/" className="flex items-center gap-3 group shrink-0">
-          <div className="w-10 h-10 shrink-0 transform group-hover:rotate-12 transition-transform duration-500">
-            <Logo className="w-full h-full" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-black tracking-tighter text-white leading-none uppercase italic">SYTEX<span className="text-primary">ARCHIVE</span></span>
-            <span className="text-[7px] font-black tracking-[0.4em] text-white/30 leading-none uppercase mt-1">Professional Digital Assets</span>
-          </div>
-        </Link>
+        {/* LOGO AREA - SENİN ÖZEL KOORDİNATLARINLA (x20 y-1) */}
+        <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-3 group shrink-0" style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}>
+                <div className="w-10 h-10 shrink-0 transform group-hover:rotate-12 transition-transform duration-500">
+                    <Logo className="w-full h-full" />
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-lg font-black tracking-tighter text-white leading-none uppercase italic">SYTEX<span className="text-primary">ARCHIVE</span></span>
+                    <span className="text-[7px] font-black tracking-[0.4em] text-white/30 leading-none uppercase mt-1">Professional Digital Assets</span>
+                </div>
+            </Link>
+
+            {/* LOGO DÜZENLEME BUTONU (SADECE SENİN İÇİN) */}
+            {isAdmin && (
+                <div className="flex items-center gap-2 ml-12">
+                    {isEditingLogo ? (
+                        <div className="flex items-center gap-2 bg-primary/10 p-1 rounded-lg border border-primary/20 animate-in fade-in zoom-in duration-200">
+                            <input type="number" value={logoPos.x} onChange={(e) => setLogoPos({...logoPos, x: parseInt(e.target.value)})} className="w-10 bg-black text-[10px] text-white text-center rounded border border-white/10" />
+                            <input type="number" value={logoPos.y} onChange={(e) => setLogoPos({...logoPos, y: parseInt(e.target.value)})} className="w-10 bg-black text-[10px] text-white text-center rounded border border-white/10" />
+                            <button onClick={saveLogoPos} className="p-1 bg-green-500 text-white rounded hover:scale-110 transition-all"><Check size={12}/></button>
+                        </div>
+                    ) : (
+                        <button onClick={() => setIsEditingLogo(true)} className="p-1.5 text-white/10 hover:text-primary transition-all rounded-lg hover:bg-white/5 opacity-0 group-hover:opacity-100"><Edit2 size={12}/></button>
+                    )}
+                </div>
+            )}
+        </div>
 
         {/* SEARCH BAR */}
         {onSearch && (
