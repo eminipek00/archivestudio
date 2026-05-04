@@ -75,7 +75,6 @@ const ProfilePage = () => {
     if (!user) return;
     setLoading(true);
     try {
-        // 1. PROFİL BİLGİLERİNİ GÜNCELLE
         const { error: profileError } = await supabase.from('profiles').upsert({
             id: user.id,
             full_name: fullName,
@@ -86,7 +85,6 @@ const ProfilePage = () => {
         });
         if (profileError) throw profileError;
 
-        // 2. ŞİFRE DEĞİŞTİRME (EĞER BİR ŞEY YAZILDIYSA)
         if (newPassword.length >= 6) {
             const { error: authError } = await supabase.auth.updateUser({ password: newPassword });
             if (authError) throw authError;
@@ -135,7 +133,6 @@ const ProfilePage = () => {
       <main className="flex-grow overflow-y-auto px-4 py-8 custom-scrollbar">
         <div className="max-w-4xl mx-auto space-y-8">
           
-          {/* PROFİL ÜST KART */}
           <div className="flex flex-col md:flex-row items-center gap-8 bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl relative overflow-hidden">
             <div className="relative group shrink-0">
                 <div className="w-32 h-32 md:w-36 md:h-36 rounded-[2.5rem] overflow-hidden border-4 border-background shadow-2xl bg-[#111]">
@@ -166,7 +163,6 @@ const ProfilePage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div className="space-y-8">
-                {/* HESAP YÖNETİMİ (ŞİFRE ALANI EKLENDİ) */}
                 <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6">
                     <div className="flex items-center justify-between border-b border-white/5 pb-4">
                         <div className="flex items-center gap-3">
@@ -185,9 +181,8 @@ const ProfilePage = () => {
                             <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
                         </div>
 
-                        {/* YENİ ŞİFRE ALANI */}
                         <div className="space-y-1 relative">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">YENİ ŞİFRE (OPSİYONEL)</label>
+                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('newPassword')}</label>
                             <div className="relative">
                                 <input type={showPassword ? "text" : "password"} disabled={!isEditingProfile} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 pr-12 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
                                 <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={!isEditingProfile} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors">
@@ -196,11 +191,10 @@ const ProfilePage = () => {
                             </div>
                         </div>
                         
-                        {/* GİZLİLİK ANAHTARI */}
                         <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 mt-2">
                             <div className="flex items-center gap-3">
                                 {showFavorites ? <Eye size={16} className="text-primary" /> : <EyeOff size={16} className="text-white/20" />}
-                                <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">Favorileri Göster</span>
+                                <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">{t('showFavorites')}</span>
                             </div>
                             <button type="button" onClick={() => setShowFavorites(!showFavorites)} disabled={!isEditingProfile} className={`w-12 h-6 rounded-full transition-all relative ${showFavorites ? 'bg-primary' : 'bg-white/10'} ${!isEditingProfile && 'opacity-30'}`}>
                                 <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${showFavorites ? 'left-7' : 'left-1'}`} />
@@ -218,7 +212,7 @@ const ProfilePage = () => {
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-muted rounded-2xl text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all"><AtSign size={18} /></div>
                         <div>
-                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-0.5">E-POSTA ADRESİ</p>
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-0.5">{t('emailAddress')}</p>
                             <p className="text-[10px] font-black text-white italic tracking-tight">{user.email}</p>
                         </div>
                     </div>
@@ -226,7 +220,6 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            {/* FAVORİ VARLIKLARIM */}
             <div className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6 min-h-[400px]">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                     <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><Heart size={20} fill="currentColor" /></div>
@@ -236,7 +229,7 @@ const ProfilePage = () => {
                 {favoriteAssets.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-white/10 text-center space-y-4">
                         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center"><Heart size={32} className="opacity-10" /></div>
-                        <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">HENÜZ FAVORİ VARLIK EKLEMEDİNİZ.</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">{t('noFavorites')}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
@@ -249,7 +242,6 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* CROP MODAL */}
         {isCropping && (
             <div className="fixed inset-0 z-[5000] bg-black/98 flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
                 <div className="relative w-full max-w-2xl aspect-square bg-muted rounded-[4rem] overflow-hidden border border-white/10 shadow-2xl">
