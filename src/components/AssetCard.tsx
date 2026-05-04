@@ -55,7 +55,6 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
             alt={asset.title} 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
-          {/* Admin Silme Butonu (Kart Üzerinde) */}
           {isAdmin && (
             <button onClick={handleDelete} className="absolute top-4 left-4 p-2 bg-red-500 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:scale-110">
                 <Trash2 size={16} />
@@ -114,7 +113,7 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                             <div className="p-2 bg-muted rounded-xl"><User size={18} className="text-white/40" /></div>
                             <div>
                                 <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none">YÜKLEYEN</p>
-                                <p className="text-xs font-black text-white uppercase italic">{isAdmin ? 'ADMIN' : 'sytexarchive EDITOR'}</p>
+                                <p className="text-xs font-black text-white uppercase italic">{isAdmin ? 'ADMIN' : 'EDITOR'}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom">
@@ -128,9 +127,9 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                 </div>
 
                 <div className="space-y-4">
-                    <a href={asset.download_url} target="_blank" className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95 uppercase">
+                    <a href={asset.download_url} target="_blank" className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95">
                         <Download size={20} />
-                        {t('upload').toUpperCase()} İNDİR
+                        İNDİR
                     </a>
                     <button onClick={handleShare} className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-95">
                         <Share2 size={16} />
