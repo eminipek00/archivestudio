@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/utils/LanguageContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "sytexarchive | Premium Editör Kaynakları",
-  description: "Video editörleri için premium sahne paketleri, presetler ve dijital varlıklar.",
+  title: "Sytex Archive - Editor Digital Assets",
+  description: "Professional digital assets for editors, scene packs, presets and more.",
+  icons: {
+    icon: "/logo.png", // Tarayıcı sekmesindeki o küçük logo
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -25,22 +21,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="tr"
-      suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable}`}
-    >
-      <body className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/30">
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <div className="flex flex-col min-h-screen">
-              {children}
-            </div>
+            {children}
           </LanguageProvider>
         </ThemeProvider>
       </body>
