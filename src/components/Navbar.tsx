@@ -21,7 +21,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [authLoaded, setAuthLoaded] = useState(false);
   
-  // DRAG STATES (Sadece Admin için)
+  // DRAG STATES (Sadece Logo İçin)
   const [isDragging, setIsDragging] = useState(false);
   const [logoPos, setLogoPos] = useState({ x: 8, y: -6 }); // Başlangıç değerleri
   const dragStart = useRef({ x: 0, y: 0 });
@@ -58,6 +58,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     dragStart.current = { x: e.clientX, y: e.clientY };
     logoStart.current = { x: logoPos.x, y: logoPos.y };
     e.preventDefault();
+    e.stopPropagation(); // Link'in tıklanmasını engelle
   };
 
   useEffect(() => {
@@ -66,8 +67,8 @@ const Navbar = ({ onSearch }: NavbarProps) => {
       const dx = e.clientX - dragStart.current.x;
       const dy = e.clientY - dragStart.current.y;
       setLogoPos({
-        x: Math.round(logoStart.current.x + dx / 5), // Hassasiyet ayarı
-        y: Math.round(logoStart.current.y + dy / 5)
+        x: Math.round(logoStart.current.x + dx / 4), // Daha akıcı sürükleme
+        y: Math.round(logoStart.current.y + dy / 4)
       });
     };
     const onMouseUp = () => setIsDragging(false);
@@ -101,32 +102,42 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4 md:gap-8">
         
-        {/* LOGO AREA - SÜRÜKLENEBİLİR MOD */}
-        <div className="flex items-center gap-3 shrink-0 relative group">
-          <Link href="/" 
+        {/* LOGO AREA - ARTIK SADECE LOGO SÜRÜKLENİYOR */}
+        <div className="flex items-center shrink-0 relative">
+          <Link href="/" className="flex items-center gap-3">
+            {/* SÜRÜKLENEBİLİR LOGO KUTUSU */}
+            <div 
                 onMouseDown={onMouseDown}
                 style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}
-                className={`flex items-center gap-3 transition-transform ${isDragging ? 'cursor-grabbing scale-105' : isAdmin ? 'cursor-grab' : ''}`}>
-            <Logo className="w-10 h-10 md:w-14 md:h-14" />
-            <div className="flex flex-col -space-y-1">
+                className={`relative transition-transform ${isDragging ? 'cursor-grabbing scale-110 z-[5000]' : isAdmin ? 'cursor-grab hover:scale-105' : ''}`}>
+                <Logo className="w-10 h-10 md:w-14 md:h-14" />
+                
+                {/* ADMIN KOORDİNAT TOOLTIP */}
+                {isAdmin && (
+                    <div className={`absolute -bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-xl whitespace-nowrap pointer-events-none transition-opacity flex items-center gap-1 ${isDragging ? 'opacity-100' : 'opacity-0'}`}>
+                        X:{logoPos.x} Y:{logoPos.y}
+                    </div>
+                )}
+            </div>
+
+            {/* SABİT YAZI ALANI */}
+            <div className="flex flex-col -space-y-1 ml-1">
                 <span className="text-lg md:text-3xl font-[1000] tracking-tighter uppercase italic leading-none text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
-                SYTEXARCHIVE
+                    SYTEXARCHIVE
                 </span>
                 {authLoaded && (
-                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary italic">
-                    {isAdmin ? 'ADMIN' : 'EDITOR'}
-                </span>
+                    <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary italic">
+                        {isAdmin ? 'ADMIN' : 'EDITOR'}
+                    </span>
                 )}
             </div>
           </Link>
-
-          {/* ADMIN KOORDİNAT TOOLTIP */}
-          {isAdmin && (
-            <div className={`absolute -bottom-10 left-0 bg-primary text-white text-[8px] font-black px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-2 ${isDragging ? 'opacity-100' : ''}`}>
-                <Move size={10} />
-                X: {logoPos.x} | Y: {logoPos.y}
-                <span className="ml-2 text-white/50">(Sürükle ve bana rakamları söyle lo!)</span>
-            </div>
+          
+          {/* YARDIMCI MESAJ (Sadece Admin ve boşta iken) */}
+          {isAdmin && !isDragging && (
+             <div className="absolute -bottom-6 left-0 text-[6px] font-black uppercase text-white/20 tracking-widest pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                Logoyu sürükle lo!
+             </div>
           )}
         </div>
 
