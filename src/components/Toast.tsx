@@ -15,27 +15,31 @@ export const useToast = () => {
 
 export const Toast = ({ message, type, onClose }: { message: string, type: 'success' | 'error' | 'info', onClose: () => void }) => {
   useEffect(() => {
-    const timer = setTimeout(onClose, 4000);
+    const timer = setTimeout(onClose, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
 
   const icons = {
-    success: <CheckCircle2 className="text-green-500" />,
-    error: <AlertCircle className="text-red-500" />,
-    info: <Info className="text-primary" />
+    success: <CheckCircle2 className="text-green-500" size={24} />,
+    error: <AlertCircle className="text-red-500" size={24} />,
+    info: <Info className="text-primary" size={24} />
   };
 
   const colors = {
-    success: 'border-green-500/20 bg-green-500/5',
-    error: 'border-red-500/20 bg-red-500/5',
-    info: 'border-primary/20 bg-primary/5'
+    success: 'border-green-500/20 bg-black/90 shadow-green-500/10',
+    error: 'border-red-500/20 bg-black/90 shadow-red-500/10',
+    info: 'border-primary/20 bg-black/90 shadow-primary/10'
   };
 
   return (
-    <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-4 px-6 py-4 rounded-3xl border shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-bottom-8 duration-500 ${colors[type]}`}>
-      {icons[type]}
-      <span className="text-[10px] font-black uppercase tracking-widest text-foreground">{message}</span>
-      <button onClick={onClose} className="ml-4 opacity-40 hover:opacity-100"><X size={16} /></button>
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 pointer-events-none">
+        <div className={`pointer-events-auto flex flex-col items-center gap-4 px-10 py-8 rounded-[3rem] border shadow-2xl backdrop-blur-2xl animate-in fade-in zoom-in duration-500 text-center max-w-sm w-full ${colors[type]}`}>
+            <div className="p-4 bg-muted rounded-2xl mb-2">
+                {icons[type]}
+            </div>
+            <span className="text-sm font-black uppercase tracking-tighter italic text-white leading-tight">{message}</span>
+            <button onClick={onClose} className="mt-2 text-[10px] font-black uppercase text-white/30 hover:text-white transition-colors tracking-widest">KAPAT</button>
+        </div>
     </div>
   );
 };
