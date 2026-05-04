@@ -45,12 +45,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
-  // AVATAR MANTIĞI: Önce yüklenen fotoğraf, yoksa ADMIN ise logo, yoksa rastgele avatar
   const renderAvatar = () => {
     if (profile?.avatar_url) {
         return <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />;
     }
-
     if (isAdmin) {
         return (
             <div className="w-full h-full flex items-center justify-center bg-black/50 p-1.5">
@@ -58,29 +56,21 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             </div>
         );
     }
-    
-    // Sıradan kullanıcılar için rastgele avatar
     const seed = profile?.username || user?.email || 'default';
-    return (
-        <img 
-            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`} 
-            alt="Avatar" 
-            className="w-full h-full object-cover" 
-        />
-    );
+    return <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`} alt="Avatar" className="w-full h-full object-cover" />;
   };
 
   return (
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4 md:gap-8">
         
-        {/* LOGO */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <Logo className="w-10 h-10 md:w-12 md:h-12" />
-          <div className="flex flex-col">
-            <span className="text-sm md:text-xl font-black tracking-tighter uppercase italic leading-none text-white">sytexarchive</span>
+        {/* LOGO AREA - HİZALAMA DÜZELTİLDİ */}
+        <Link href="/" className="flex items-center gap-3 shrink-0 group">
+          <Logo className="w-10 h-10 md:w-14 md:h-14 transition-transform group-hover:scale-105" />
+          <div className="flex flex-col justify-center">
+            <span className="text-sm md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">sytexarchive</span>
             {authLoaded && (
-               <span className="text-[7px] md:text-[9px] font-black uppercase tracking-widest text-primary mt-0.5 italic">
+               <span className="text-[7px] md:text-[10px] font-black uppercase tracking-widest text-primary mt-0.5 italic">
                 {isAdmin ? 'ADMIN' : 'EDITOR'}
               </span>
             )}
@@ -114,10 +104,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 ))}
               </div>
             )}
-          </div>
-
-          <div className="hidden sm:block">
-            <ThemeToggle />
           </div>
 
           {authLoaded ? (
