@@ -64,9 +64,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4 md:gap-8">
         
-        {/* LOGO AREA - HİZALAMA DÜZELTİLDİ */}
+        {/* LOGO AREA - SAĞA VE YUKARI KAYDIRILDI */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <Logo className="w-10 h-10 md:w-14 md:h-14 transition-transform group-hover:scale-105" />
+          {/* translate-x-1 (sağa), -translate-y-1 (yukarı) */}
+          <Logo className="w-10 h-10 md:w-14 md:h-14 transition-all group-hover:scale-105 translate-x-1 -translate-y-0.5" />
           <div className="flex flex-col justify-center">
             <span className="text-sm md:text-2xl font-black tracking-tighter uppercase italic leading-none text-white">sytexarchive</span>
             {authLoaded && (

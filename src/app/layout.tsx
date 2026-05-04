@@ -7,9 +7,8 @@ import { LanguageProvider } from "@/utils/LanguageContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Sytex Archive - Editor Digital Assets",
+  title: "Sytex Archive", // ARTIK SADECE SYTEX ARCHIVE YAZIYOR
   description: "Professional digital assets for editors, scene packs, presets and more.",
-  // Manuel ikon ayarını sildik, Next.js src/app/icon.png dosyasını otomatik kullanacak lo!
 };
 
 export default function RootLayout({
