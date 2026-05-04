@@ -20,7 +20,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
   
-  // LOGO POSITIONER STATES (SENİN ÖZEL AYARIN)
+  // LOGO POSITIONER STATES
   const [isEditingLogo, setIsEditingLogo] = useState(false);
   const [logoPos, setLogoPos] = useState({ x: 20, y: -1 });
 
@@ -29,7 +29,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const router = useRouter();
 
   useEffect(() => {
-    // LocalStorage'dan senin ayarını çek
     const savedPos = localStorage.getItem('sytexLogoPos');
     if (savedPos) setLogoPos(JSON.parse(savedPos));
 
@@ -80,12 +79,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[5000] py-4 bg-[#050505] border-b border-border-custom shadow-2xl">
+    <nav className="fixed top-0 left-0 right-0 z-[5000] py-4 bg-black border-b border-border-custom shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-8">
         
-        {/* LOGO AREA - SENİN ÖZEL KOORDİNATLARINLA (x20 y-1) */}
-        <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-3 group shrink-0" style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}>
+        {/* LOGO AREA */}
+        <div className="flex items-center gap-2 group">
+            <Link href="/" className="flex items-center gap-3 shrink-0" style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}>
                 <div className="w-10 h-10 shrink-0 transform group-hover:rotate-12 transition-transform duration-500">
                     <Logo className="w-full h-full" />
                 </div>
@@ -95,17 +94,19 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </div>
             </Link>
 
-            {/* LOGO DÜZENLEME BUTONU (SADECE SENİN İÇİN) */}
+            {/* LOGO DÜZENLEME BUTONU (SENİN İÇİN HER ZAMAN GÖRÜNÜR) */}
             {isAdmin && (
-                <div className="flex items-center gap-2 ml-12">
+                <div className="flex items-center gap-2 ml-14">
                     {isEditingLogo ? (
-                        <div className="flex items-center gap-2 bg-primary/10 p-1 rounded-lg border border-primary/20 animate-in fade-in zoom-in duration-200">
-                            <input type="number" value={logoPos.x} onChange={(e) => setLogoPos({...logoPos, x: parseInt(e.target.value)})} className="w-10 bg-black text-[10px] text-white text-center rounded border border-white/10" />
-                            <input type="number" value={logoPos.y} onChange={(e) => setLogoPos({...logoPos, y: parseInt(e.target.value)})} className="w-10 bg-black text-[10px] text-white text-center rounded border border-white/10" />
-                            <button onClick={saveLogoPos} className="p-1 bg-green-500 text-white rounded hover:scale-110 transition-all"><Check size={12}/></button>
+                        <div className="flex items-center gap-2 bg-[#0a0a0a] p-1.5 rounded-xl border border-primary/40 shadow-2xl animate-in zoom-in-95 duration-200">
+                            <input type="number" value={logoPos.x} onChange={(e) => setLogoPos({...logoPos, x: parseInt(e.target.value) || 0})} className="w-12 bg-black text-[10px] font-black text-white text-center rounded-lg border border-white/10 p-1" />
+                            <input type="number" value={logoPos.y} onChange={(e) => setLogoPos({...logoPos, y: parseInt(e.target.value) || 0})} className="w-12 bg-black text-[10px] font-black text-white text-center rounded-lg border border-white/10 p-1" />
+                            <button onClick={saveLogoPos} className="p-1.5 bg-primary text-white rounded-lg hover:scale-110 transition-all shadow-lg"><Check size={12}/></button>
                         </div>
                     ) : (
-                        <button onClick={() => setIsEditingLogo(true)} className="p-1.5 text-white/10 hover:text-primary transition-all rounded-lg hover:bg-white/5 opacity-0 group-hover:opacity-100"><Edit2 size={12}/></button>
+                        <button onClick={() => setIsEditingLogo(true)} className="p-2 text-white/20 hover:text-primary transition-all rounded-xl hover:bg-white/5">
+                            <Edit2 size={14}/>
+                        </button>
                     )}
                 </div>
             )}

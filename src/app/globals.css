@@ -56,3 +56,21 @@ html, body {
 .dark .glass-card {
   background: rgba(15, 23, 42, 0.6);
 }
+
+/* CUSTOM SCROLLBAR FOR MENUS */
+.custom-scrollbar-minimal::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar-minimal::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.custom-scrollbar-minimal::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
+}
+
+.custom-scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
