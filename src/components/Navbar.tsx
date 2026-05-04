@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Zap } from 'lucide-react';
+import { Upload, User, LogOut, ChevronDown, Settings, Search, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
 import { Toast, useToast } from './Toast';
+import { Logo } from './Logo';
 
 interface NavbarProps {
   onSearch?: (query: string) => void;
@@ -48,24 +49,15 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   };
 
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
-  
-  // ADMIN İÇİN LOGO PP OLARAK GÖRÜNSÜN
-  const adminAvatar = "/logo.png"; // Kullanıcı logoyu public klasörüne bu isimle kaydetmeli
-  const displayAvatar = isAdmin ? adminAvatar : profile?.avatar_url;
+  const displayAvatar = profile?.avatar_url;
 
   return (
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4 md:gap-8">
         
-        {/* LOGO AREA - ARTIK RESMİ LOGOMUZ VAR */}
+        {/* RESMİ YILDIRIMLI LOGO */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 overflow-hidden shadow-lg shadow-primary/10">
-            <img src="/logo.png" alt="S" className="w-full h-full object-cover scale-125" onError={(e) => {
-                // Eğer logo.png yoksa Archive ikonuna dön
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.parentElement!.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white w-6 h-6"><path d="M21 8V21H3V8"/><path d="M1 3H23V8H1V3Z"/><path d="M10 12H14"/></svg>';
-            }} />
-          </div>
+          <Logo className="w-10 h-10 md:w-12 md:h-12" />
           <div className="flex flex-col">
             <span className="text-sm md:text-xl font-black tracking-tighter uppercase italic leading-none text-white">sytexarchive</span>
             {authLoaded && (
@@ -75,16 +67,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             )}
           </div>
         </Link>
-
-        {/* PREMIUM */}
-        <div className="hidden lg:flex items-center gap-6">
-            <button onClick={handlePremiumClick} className="flex items-center gap-2 text-[10px] font-black uppercase text-yellow-500 hover:text-yellow-400 transition-colors group">
-                <div className="p-1.5 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-all">
-                    <Zap size={14} className="fill-yellow-500" />
-                </div>
-                <span>PREMIUM</span>
-            </button>
-        </div>
 
         {/* SEARCH */}
         <div className="flex-1 max-w-[120px] sm:max-w-sm relative group md:flex">
@@ -115,10 +97,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             )}
           </div>
 
-          <div className="hidden sm:block">
-            <ThemeToggle />
-          </div>
-
           {authLoaded ? (
             user ? (
               <div className="flex items-center gap-2 md:gap-3">
@@ -129,7 +107,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 
                 <div className="relative">
                   <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="w-9 md:w-10 h-9 md:h-10 rounded-xl overflow-hidden border border-border-custom hover:border-primary transition-all bg-muted shadow-inner">
-                    {displayAvatar ? <img src={displayAvatar} alt="P" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin'; }} /> : <div className="w-full h-full flex items-center justify-center text-white/40"><User className="w-4.5 h-4.5 md:w-5 md:h-5" /></div>}
+                    {displayAvatar ? <img src={displayAvatar} alt="P" className="w-full h-full object-cover" /> : (
+                        <div className="w-full h-full flex items-center justify-center bg-black/50">
+                            {/* EĞER PP YOKSA YILDIRIMLI LOGO GÖRÜNSÜN */}
+                            <Logo className="w-7 h-7" />
+                        </div>
+                    )}
                   </button>
                   
                   {isProfileOpen && (
@@ -142,10 +125,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                             <Link href="/profile" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-primary hover:text-white transition-all text-white/60 italic">
                                 <Settings size={16} />
                                 {t('settings')}
-                            </Link>
-                            <Link href="/upload" onClick={() => setIsProfileOpen(false)} className="sm:hidden flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-primary hover:text-white transition-all text-white/60 italic">
-                                <Upload size={16} />
-                                {t('upload')}
                             </Link>
                             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-red-500/10 text-red-500 transition-all italic">
                                 <LogOut size={16} />
