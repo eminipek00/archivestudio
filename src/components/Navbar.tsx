@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Zap, Menu } from 'lucide-react';
+import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
@@ -56,7 +56,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         {/* LOGO AREA */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <div className="bg-primary p-2 rounded-xl shadow-lg">
-            <Archive size={20} className="text-white md:size-[24px]" />
+            <Archive className="text-white w-5 h-5 md:w-6 md:h-6" />
           </div>
           <div className="flex flex-col">
             <span className="text-sm md:text-xl font-black tracking-tighter uppercase italic leading-none text-white">sytexarchive</span>
@@ -68,7 +68,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           </div>
         </Link>
 
-        {/* PREMIUM - HIDDEN ON SMALL MOBILE */}
+        {/* PREMIUM */}
         <div className="hidden lg:flex items-center gap-6">
             <button onClick={handlePremiumClick} className="flex items-center gap-2 text-[10px] font-black uppercase text-yellow-500 hover:text-yellow-400 transition-colors group">
                 <div className="p-1.5 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-all">
@@ -78,10 +78,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             </button>
         </div>
 
-        {/* SEARCH - COMPACT ON MOBILE */}
+        {/* SEARCH */}
         <div className="flex-1 max-w-[120px] sm:max-w-sm relative group md:flex">
             <div className="absolute inset-y-0 left-3 md:left-4 flex items-center text-white/30 group-focus-within:text-primary transition-colors">
-                <Search size={14} md:size={18} />
+                <Search className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
             </div>
             <input 
               type="text" 
@@ -93,11 +93,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
         {/* ACTIONS */}
         <div className="flex items-center gap-2 md:gap-4 shrink-0">
-          {/* LANG TOGGLE */}
           <div className="relative">
             <button onClick={() => setIsLangOpen(!isLangOpen)} className="flex items-center gap-1 md:gap-2 h-9 md:h-10 px-2 md:px-4 rounded-xl border border-border-custom bg-[#111] hover:bg-[#222] transition-all text-white">
               <span className="text-[8px] md:text-[10px] font-black uppercase">{language}</span>
-              <ChevronDown size={12} md:size={14} className={isLangOpen ? 'rotate-180' : ''} />
+              <ChevronDown className={`transition-transform duration-200 w-3 h-3 md:w-3.5 md:h-3.5 ${isLangOpen ? 'rotate-180' : ''}`} />
             </button>
             {isLangOpen && (
               <div className="absolute top-12 right-0 w-32 bg-black border border-border-custom rounded-2xl shadow-2xl p-2 z-[2000] animate-in fade-in slide-in-from-top-2">
@@ -122,7 +121,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 
                 <div className="relative">
                   <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="w-9 md:w-10 h-9 md:h-10 rounded-xl overflow-hidden border border-border-custom hover:border-primary transition-all bg-muted">
-                    {profile?.avatar_url ? <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white/40"><User size={18} md:size={20} /></div>}
+                    {profile?.avatar_url ? <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white/40"><User className="w-4.5 h-4.5 md:w-5 md:h-5" /></div>}
                   </button>
                   
                   {isProfileOpen && (
