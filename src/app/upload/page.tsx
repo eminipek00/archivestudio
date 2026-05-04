@@ -25,13 +25,22 @@ const UploadPage = () => {
   const categories = [t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
 
   const MAX_FILE_SIZE_MB = 20;
-  // FFX (Preset) ve diğerlerini de kapsayan filtre
-  const ACCEPTED_FILE_TYPES = ".zip,.rar,.7z,.aep,.ffx,.prproj,.psd,.ai,.cube,.mp4,.mov,.png,.jpg,.xml";
 
-  // KATEGORİYE GÖRE KAPSAYICI YAZI MANTIĞI
+  // KATEGORİ BAZLI DOSYA FİLTRESİ (MANTIKLI OLAN)
+  const getAcceptedFiles = (cat: string) => {
+    const c = cat.toLowerCase();
+    const common = ".zip,.rar,.7z";
+    if (c.includes('sahne') || c.includes('scene')) return `${common},.mp4,.mov`;
+    if (c.includes('after') || c.includes('ae')) return `${common},.aep,.ffx,.prproj`;
+    if (c.includes('alight') || c.includes('am')) return `${common},.xml`;
+    if (c.includes('lut')) return `${common},.cube`;
+    if (c.includes('overlay')) return `${common},.mp4,.mov,.png,.jpg`;
+    return `${common},.mp4,.mov,.aep,.xml,.cube`;
+  };
+
   const getCategoryContext = (cat: string) => {
     const c = cat.toLowerCase();
-    if (c.includes('sahne') || c.includes('scene')) return { label: 'PAKET SEÇ (RAR/ZIP)', icon: <Box size={28} /> };
+    if (c.includes('sahne') || c.includes('scene')) return { label: 'PAKET SEÇ (MP4/RAR)', icon: <Box size={28} /> };
     if (c.includes('after') || c.includes('ae')) return { label: 'PROJE / PRESET SEÇ', icon: <FileCode2 size={28} /> };
     if (c.includes('alight') || c.includes('am')) return { label: 'XML / PROJE SEÇ', icon: <FileType size={28} /> };
     if (c.includes('lut')) return { label: 'LUT / CUBE SEÇ', icon: <FileArchive size={28} /> };
@@ -40,6 +49,7 @@ const UploadPage = () => {
   };
 
   const currentContext = getCategoryContext(category);
+  const acceptedFiles = getAcceptedFiles(category);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -146,7 +156,7 @@ const UploadPage = () => {
                                         {currentContext.icon}
                                     </div>
                                     <span className="text-[9px] font-black uppercase tracking-widest">{assetFile ? assetFile.name : currentContext.label}</span>
-                                    <input type="file" accept={ACCEPTED_FILE_TYPES} onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required={!useExternal} />
+                                    <input type="file" accept={acceptedFiles} onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required={!useExternal} />
                                 </div>
                             </div>
                         )}
