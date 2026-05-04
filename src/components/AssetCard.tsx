@@ -49,12 +49,12 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
       if (liked) {
           // UNLIKE
           setLiked(false);
-          setLikeCount(prev => prev - 1);
+          setLikeCount((prev: number) => prev - 1);
           await supabase.from('likes').delete().eq('asset_id', asset.id).eq('user_id', currentUserId);
       } else {
           // LIKE
           setLiked(true);
-          setLikeCount(prev => prev + 1);
+          setLikeCount((prev: number) => prev + 1);
           await supabase.from('likes').insert([{ asset_id: asset.id, user_id: currentUserId }]);
       }
       
