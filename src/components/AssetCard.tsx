@@ -1,14 +1,46 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle } from 'lucide-react';
+import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle, Trash2 } from 'lucide-react';
 import { useLanguage } from '@/utils/LanguageContext';
+import { createClient } from '@/utils/supabase/client';
+import { Toast, useToast } from './Toast';
 
-const AssetCard = ({ asset }: { asset: any }) => {
+const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean, onDelete?: (id: string) => void }) => {
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [showModal, setShowModal] = useState(false);
+  const supabase = createClient();
 
-  const isExternal = asset.download_url?.includes('http');
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shareData = {
+        title: asset.title,
+        text: `Sytex Archive üzerinden şu pakete bak: ${asset.title}`,
+        url: window.location.origin + `?id=${asset.id}`
+    };
+
+    try {
+        if (navigator.share) {
+            await navigator.share(shareData);
+        } else {
+            await navigator.clipboard.writeText(shareData.url);
+            showToast("Bağlantı kopyalandı lo!", "success");
+        }
+    } catch (err) { console.log(err); }
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm("Bu dosyayı kalıcı olarak silmek istediğine emin misin lo?")) {
+        const { error } = await supabase.from('assets').delete().eq('id', asset.id);
+        if (!error) {
+            showToast("Dosya başarıyla silindi!", "success");
+            if (onDelete) onDelete(asset.id);
+            setShowModal(false);
+        }
+    }
+  };
 
   return (
     <>
@@ -23,6 +55,13 @@ const AssetCard = ({ asset }: { asset: any }) => {
             alt={asset.title} 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
+          {/* Admin Silme Butonu (Kart Üzerinde) */}
+          {isAdmin && (
+            <button onClick={handleDelete} className="absolute top-4 left-4 p-2 bg-red-500 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity z-20 hover:scale-110">
+                <Trash2 size={16} />
+            </button>
+          )}
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 flex items-center gap-2">
                 <PlayCircle size={20} className="text-white" />
@@ -48,29 +87,25 @@ const AssetCard = ({ asset }: { asset: any }) => {
         </div>
       </div>
 
-      {/* DETAY MODALI (PREMIUM MODAL) */}
+      {/* DETAY MODALI */}
       {showModal && (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-black/90 backdrop-blur-2xl" onClick={() => setShowModal(false)} />
           
           <div className="relative bg-card border border-border-custom w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row animate-in zoom-in slide-in-from-bottom-8 duration-500">
-            {/* Modal Sol: Resim */}
             <div className="w-full md:w-3/5 aspect-video md:aspect-auto bg-muted relative">
                 <img src={asset.image_url} alt={asset.title} className="w-full h-full object-cover" />
-                <button 
-                  onClick={() => setShowModal(false)}
-                  className="absolute top-6 left-6 p-3 bg-black/50 hover:bg-black backdrop-blur-md text-white rounded-2xl transition-all md:hidden"
-                >
-                  <X size={20} />
-                </button>
+                <button onClick={() => setShowModal(false)} className="absolute top-6 left-6 p-3 bg-black/50 hover:bg-black backdrop-blur-md text-white rounded-2xl transition-all md:hidden"><X size={20} /></button>
             </div>
 
-            {/* Modal Sağ: İçerik */}
             <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-between space-y-8 bg-[#050505]">
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic bg-primary/5 px-4 py-2 rounded-xl border border-primary/10">{asset.category}</span>
-                        <button onClick={() => setShowModal(false)} className="hidden md:block text-white/20 hover:text-white transition-colors"><X size={24} /></button>
+                        <div className="flex items-center gap-2">
+                            {isAdmin && <button onClick={handleDelete} className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"><Trash2 size={20} /></button>}
+                            <button onClick={() => setShowModal(false)} className="hidden md:block text-white/20 hover:text-white transition-colors"><X size={24} /></button>
+                        </div>
                     </div>
                     <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white leading-none">{asset.title}</h2>
                     
@@ -79,7 +114,7 @@ const AssetCard = ({ asset }: { asset: any }) => {
                             <div className="p-2 bg-muted rounded-xl"><User size={18} className="text-white/40" /></div>
                             <div>
                                 <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none">YÜKLEYEN</p>
-                                <p className="text-xs font-black text-white uppercase italic">sytexarchive Editor</p>
+                                <p className="text-xs font-black text-white uppercase italic">{isAdmin ? 'ADMIN' : 'sytexarchive EDITOR'}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom">
@@ -93,15 +128,11 @@ const AssetCard = ({ asset }: { asset: any }) => {
                 </div>
 
                 <div className="space-y-4">
-                    <a 
-                      href={asset.download_url} 
-                      target="_blank" 
-                      className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
-                    >
-                        {isExternal ? <ExternalLink size={20} /> : <Download size={20} />}
-                        {isExternal ? 'DIŞ BAĞLANTIYA GİT' : 'DOSYAYI İNDİR'}
+                    <a href={asset.download_url} target="_blank" className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95 uppercase">
+                        <Download size={20} />
+                        {t('upload').toUpperCase()} İNDİR
                     </a>
-                    <button className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all">
+                    <button onClick={handleShare} className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-95">
                         <Share2 size={16} />
                         ARKADAŞINLA PAYLAŞ
                     </button>

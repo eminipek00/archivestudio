@@ -14,22 +14,36 @@ interface AssetGridProps {
 const AssetGrid = ({ searchQuery, activeCategory }: AssetGridProps) => {
   const [assets, setAssets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { t } = useLanguage();
   const supabase = createClient();
 
   useEffect(() => {
     const fetchAssets = async () => {
       setLoading(true);
-      let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
-      
-      const { data, error } = await query;
+      const { data, error } = await supabase.from('assets').select('*').order('created_at', { ascending: false });
       if (!error && data) setAssets(data);
       setLoading(false);
     };
+
+    const checkAdmin = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.email === 'ipekmuhammetemin@gmail.com') {
+            setIsAdmin(true);
+        } else if (user) {
+            const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
+            if (profile?.is_admin) setIsAdmin(true);
+        }
+    };
+
     fetchAssets();
+    checkAdmin();
   }, [supabase]);
 
-  // FİLTRELEME MANTIĞI (Frontend tarafında daha hızlı olması için)
+  const handleDelete = (id: string) => {
+    setAssets(assets.filter(a => a.id !== id));
+  };
+
   const filteredAssets = assets.filter(asset => {
     const matchesSearch = asset.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeCategory === t('tags.all') || asset.category === activeCategory;
@@ -62,7 +76,7 @@ const AssetGrid = ({ searchQuery, activeCategory }: AssetGridProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
       {filteredAssets.map((asset) => (
-        <AssetCard key={asset.id} asset={asset} />
+        <AssetCard key={asset.id} asset={asset} isAdmin={isAdmin} onDelete={handleDelete} />
       ))}
     </div>
   );
