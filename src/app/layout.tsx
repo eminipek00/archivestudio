@@ -9,10 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Sytex Archive - Editor Digital Assets",
   description: "Professional digital assets for editors, scene packs, presets and more.",
-  icons: {
-    icon: "/logo.png", // Tarayıcı sekmesindeki o küçük logo
-    apple: "/logo.png",
-  },
+  // Manuel ikon ayarını sildik, Next.js src/app/icon.png dosyasını otomatik kullanacak lo!
 };
 
 export default function RootLayout({
