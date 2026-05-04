@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { Upload, User, LogOut, ChevronDown, Settings, Search, Zap } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Upload, User, LogOut, ChevronDown, Settings, Search, Zap, Move } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
@@ -21,6 +21,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [authLoaded, setAuthLoaded] = useState(false);
   
+  // DRAG STATES (Sadece Admin için)
+  const [isDragging, setIsDragging] = useState(false);
+  const [logoPos, setLogoPos] = useState({ x: 8, y: -6 }); // Başlangıç değerleri
+  const dragStart = useRef({ x: 0, y: 0 });
+  const logoStart = useRef({ x: 0, y: 0 });
+
   const supabase = createClient();
   const { t, setLanguage, language } = useLanguage();
   const { toast, showToast, hideToast } = useToast();
@@ -45,6 +51,37 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
+  // DRAG HANDLERS
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!isAdmin) return;
+    setIsDragging(true);
+    dragStart.current = { x: e.clientX, y: e.clientY };
+    logoStart.current = { x: logoPos.x, y: logoPos.y };
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      const dx = e.clientX - dragStart.current.x;
+      const dy = e.clientY - dragStart.current.y;
+      setLogoPos({
+        x: Math.round(logoStart.current.x + dx / 5), // Hassasiyet ayarı
+        y: Math.round(logoStart.current.y + dy / 5)
+      });
+    };
+    const onMouseUp = () => setIsDragging(false);
+
+    if (isDragging) {
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, [isDragging]);
+
   const renderAvatar = () => {
     if (profile?.avatar_url) {
         return <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />;
@@ -64,20 +101,34 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4 md:gap-8">
         
-        {/* LOGO AREA - SCREENSHOT STİLİ GELDİ */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <Logo className="w-10 h-10 md:w-14 md:h-14 transition-all" />
-          <div className="flex flex-col -space-y-1">
-            <span className="text-lg md:text-3xl font-[1000] tracking-tighter uppercase italic leading-none text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
-              SYTEXARCHIVE
-            </span>
-            {authLoaded && (
-               <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary italic">
-                {isAdmin ? 'ADMIN' : 'EDITOR'}
-              </span>
-            )}
-          </div>
-        </Link>
+        {/* LOGO AREA - SÜRÜKLENEBİLİR MOD */}
+        <div className="flex items-center gap-3 shrink-0 relative group">
+          <Link href="/" 
+                onMouseDown={onMouseDown}
+                style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}
+                className={`flex items-center gap-3 transition-transform ${isDragging ? 'cursor-grabbing scale-105' : isAdmin ? 'cursor-grab' : ''}`}>
+            <Logo className="w-10 h-10 md:w-14 md:h-14" />
+            <div className="flex flex-col -space-y-1">
+                <span className="text-lg md:text-3xl font-[1000] tracking-tighter uppercase italic leading-none text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+                SYTEXARCHIVE
+                </span>
+                {authLoaded && (
+                <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary italic">
+                    {isAdmin ? 'ADMIN' : 'EDITOR'}
+                </span>
+                )}
+            </div>
+          </Link>
+
+          {/* ADMIN KOORDİNAT TOOLTIP */}
+          {isAdmin && (
+            <div className={`absolute -bottom-10 left-0 bg-primary text-white text-[8px] font-black px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-2 ${isDragging ? 'opacity-100' : ''}`}>
+                <Move size={10} />
+                X: {logoPos.x} | Y: {logoPos.y}
+                <span className="ml-2 text-white/50">(Sürükle ve bana rakamları söyle lo!)</span>
+            </div>
+          )}
+        </div>
 
         {/* SEARCH */}
         <div className="flex-1 max-w-[120px] sm:max-w-sm relative group md:flex">
