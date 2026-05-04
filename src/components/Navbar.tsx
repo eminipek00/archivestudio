@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit2, Check } from 'lucide-react';
+import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit2, Check, Maximize2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
@@ -20,17 +20,17 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
   
-  // LOGO POSITIONER STATES (Hizayı bozmamak için default 0,0 yapıyorum)
+  // LOGO ÖZEL AYARLAR (İkon Konumu ve Boyutu)
   const [isEditingLogo, setIsEditingLogo] = useState(false);
-  const [logoPos, setLogoPos] = useState({ x: 0, y: 0 });
+  const [logoSettings, setLogoSettings] = useState({ x: 0, y: 0, scale: 1 });
 
   const { language, setLanguage, t } = useLanguage();
   const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {
-    const savedPos = localStorage.getItem('sytexLogoPos');
-    if (savedPos) setLogoPos(JSON.parse(savedPos));
+    const savedSettings = localStorage.getItem('sytexLogoSettings');
+    if (savedSettings) setLogoSettings(JSON.parse(savedSettings));
 
     const getUser = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -43,8 +43,8 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     getUser();
   }, [supabase]);
 
-  const saveLogoPos = () => {
-    localStorage.setItem('sytexLogoPos', JSON.stringify(logoPos));
+  const saveLogoSettings = () => {
+    localStorage.setItem('sytexLogoSettings', JSON.stringify(logoSettings));
     setIsEditingLogo(false);
   };
 
@@ -82,10 +82,15 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     <nav className="fixed top-0 left-0 right-0 z-[5000] py-4 bg-black border-b border-border-custom shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-8">
         
-        {/* LOGO AREA - KAYMA SIFIRLANDI */}
-        <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-3 shrink-0" style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}>
-                <div className="w-10 h-10 shrink-0 transform group-hover:rotate-12 transition-transform duration-500">
+        {/* LOGO AREA - İKON VE YAZI AYRILDI */}
+        <div className="flex items-center gap-6">
+            <Link href="/" className="flex items-center gap-3 shrink-0">
+                <div 
+                  className="w-10 h-10 shrink-0 transition-transform duration-500 group-hover:rotate-12"
+                  style={{ 
+                    transform: `translate(${logoSettings.x}px, ${logoSettings.y}px) scale(${logoSettings.scale})` 
+                  }}
+                >
                     <Logo className="w-full h-full" />
                 </div>
                 <div className="flex flex-col">
@@ -94,18 +99,28 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </div>
             </Link>
 
-            {/* LOGO DÜZENLEME BUTONU (SADECE SENİN İÇİN, ÇOK KÜÇÜK VE SADE) */}
+            {/* LOGO EDİTÖR (X, Y ve BOYUT) */}
             {isAdmin && (
                 <div className="flex items-center ml-2">
                     {isEditingLogo ? (
-                        <div className="flex items-center gap-1 bg-[#0a0a0a] p-1 rounded-lg border border-white/5">
-                            <input type="number" value={logoPos.x} onChange={(e) => setLogoPos({...logoPos, x: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
-                            <input type="number" value={logoPos.y} onChange={(e) => setLogoPos({...logoPos, y: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
-                            <button onClick={saveLogoPos} className="p-1 bg-primary text-white rounded hover:scale-110 transition-all"><Check size={10}/></button>
+                        <div className="flex items-center gap-2 bg-[#0a0a0a] p-2 rounded-xl border border-primary/30 shadow-2xl animate-in zoom-in-95 duration-200">
+                            <div className="flex flex-col items-center gap-1">
+                                <span className="text-[6px] text-white/20 font-black">X</span>
+                                <input type="number" value={logoSettings.x} onChange={(e) => setLogoSettings({...logoSettings, x: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
+                            </div>
+                            <div className="flex flex-col items-center gap-1">
+                                <span className="text-[6px] text-white/20 font-black">Y</span>
+                                <input type="number" value={logoSettings.y} onChange={(e) => setLogoSettings({...logoSettings, y: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
+                            </div>
+                            <div className="flex flex-col items-center gap-1">
+                                <span className="text-[6px] text-white/20 font-black">BOY</span>
+                                <input type="number" step="0.1" value={logoSettings.scale} onChange={(e) => setLogoSettings({...logoSettings, scale: parseFloat(e.target.value) || 1})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
+                            </div>
+                            <button onClick={saveLogoSettings} className="p-1.5 bg-primary text-white rounded-lg hover:scale-110 transition-all ml-1"><Check size={12}/></button>
                         </div>
                     ) : (
-                        <button onClick={() => setIsEditingLogo(true)} className="p-1 text-white/5 hover:text-primary transition-all rounded">
-                            <Edit2 size={10}/>
+                        <button onClick={() => setIsEditingLogo(true)} className="p-2 text-white/5 hover:text-primary transition-all rounded-lg">
+                            <Maximize2 size={12}/>
                         </button>
                     )}
                 </div>
