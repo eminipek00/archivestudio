@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle, Trash2, Edit3, Save, Camera, Heart } from 'lucide-react';
+import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle, Trash2, Edit3, Save, Camera, Heart, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/utils/LanguageContext';
 import { createClient } from '@/utils/supabase/client';
 import { Toast, useToast } from './Toast';
@@ -16,7 +16,6 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
   const [editUrl, setEditUrl] = useState(asset.image_url);
   const [loading, setLoading] = useState(false);
   
-  // GLOBAL LIKE SYSTEM (DATABASE DRIVEN)
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(asset.likes_count || 0);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -34,7 +33,6 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
     };
     checkLikeStatus();
     
-    // BEĞENİ SAYISINI GÜNCELLE
     const fetchLikeCount = async () => {
         const { count } = await supabase.from('likes').select('*', { count: 'exact', head: true }).eq('asset_id', asset.id);
         setLikeCount(count || 0);
@@ -45,30 +43,52 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
   const handleLike = async (e: React.MouseEvent) => {
       e.stopPropagation();
       if (!currentUserId) { showToast("Beğenmek için giriş yapmalısınız.", "error"); return; }
-
       if (liked) {
-          // UNLIKE
           setLiked(false);
           setLikeCount((prev: number) => prev - 1);
           await supabase.from('likes').delete().eq('asset_id', asset.id).eq('user_id', currentUserId);
       } else {
-          // LIKE
           setLiked(true);
           setLikeCount((prev: number) => prev + 1);
           await supabase.from('likes').insert([{ asset_id: asset.id, user_id: currentUserId }]);
       }
-      
-      // Notify other components
       window.dispatchEvent(new Event('favoritesUpdated'));
+  };
+
+  // DOSYA YÜKLEME FONKSİYONU (YENİ)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+        setLoading(true);
+        const file = e.target.files[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `covers/${fileName}`;
+
+        try {
+            const { error: uploadError } = await supabase.storage.from('assets').upload(filePath, file);
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage.from('assets').getPublicUrl(filePath);
+            setEditUrl(publicUrl);
+            showToast("Görsel başarıyla yüklendi.", "success");
+        } catch (error: any) {
+            showToast(error.message, "error");
+        } finally {
+            setLoading(false);
+        }
+    }
+  };
+
+  const handleUpdate = async () => {
+    setLoading(true);
+    const { error } = await supabase.from('assets').update({ title: editTitle, image_url: editUrl }).eq('id', asset.id);
+    if (!error) { showToast("Bilgiler güncellendi.", "success"); setIsEditing(false); asset.title = editTitle; asset.image_url = editUrl; }
+    setLoading(false);
   };
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const shareData = {
-        title: asset.title,
-        text: `Sytex Archive üzerinden şu varlığa göz atın: ${asset.title}`,
-        url: window.location.origin + `?id=${asset.id}`
-    };
+    const shareData = { title: asset.title, url: window.location.origin + `?id=${asset.id}` };
     try {
         if (navigator.share) { await navigator.share(shareData); } 
         else { await navigator.clipboard.writeText(shareData.url); showToast("Bağlantı kopyalandı.", "success"); }
@@ -81,13 +101,6 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
         const { error } = await supabase.from('assets').delete().eq('id', asset.id);
         if (!error) { showToast("Varlık silindi.", "success"); if (onDelete) onDelete(asset.id); setShowModal(false); }
     }
-  };
-
-  const handleUpdate = async () => {
-    setLoading(true);
-    const { error } = await supabase.from('assets').update({ title: editTitle, image_url: editUrl }).eq('id', asset.id);
-    if (!error) { showToast("Güncellendi.", "success"); setIsEditing(false); asset.title = editTitle; asset.image_url = editUrl; }
-    setLoading(false);
   };
 
   const uploader = asset.profiles || { username: 'Sytex Editor', avatar_url: '/logo.png' };
@@ -137,13 +150,14 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl" onClick={() => { setShowModal(false); setIsEditing(false); }} />
           <div className="relative bg-card border border-border-custom w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row animate-in zoom-in slide-in-from-bottom-8 duration-500">
-            <div className="w-full md:w-3/5 aspect-video md:aspect-auto bg-muted relative">
+            <div className="w-full md:w-3/5 aspect-video md:aspect-auto bg-muted relative group/edit">
                 <img src={isEditing ? editUrl : asset.image_url} alt={asset.title} className="w-full h-full object-cover" />
                 {isEditing && (
-                    <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-8 space-y-4">
-                        <Camera size={32} className="text-primary animate-pulse" />
-                        <input type="text" value={editUrl} onChange={(e) => setEditUrl(e.target.value)} placeholder="Yeni Kapak URL" className="w-full max-w-md bg-black/50 border border-white/10 rounded-xl p-3 text-[10px] text-white outline-none focus:border-primary" />
-                    </div>
+                    <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-8 space-y-4 cursor-pointer hover:bg-black/80 transition-all">
+                        {loading ? <Loader2 size={48} className="text-primary animate-spin" /> : <Camera size={48} className="text-primary" />}
+                        <p className="text-xs font-black text-white uppercase tracking-widest">{loading ? 'YÜKLENİYOR...' : 'GÖRSEL SEÇMEK İÇİN TIKLAYIN'}</p>
+                        <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                    </label>
                 )}
                 <button onClick={() => { setShowModal(false); setIsEditing(false); }} className="absolute top-6 left-6 p-3 bg-black/50 hover:bg-black backdrop-blur-md text-white rounded-2xl md:hidden"><X size={20} /></button>
             </div>
@@ -157,24 +171,27 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                         </div>
                     </div>
                     {isEditing ? (
-                        <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full bg-muted border border-white/10 rounded-xl p-4 text-xl font-black uppercase text-white italic outline-none focus:border-primary" />
+                        <div className="space-y-4">
+                            <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full bg-muted border border-white/10 rounded-xl p-4 text-xl font-black uppercase text-white italic outline-none focus:border-primary" />
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest px-2">Kapağı değiştirmek için soldaki görselin üzerine tıklayın.</p>
+                        </div>
                     ) : (
                         <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white leading-none">{asset.title}</h2>
                     )}
                     <Link href={`/user/${asset.author_id}`} onClick={() => setShowModal(false)} className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border-custom shadow-inner hover:bg-primary/10 transition-all group/modal-uploader">
-                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0 group-hover/modal-uploader:scale-110 transition-transform">
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0">
                             <img src={uploader.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover" />
                         </div>
                         <div>
                             <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none mb-1">{t('uploader')}</p>
-                            <p className="text-xs font-black text-white uppercase italic group-hover/modal-uploader:text-primary transition-colors">@{uploader.username}</p>
+                            <p className="text-xs font-black text-white uppercase italic">@{uploader.username}</p>
                         </div>
                     </Link>
                 </div>
                 <div className="space-y-4">
                     {isEditing ? (
                         <button onClick={handleUpdate} disabled={loading} className="w-full bg-green-500 hover:bg-green-600 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-95">
-                            {loading ? <div className="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent" /> : <Save size={20} />} {t('save')}
+                            {loading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />} {t('save')}
                         </button>
                     ) : (
                         <a href={asset.download_url} target="_blank" className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95">
