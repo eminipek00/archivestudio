@@ -109,7 +109,7 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
     <>
       <div onClick={() => setShowModal(true)} className="group relative bg-card border border-border-custom rounded-[2.5rem] overflow-hidden hover:border-primary transition-all duration-500 cursor-pointer hover:shadow-2xl hover:shadow-primary/10 flex flex-col h-full">
         <div className="aspect-video relative overflow-hidden">
-          <img src={asset.image_url || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=800&q=80'} alt={asset.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+          <img src={asset.image_url || 'https://images.unsplash.com/photo-1635776062127-d379bfcba9f8?w=800&q=80'} alt={asset.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
           <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md text-white text-[7px] font-black px-2.5 py-1 rounded-lg uppercase tracking-tighter flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
             {asset.file_type || 'PAKET'}
