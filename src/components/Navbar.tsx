@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Star } from 'lucide-react';
+import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Star, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
+import { Toast, useToast } from './Toast';
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null);
@@ -15,6 +16,7 @@ const Navbar = () => {
   const [authLoaded, setAuthLoaded] = useState(false);
   const supabase = createClient();
   const { t, setLanguage, language } = useLanguage();
+  const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
     const getUser = async () => {
@@ -32,6 +34,11 @@ const Navbar = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = "/";
+  };
+
+  const handlePremiumClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    showToast("Premium üyelik sistemi yakında aktif edilecektir!", "info");
   };
 
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
@@ -53,11 +60,20 @@ const Navbar = () => {
           </div>
         </Link>
 
-        <div className="hidden md:flex flex-1 max-w-xl relative group">
+        <div className="hidden lg:flex items-center gap-6">
+            <button onClick={handlePremiumClick} className="flex items-center gap-2 text-[10px] font-black uppercase text-yellow-500 hover:text-yellow-400 transition-colors group">
+                <div className="p-1.5 bg-yellow-500/10 rounded-lg group-hover:bg-yellow-500/20 transition-all">
+                    <Zap size={14} className="fill-yellow-500" />
+                </div>
+                <span>PREMIUM</span>
+            </button>
+        </div>
+
+        <div className="hidden md:flex flex-1 max-w-sm relative group">
             <div className="absolute inset-y-0 left-4 flex items-center text-white/30 group-focus-within:text-primary transition-colors">
                 <Search size={18} />
             </div>
-            <input type="text" placeholder={t('searchPlaceholder')} className="w-full bg-[#111] border border-border-custom rounded-2xl py-3 pl-12 pr-4 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
+            <input type="text" placeholder={t('searchPlaceholder')} className="w-full bg-[#111] border border-border-custom rounded-2xl py-2.5 pl-12 pr-4 text-[10px] font-bold text-white focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
         </div>
 
         <div className="flex items-center gap-4">
@@ -109,6 +125,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </nav>
   );
 };
