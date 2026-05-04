@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { Archive, Upload, User, LogOut, ChevronDown, Languages, UserCircle, Settings, Search } from 'lucide-react';
+import { Archive, Upload, User, LogOut, ChevronDown, Settings, Search, Star } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
@@ -39,31 +39,25 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-8">
-        {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20">
+          <div className="bg-primary p-2 rounded-xl shadow-lg">
             <Archive size={24} className="text-white" />
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-black tracking-tighter uppercase italic leading-none text-white">sytexarchive</span>
             {authLoaded && (
-               <span className="text-[9px] font-black uppercase tracking-widest text-primary mt-0.5">
-                {isAdmin ? "ADMIN" : "EDITOR"}
+               <span className="text-[9px] font-black uppercase tracking-widest text-primary mt-0.5 italic">
+                {isAdmin ? t('admin') : t('editor')}
               </span>
             )}
           </div>
         </Link>
 
-        {/* NAVBAR ARAMA ÇUBUĞU (YENİ) */}
         <div className="hidden md:flex flex-1 max-w-xl relative group">
             <div className="absolute inset-y-0 left-4 flex items-center text-white/30 group-focus-within:text-primary transition-colors">
                 <Search size={18} />
             </div>
-            <input 
-                type="text" 
-                placeholder={t('searchPlaceholder')}
-                className="w-full bg-[#111] border border-border-custom rounded-2xl py-3 pl-12 pr-4 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all"
-            />
+            <input type="text" placeholder={t('searchPlaceholder')} className="w-full bg-[#111] border border-border-custom rounded-2xl py-3 pl-12 pr-4 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all" />
         </div>
 
         <div className="flex items-center gap-4">
@@ -74,10 +68,8 @@ const Navbar = () => {
             </button>
             {isLangOpen && (
               <div className="absolute top-12 right-0 w-32 bg-black border border-border-custom rounded-2xl shadow-2xl p-2 z-[2000]">
-                {['tr', 'en', 'es', 'fr', 'de'].map((l) => (
-                    <button key={l} onClick={() => { setLanguage(l as Language); setIsLangOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-[10px] font-black uppercase mb-1 ${language === l ? 'bg-primary text-white' : 'text-white/60 hover:bg-muted'}`}>
-                        {l}
-                    </button>
+                {['tr', 'en', 'es', 'fr', 'de', 'ru', 'ar', 'zh', 'ja', 'pt'].map((l) => (
+                    <button key={l} onClick={() => { setLanguage(l as Language); setIsLangOpen(false); }} className={`w-full text-left px-3 py-2 rounded-lg text-[10px] font-black uppercase mb-1 ${language === l ? 'bg-primary text-white' : 'text-white/60 hover:bg-muted'}`}>{l}</button>
                 ))}
               </div>
             )}
@@ -99,10 +91,10 @@ const Navbar = () => {
                   </button>
                   <div className="absolute top-12 right-0 w-64 bg-black border border-border-custom rounded-2xl shadow-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-[3000]">
                     <div className="px-4 py-4 border-b border-border-custom mb-1">
-                        <p className="text-xs font-black uppercase italic text-white">@{profile?.username || 'kullanici'}</p>
+                        <p className="text-xs font-black uppercase italic text-white">@{profile?.username || 'user'}</p>
                     </div>
                     <Link href="/profile" className="flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-primary hover:text-white transition-all text-white/60 italic"><Settings size={16} />{t('settings')}</Link>
-                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-red-500/10 text-red-500 transition-all italic"><LogOut size={16} />Çıkış</button>
+                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-red-500/10 text-red-500 transition-all italic"><LogOut size={16} />{t('logout')}</button>
                   </div>
                 </div>
               </div>
@@ -113,7 +105,7 @@ const Navbar = () => {
               </div>
             )
           ) : (
-            <div className="w-10 h-10 bg-muted animate-pulse rounded-xl" />
+            <div className="w-10 h-10 bg-[#111] animate-pulse rounded-xl" />
           )}
         </div>
       </div>

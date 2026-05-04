@@ -19,7 +19,13 @@ const UploadPage = () => {
 
   const { t } = useLanguage();
   const supabase = createClient();
-  const categories = ["Sahne Paketleri", "After Effects", "Alight Motion", "LUT Paketleri", "Overlay"];
+  const categories = [
+    t('tags.scene'), 
+    t('tags.ae'), 
+    t('tags.am'), 
+    t('tags.lut'), 
+    t('tags.overlay')
+  ];
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -37,7 +43,7 @@ const UploadPage = () => {
     e.preventDefault();
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return alert("Giriş yapın.");
+    if (!user) return alert("Error: Login required.");
 
     try {
         let uploadedImageUrl = "";
@@ -73,17 +79,17 @@ const UploadPage = () => {
           {step === 1 ? (
               <form onSubmit={handleUpload} className="space-y-8">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-black uppercase italic tracking-tighter text-white">Asset Yükle</h1>
-                    <span className="text-[9px] font-black uppercase text-primary bg-primary/5 px-4 py-2 rounded-xl border border-primary/10 tracking-widest italic">Admin Modu</span>
+                    <h1 className="text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
+                    <span className="text-[9px] font-black uppercase text-primary bg-primary/5 px-4 py-2 rounded-xl border border-primary/10 tracking-widest italic">{t('admin')}</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
                         <div className="relative aspect-video rounded-3xl bg-muted overflow-hidden border-2 border-dashed border-border-custom hover:border-primary transition-all">
-                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">Kapak Resmi</span></div>}
+                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">THUMBNAIL</span></div>}
                             <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" required />
                         </div>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-sm font-bold" placeholder="Asset Başlığı" required />
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-sm font-bold" placeholder="TITLE" required />
                     </div>
 
                     <div className="space-y-6">
@@ -93,21 +99,21 @@ const UploadPage = () => {
                             ))}
                         </div>
                         <div className="space-y-4">
-                            <button type="button" onClick={() => setUseExternal(!useExternal)} className="text-[9px] font-black uppercase text-primary underline">Link Kullan</button>
-                            {useExternal ? <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-sm font-bold" placeholder="URL" required /> : <div className="relative"><div className="w-full py-6 rounded-xl border-2 border-dashed border-border-custom flex flex-col items-center gap-2 bg-muted/50"><FileArchive size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase tracking-widest">Dosya Seç</span><input type="file" onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required /></div></div>}
+                            <button type="button" onClick={() => setUseExternal(!useExternal)} className="text-[9px] font-black uppercase text-primary underline">External Link</button>
+                            {useExternal ? <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-sm font-bold" placeholder="URL" required /> : <div className="relative"><div className="w-full py-6 rounded-xl border-2 border-dashed border-border-custom flex flex-col items-center gap-2 bg-muted/50"><FileArchive size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase tracking-widest">FILE</span><input type="file" onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required /></div></div>}
                         </div>
                     </div>
                 </div>
 
                 <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-xl">
-                    {loading ? "YÜKLENİYOR" : "YAYINA AL"}
+                    {loading ? "..." : t('save')}
                     <ChevronRight size={18} />
                 </button>
               </form>
           ) : (
             <div className="text-center py-16 space-y-4">
                 <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto text-green-500"><CheckCircle2 size={32} /></div>
-                <h2 className="text-2xl font-black uppercase italic tracking-tighter text-white">Yüklendi!</h2>
+                <h2 className="text-2xl font-black uppercase italic tracking-tighter text-white">{t('uploadSuccess')}</h2>
             </div>
           )}
         </div>
