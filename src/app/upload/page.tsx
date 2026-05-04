@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box } from "lucide-react";
+import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box, FileType } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useLanguage } from "@/utils/LanguageContext";
 import { Toast, useToast } from "@/components/Toast";
@@ -25,17 +25,18 @@ const UploadPage = () => {
   const categories = [t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
 
   const MAX_FILE_SIZE_MB = 20;
-  const ACCEPTED_FILE_TYPES = ".zip,.rar,.7z,.aep,.prproj,.psd,.ai,.cube,.mp4,.mov,.png,.jpg,.xml";
+  // FFX (Preset) ve diğerlerini de kapsayan filtre
+  const ACCEPTED_FILE_TYPES = ".zip,.rar,.7z,.aep,.ffx,.prproj,.psd,.ai,.cube,.mp4,.mov,.png,.jpg,.xml";
 
-  // KATEGORİYE GÖRE DİNAMİK YAZI VE İKON MANTIĞI
+  // KATEGORİYE GÖRE KAPSAYICI YAZI MANTIĞI
   const getCategoryContext = (cat: string) => {
     const c = cat.toLowerCase();
-    if (c.includes('sahne') || c.includes('scene')) return { label: 'PAKET SEÇ', icon: <Box size={28} /> };
-    if (c.includes('after') || c.includes('ae')) return { label: 'AEP SEÇ', icon: <FileCode2 size={28} /> };
-    if (c.includes('alight') || c.includes('am')) return { label: 'XML SEÇ', icon: <FileCode2 size={28} /> };
-    if (c.includes('lut')) return { label: 'LUT SEÇ', icon: <FileArchive size={28} /> };
-    if (c.includes('overlay')) return { label: 'VİDEO SEÇ', icon: <Film size={28} /> };
-    return { label: 'ASSET SEÇ', icon: <FileArchive size={28} /> };
+    if (c.includes('sahne') || c.includes('scene')) return { label: 'PAKET SEÇ (RAR/ZIP)', icon: <Box size={28} /> };
+    if (c.includes('after') || c.includes('ae')) return { label: 'PROJE / PRESET SEÇ', icon: <FileCode2 size={28} /> };
+    if (c.includes('alight') || c.includes('am')) return { label: 'XML / PROJE SEÇ', icon: <FileType size={28} /> };
+    if (c.includes('lut')) return { label: 'LUT / CUBE SEÇ', icon: <FileArchive size={28} /> };
+    if (c.includes('overlay')) return { label: 'VİDEO / OVERLAY SEÇ', icon: <Film size={28} /> };
+    return { label: 'DOSYA SEÇ', icon: <FileArchive size={28} /> };
   };
 
   const currentContext = getCategoryContext(category);
