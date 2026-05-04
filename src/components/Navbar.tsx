@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Upload, User, LogOut, ChevronDown, Settings, Search, Zap, Move } from 'lucide-react';
+import { Upload, User, LogOut, ChevronDown, Settings, Search, Zap, Move, Sliders, X as CloseIcon, Save } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/client';
 import { ThemeToggle } from './ThemeToggle';
@@ -19,11 +19,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [profile, setProfile] = useState<any>(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isDesignOpen, setIsDesignOpen] = useState(false);
   const [authLoaded, setAuthLoaded] = useState(false);
   
-  // DRAG STATES - KULLANICININ BELİRLEDİĞİ X:17 Y:-2 NOKTASI BAŞLANGIÇ YAPILDI
+  // LOGO TASARIM AYARLARI
+  const [logoPos, setLogoPos] = useState({ x: 20, y: -1, size: 64 }); // Default X20 Y-1 Size64
   const [isDragging, setIsDragging] = useState(false);
-  const [logoPos, setLogoPos] = useState({ x: 17, y: -2 }); 
   const dragStart = useRef({ x: 0, y: 0 });
   const logoStart = useRef({ x: 0, y: 0 });
 
@@ -32,6 +33,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
+    // LocalStorage'dan kayıtlı ayarları yükle
+    const savedPos = localStorage.getItem('sytex_logo_config');
+    if (savedPos) setLogoPos(JSON.parse(savedPos));
+
     const getUser = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       setUser(authUser);
@@ -51,7 +56,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
-  // DRAG HANDLERS
+  // SÜRÜKLEME MANTIĞI
   const onMouseDown = (e: React.MouseEvent) => {
     if (!isAdmin) return;
     setIsDragging(true);
@@ -66,13 +71,13 @@ const Navbar = ({ onSearch }: NavbarProps) => {
       if (!isDragging) return;
       const dx = e.clientX - dragStart.current.x;
       const dy = e.clientY - dragStart.current.y;
-      setLogoPos({
-        x: Math.round(logoStart.current.x + dx / 4),
-        y: Math.round(logoStart.current.y + dy / 4)
-      });
+      setLogoPos(prev => ({
+        ...prev,
+        x: Math.round(logoStart.current.x + dx / 3),
+        y: Math.round(logoStart.current.y + dy / 3)
+      }));
     };
     const onMouseUp = () => setIsDragging(false);
-
     if (isDragging) {
       window.addEventListener('mousemove', onMouseMove);
       window.addEventListener('mouseup', onMouseUp);
@@ -83,17 +88,15 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     };
   }, [isDragging]);
 
+  const saveLogoConfig = () => {
+    localStorage.setItem('sytex_logo_config', JSON.stringify(logoPos));
+    setIsDesignOpen(false);
+    alert("Logo ayarları kaydedildi lo! (Tarayıcında saklı kalacak)");
+  };
+
   const renderAvatar = () => {
-    if (profile?.avatar_url) {
-        return <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />;
-    }
-    if (isAdmin) {
-        return (
-            <div className="w-full h-full flex items-center justify-center bg-black/50 p-1.5">
-                <Logo className="w-full h-full" />
-            </div>
-        );
-    }
+    if (profile?.avatar_url) return <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />;
+    if (isAdmin) return <div className="w-full h-full flex items-center justify-center bg-black/50 p-1.5"><Logo className="w-full h-full" /></div>;
     const seed = profile?.username || user?.email || 'default';
     return <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`} alt="Avatar" className="w-full h-full object-cover" />;
   };
@@ -102,18 +105,20 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4 md:gap-8">
         
-        {/* LOGO AREA - KULLANICI AYARLARI (X:17 Y:-2) SABİTLENDİ VE BÜYÜTÜLDÜ */}
+        {/* LOGO AREA - TASARIM MODU ENTEGRE */}
         <div className="flex items-center shrink-0 relative">
           <Link href="/" className="flex items-center gap-3">
             <div 
                 onMouseDown={onMouseDown}
-                style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}
-                className={`relative transition-transform ${isDragging ? 'cursor-grabbing scale-110 z-[5000]' : isAdmin ? 'cursor-grab hover:scale-105' : ''}`}>
-                {/* LOGO BÜYÜTÜLDÜ: md:w-16 md:h-16 */}
-                <Logo className="w-12 h-12 md:w-16 md:h-16" />
-                
-                {isAdmin && (
-                    <div className={`absolute -bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-xl whitespace-nowrap pointer-events-none transition-opacity flex items-center gap-1 ${isDragging ? 'opacity-100' : 'opacity-0'}`}>
+                style={{ 
+                    transform: `translate(${logoPos.x}px, ${logoPos.y}px)`,
+                    width: `${logoPos.size}px`,
+                    height: `${logoPos.size}px`
+                }}
+                className={`relative transition-all duration-75 ${isDragging ? 'cursor-grabbing scale-105 z-[5000]' : isAdmin ? 'cursor-grab hover:scale-105' : ''}`}>
+                <Logo className="w-full h-full" />
+                {isAdmin && isDragging && (
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white text-[7px] font-black px-1.5 py-0.5 rounded shadow-xl whitespace-nowrap">
                         X:{logoPos.x} Y:{logoPos.y}
                     </div>
                 )}
@@ -130,6 +135,15 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 )}
             </div>
           </Link>
+
+          {/* ADMIN TASARIM BUTONU */}
+          {isAdmin && (
+            <button 
+                onClick={() => setIsDesignOpen(true)}
+                className="ml-4 p-2 bg-white/5 hover:bg-primary/20 text-white/30 hover:text-primary rounded-xl transition-all border border-white/5">
+                <Sliders size={16} />
+            </button>
+          )}
         </div>
 
         {/* SEARCH */}
@@ -168,27 +182,15 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                   <Upload size={14} />
                   <span className="hidden lg:inline">{t('upload')}</span>
                 </Link>
-                
                 <div className="relative">
-                  <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="w-9 md:w-10 h-9 md:h-10 rounded-xl overflow-hidden border border-border-custom hover:border-primary transition-all bg-[#111] shadow-inner">
-                    {renderAvatar()}
-                  </button>
-                  
+                  <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="w-9 md:w-10 h-9 md:h-10 rounded-xl overflow-hidden border border-border-custom hover:border-primary transition-all bg-[#111] shadow-inner">{renderAvatar()}</button>
                   {isProfileOpen && (
                     <>
                         <div className="fixed inset-0 z-[2000] md:hidden" onClick={() => setIsProfileOpen(false)} />
                         <div className="absolute top-12 right-0 w-56 md:w-64 bg-black border border-border-custom rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 z-[3000]">
-                            <div className="px-4 py-4 border-b border-border-custom mb-1">
-                                <p className="text-[10px] md:text-xs font-black uppercase italic text-white line-clamp-1">@{profile?.username || 'user'}</p>
-                            </div>
-                            <Link href="/profile" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-primary hover:text-white transition-all text-white/60 italic">
-                                <Settings size={16} />
-                                {t('settings')}
-                            </Link>
-                            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-red-500/10 text-red-500 transition-all italic">
-                                <LogOut size={16} />
-                                {t('logout')}
-                            </button>
+                            <div className="px-4 py-4 border-b border-border-custom mb-1"><p className="text-[10px] md:text-xs font-black uppercase italic text-white line-clamp-1">@{profile?.username || 'user'}</p></div>
+                            <Link href="/profile" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-primary hover:text-white transition-all text-white/60 italic"><Settings size={16} />{t('settings')}</Link>
+                            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-red-500/10 text-red-500 transition-all italic"><LogOut size={16} />{t('logout')}</button>
                         </div>
                     </>
                   )}
@@ -205,6 +207,39 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           )}
         </div>
       </div>
+
+      {/* LOGO TASARIM PANELİ (MODAL) */}
+      {isDesignOpen && (
+          <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
+              <div className="bg-[#111] border border-border-custom rounded-[2.5rem] w-full max-w-sm p-8 shadow-2xl space-y-8">
+                  <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">LOGO AYARLARI</h3>
+                      <button onClick={() => setIsDesignOpen(false)} className="p-2 hover:bg-white/10 rounded-full text-white/50"><CloseIcon size={20}/></button>
+                  </div>
+
+                  <div className="space-y-6">
+                      <div className="space-y-3">
+                          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40"><span>YATAY (X)</span><span>{logoPos.x}</span></div>
+                          <input type="range" min="-50" max="100" value={logoPos.x} onChange={(e) => setLogoPos({...logoPos, x: Number(e.target.value)})} className="w-full accent-primary bg-white/10 rounded-lg h-1.5 appearance-none cursor-pointer" />
+                      </div>
+                      <div className="space-y-3">
+                          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40"><span>DİKEY (Y)</span><span>{logoPos.y}</span></div>
+                          <input type="range" min="-50" max="50" value={logoPos.y} onChange={(e) => setLogoPos({...logoPos, y: Number(e.target.value)})} className="w-full accent-primary bg-white/10 rounded-lg h-1.5 appearance-none cursor-pointer" />
+                      </div>
+                      <div className="space-y-3">
+                          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40"><span>BOYUT</span><span>{logoPos.size}px</span></div>
+                          <input type="range" min="20" max="150" value={logoPos.size} onChange={(e) => setLogoPos({...logoPos, size: Number(e.target.value)})} className="w-full accent-primary bg-white/10 rounded-lg h-1.5 appearance-none cursor-pointer" />
+                      </div>
+                  </div>
+
+                  <button onClick={saveLogoConfig} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-primary/20">
+                      <Save size={16} /> AYARLARI KAYDET
+                  </button>
+                  <p className="text-[8px] text-center font-black text-white/20 uppercase tracking-widest">Sürükleyerek de ayarlayabilirsin lo!</p>
+              </div>
+          </div>
+      )}
+
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </nav>
   );
