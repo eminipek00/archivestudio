@@ -20,9 +20,9 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
   
-  // LOGO POSITIONER STATES
+  // LOGO POSITIONER STATES (Hizayı bozmamak için default 0,0 yapıyorum)
   const [isEditingLogo, setIsEditingLogo] = useState(false);
-  const [logoPos, setLogoPos] = useState({ x: 20, y: -1 });
+  const [logoPos, setLogoPos] = useState({ x: 0, y: 0 });
 
   const { language, setLanguage, t } = useLanguage();
   const supabase = createClient();
@@ -82,8 +82,8 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     <nav className="fixed top-0 left-0 right-0 z-[5000] py-4 bg-black border-b border-border-custom shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-8">
         
-        {/* LOGO AREA */}
-        <div className="flex items-center gap-2 group">
+        {/* LOGO AREA - KAYMA SIFIRLANDI */}
+        <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-3 shrink-0" style={{ transform: `translate(${logoPos.x}px, ${logoPos.y}px)` }}>
                 <div className="w-10 h-10 shrink-0 transform group-hover:rotate-12 transition-transform duration-500">
                     <Logo className="w-full h-full" />
@@ -94,18 +94,18 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </div>
             </Link>
 
-            {/* LOGO DÜZENLEME BUTONU (SENİN İÇİN HER ZAMAN GÖRÜNÜR) */}
+            {/* LOGO DÜZENLEME BUTONU (SADECE SENİN İÇİN, ÇOK KÜÇÜK VE SADE) */}
             {isAdmin && (
-                <div className="flex items-center gap-2 ml-14">
+                <div className="flex items-center ml-2">
                     {isEditingLogo ? (
-                        <div className="flex items-center gap-2 bg-[#0a0a0a] p-1.5 rounded-xl border border-primary/40 shadow-2xl animate-in zoom-in-95 duration-200">
-                            <input type="number" value={logoPos.x} onChange={(e) => setLogoPos({...logoPos, x: parseInt(e.target.value) || 0})} className="w-12 bg-black text-[10px] font-black text-white text-center rounded-lg border border-white/10 p-1" />
-                            <input type="number" value={logoPos.y} onChange={(e) => setLogoPos({...logoPos, y: parseInt(e.target.value) || 0})} className="w-12 bg-black text-[10px] font-black text-white text-center rounded-lg border border-white/10 p-1" />
-                            <button onClick={saveLogoPos} className="p-1.5 bg-primary text-white rounded-lg hover:scale-110 transition-all shadow-lg"><Check size={12}/></button>
+                        <div className="flex items-center gap-1 bg-[#0a0a0a] p-1 rounded-lg border border-white/5">
+                            <input type="number" value={logoPos.x} onChange={(e) => setLogoPos({...logoPos, x: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
+                            <input type="number" value={logoPos.y} onChange={(e) => setLogoPos({...logoPos, y: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
+                            <button onClick={saveLogoPos} className="p-1 bg-primary text-white rounded hover:scale-110 transition-all"><Check size={10}/></button>
                         </div>
                     ) : (
-                        <button onClick={() => setIsEditingLogo(true)} className="p-2 text-white/20 hover:text-primary transition-all rounded-xl hover:bg-white/5">
-                            <Edit2 size={14}/>
+                        <button onClick={() => setIsEditingLogo(true)} className="p-1 text-white/5 hover:text-primary transition-all rounded">
+                            <Edit2 size={10}/>
                         </button>
                     )}
                 </div>
