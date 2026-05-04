@@ -169,7 +169,7 @@ const ProfilePage = () => {
                 <div className="flex items-center justify-between border-b border-white/5 pb-4">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-primary/10 rounded-xl text-primary"><UserSquare2 size={20} /></div>
-                        <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">PROFİL BİLGİLERİ</h3>
+                        <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{t('accountManagement')}</h3>
                     </div>
                     <button type="button" onClick={() => setIsEditingProfile(!isEditingProfile)} className="text-[9px] font-black uppercase text-primary hover:underline">{isEditingProfile ? t('cancel') : t('edit')}</button>
                 </div>
@@ -185,12 +185,23 @@ const ProfilePage = () => {
                 </div>
                 {isEditingProfile && (
                     <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 shadow-xl shadow-primary/20">
-                        {loading ? <Loader2 className="animate-spin" size={16}/> : <Save size={16}/>} DEĞİŞİKLİKLERİ KAYDET
+                        {loading ? <Loader2 className="animate-spin" size={16}/> : <Save size={16}/>} {t('save')}
                     </button>
                 )}
             </form>
 
             <div className="space-y-6">
+                <div className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-4">
+                    <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                        <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><Heart size={20} fill="currentColor" /></div>
+                        <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{t('myLikes')}</h3>
+                    </div>
+                    <div className="py-8 flex flex-col items-center justify-center text-white/10 text-center">
+                        <Trophy size={32} className="mb-2 opacity-5" />
+                        <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">HENÜZ FAVORİ ASSETİN YOK LO!<br/>BEĞENDİĞİN PAKETLER BURADA GÖRÜNECEK.</p>
+                    </div>
+                </div>
+
                 <div className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex items-center justify-between group">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-muted rounded-2xl text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all"><AtSign size={20} /></div>
@@ -205,7 +216,7 @@ const ProfilePage = () => {
                 <div className="bg-primary/5 border border-primary/10 p-8 rounded-[3rem] flex items-center gap-4 group">
                     <div className="p-3 bg-primary/10 rounded-2xl text-primary"><Trophy size={20} /></div>
                     <div>
-                        <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">EDİTÖR SEVİYESİ</p>
+                        <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">{isAdmin ? t('masterArchivist') : t('contributor')}</p>
                         <p className="text-xs font-black text-white uppercase italic">{isAdmin ? 'MASTER ARCHIVIST' : 'CONTRIBUTOR'}</p>
                     </div>
                 </div>

@@ -97,7 +97,7 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                     <img src={uploader.avatar_url || '/logo.png'} alt={uploader.username} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none mb-0.5">Uploader</span>
+                    <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none mb-0.5">{t('uploader')}</span>
                     <span className="text-[10px] font-black text-white uppercase italic leading-none group-hover/uploader:text-primary transition-colors">@{uploader.username}</span>
                 </div>
             </Link>
@@ -152,7 +152,7 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                             <img src={uploader.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover" />
                         </div>
                         <div>
-                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none mb-1">UPLOADED BY</p>
+                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none mb-1">{t('uploader')}</p>
                             <p className="text-xs font-black text-white uppercase italic group-hover/modal-uploader:text-primary transition-colors">@{uploader.username}</p>
                         </div>
                     </Link>
@@ -162,11 +162,11 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                     {isEditing ? (
                         <button onClick={handleUpdate} disabled={loading} className="w-full bg-green-500 hover:bg-green-600 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all active:scale-95">
                             {loading ? <div className="animate-spin h-5 w-5 border-2 border-white rounded-full border-t-transparent" /> : <Save size={20} />}
-                            KAYDET
+                            {t('save')}
                         </button>
                     ) : (
                         <a href={asset.download_url} target="_blank" className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95">
-                            <Download size={20} />İNDİR
+                            <Download size={20} />{t('download') || 'İNDİR'}
                         </a>
                     )}
                     <button onClick={handleShare} className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all">

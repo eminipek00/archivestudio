@@ -1,15 +1,16 @@
 "use client";
 
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Database } from 'lucide-react';
 import { useLanguage } from '@/utils/LanguageContext';
 
 interface HeroProps {
   activeCategory: string;
   onCategoryChange: (category: string) => void;
+  totalAssets?: number;
 }
 
-const Hero = ({ activeCategory, onCategoryChange }: HeroProps) => {
+const Hero = ({ activeCategory, onCategoryChange, totalAssets = 0 }: HeroProps) => {
   const { t } = useLanguage();
 
   const categories = [
@@ -39,7 +40,7 @@ const Hero = ({ activeCategory, onCategoryChange }: HeroProps) => {
 
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest mb-6">
           <Sparkles size={14} />
-          <span>PROFESYONEL EDİTÖRLER İÇİN SEÇİLMİŞ EN KALİTELİ KAYNAKLAR</span>
+          <span>{t('heroSub')}</span>
         </div>
         
         <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-[0.85] mb-6">
@@ -47,6 +48,18 @@ const Hero = ({ activeCategory, onCategoryChange }: HeroProps) => {
             <span key={i} className={i % 2 === 1 ? "text-primary" : ""}>{word} </span>
           ))}
         </h1>
+        
+        {/* İSTATİSTİK ALANI (HERO İÇİNDE - DAHA ŞIK) */}
+        <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px w-8 bg-border-custom" />
+            <div className="flex items-center gap-2 text-white/20">
+                <Database size={14} />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                    {totalAssets} {t('totalAssets')}
+                </span>
+            </div>
+            <div className="h-px w-8 bg-border-custom" />
+        </div>
         
         <p className="max-w-2xl mx-auto text-muted-foreground text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 italic">
           Sahne paketleri, ses efektleri ve geçişler tek bir çatı altında.

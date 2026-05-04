@@ -73,24 +73,6 @@ const AssetGrid = ({ searchQuery, activeCategory }: AssetGridProps) => {
 
   return (
     <div className="space-y-8">
-        {/* ÜST İSTATİSTİK BARI (KÜÇÜK VE ŞIK) */}
-        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-12 px-4 py-6 bg-[#111] border-y border-border-custom">
-            <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary"><Database size={16}/></div>
-                <div className="flex flex-col">
-                    <span className="text-xl font-black text-white italic leading-none">{assets.length}</span>
-                    <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">TOPLAM ASSET</span>
-                </div>
-            </div>
-            <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500/10 rounded-lg text-green-500"><TrendingUp size={16}/></div>
-                <div className="flex flex-col">
-                    <span className="text-xl font-black text-white italic leading-none">{filteredAssets.length}</span>
-                    <span className="text-[8px] font-black uppercase text-white/30 tracking-widest">FİLTRELENEN</span>
-                </div>
-            </div>
-        </div>
-
         {filteredAssets.length === 0 ? (
             <div className="w-full py-20 flex flex-col items-center justify-center gap-4 animate-in fade-in zoom-in duration-500">
                 <div className="p-6 bg-muted rounded-[2.5rem] border border-border-custom">
