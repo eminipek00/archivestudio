@@ -43,19 +43,38 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     window.location.href = "/";
   };
 
-  const handlePremiumClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    showToast("Premium üyelik sistemi yakında aktif edilecektir!", "info");
-  };
-
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
-  const displayAvatar = profile?.avatar_url;
+
+  // AVATAR MANTIĞI: SADECE ADMIN'DE LOGO OLSUN
+  const renderAvatar = () => {
+    if (isAdmin) {
+        return (
+            <div className="w-full h-full flex items-center justify-center bg-black/50 p-1.5">
+                <Logo className="w-full h-full" />
+            </div>
+        );
+    }
+    
+    if (profile?.avatar_url) {
+        return <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />;
+    }
+
+    // Sıradan kullanıcılar için rastgele avatar
+    const seed = profile?.username || user?.email || 'default';
+    return (
+        <img 
+            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`} 
+            alt="Avatar" 
+            className="w-full h-full object-cover" 
+        />
+    );
+  };
 
   return (
     <nav className="sticky top-0 z-[1000] w-full border-b border-border-custom bg-black">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4 md:gap-8">
         
-        {/* RESMİ YILDIRIMLI LOGO */}
+        {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Logo className="w-10 h-10 md:w-12 md:h-12" />
           <div className="flex flex-col">
@@ -106,13 +125,8 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </Link>
                 
                 <div className="relative">
-                  <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="w-9 md:w-10 h-9 md:h-10 rounded-xl overflow-hidden border border-border-custom hover:border-primary transition-all bg-muted shadow-inner">
-                    {displayAvatar ? <img src={displayAvatar} alt="P" className="w-full h-full object-cover" /> : (
-                        <div className="w-full h-full flex items-center justify-center bg-black/50">
-                            {/* EĞER PP YOKSA YILDIRIMLI LOGO GÖRÜNSÜN */}
-                            <Logo className="w-7 h-7" />
-                        </div>
-                    )}
+                  <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="w-9 md:w-10 h-9 md:h-10 rounded-xl overflow-hidden border border-border-custom hover:border-primary transition-all bg-[#111] shadow-inner">
+                    {renderAvatar()}
                   </button>
                   
                   {isProfileOpen && (
@@ -120,7 +134,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                         <div className="fixed inset-0 z-[2000] md:hidden" onClick={() => setIsProfileOpen(false)} />
                         <div className="absolute top-12 right-0 w-56 md:w-64 bg-black border border-border-custom rounded-2xl shadow-2xl p-2 animate-in fade-in slide-in-from-top-2 z-[3000]">
                             <div className="px-4 py-4 border-b border-border-custom mb-1">
-                                <p className="text-[10px] md:text-xs font-black uppercase italic text-white line-clamp-1">@{profile?.username || 'admin'}</p>
+                                <p className="text-[10px] md:text-xs font-black uppercase italic text-white line-clamp-1">@{profile?.username || 'user'}</p>
                             </div>
                             <Link href="/profile" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-primary hover:text-white transition-all text-white/60 italic">
                                 <Settings size={16} />
