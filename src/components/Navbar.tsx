@@ -45,8 +45,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
-  // AVATAR MANTIĞI: SADECE ADMIN'DE LOGO OLSUN
+  // AVATAR MANTIĞI: Önce yüklenen fotoğraf, yoksa ADMIN ise logo, yoksa rastgele avatar
   const renderAvatar = () => {
+    if (profile?.avatar_url) {
+        return <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />;
+    }
+
     if (isAdmin) {
         return (
             <div className="w-full h-full flex items-center justify-center bg-black/50 p-1.5">
@@ -55,10 +59,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         );
     }
     
-    if (profile?.avatar_url) {
-        return <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />;
-    }
-
     // Sıradan kullanıcılar için rastgele avatar
     const seed = profile?.username || user?.email || 'default';
     return (
@@ -114,6 +114,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="hidden sm:block">
+            <ThemeToggle />
           </div>
 
           {authLoaded ? (
