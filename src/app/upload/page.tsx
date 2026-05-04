@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
-import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, AlertCircle, Link as LinkIcon } from "lucide-react";
+import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useLanguage } from "@/utils/LanguageContext";
 import { Toast, useToast } from "@/components/Toast";
@@ -21,17 +21,16 @@ const UploadPage = () => {
   const { t } = useLanguage();
   const { toast, showToast, hideToast } = useToast();
   const supabase = createClient();
-  const categories = [t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
+  const categories = [t('tags.all'), t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
 
-  const MAX_FILE_SIZE_MB = 20; // 20 MB SINIRI
+  const MAX_FILE_SIZE_MB = 20;
+  // PROFESYONEL DOSYA FİLTRESİ
+  const ACCEPTED_FILE_TYPES = ".zip,.rar,.7z,.aep,.prproj,.psd,.ai,.cube,.mp4,.mov,.png,.jpg";
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 2 * 1024 * 1024) {
-          showToast("Kapak fotoğrafı 2MB'dan büyük olamaz!", "error");
-          return;
-      }
+      if (file.size > 2 * 1024 * 1024) return showToast("Kapak fotoğrafı 2MB'dan büyük olamaz!", "error");
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
     }
@@ -41,11 +40,9 @@ const UploadPage = () => {
     if (e.target.files && e.target.files[0]) { 
         const file = e.target.files[0];
         const fileSizeMB = file.size / (1024 * 1024);
-        
         if (fileSizeMB > MAX_FILE_SIZE_MB) {
             showToast(`Dosya ${MAX_FILE_SIZE_MB}MB'dan büyük! Lütfen Mega/Drive yükleyip LİNK kullanın.`, "error");
-            setAssetFile(null);
-            e.target.value = ""; // Inputu sıfırla
+            e.target.value = "";
             return;
         }
         setAssetFile(file); 
@@ -54,7 +51,7 @@ const UploadPage = () => {
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!useExternal && !assetFile) return showToast("Lütfen bir dosya seçin veya link kullanın.", "error");
+    if (!useExternal && !assetFile) return showToast("Lütfen bir dosya seçin.", "error");
     
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
@@ -78,7 +75,7 @@ const UploadPage = () => {
 
         const { error } = await supabase.from('assets').insert([{
             title, category, download_url: finalDownloadUrl, image_url: uploadedImageUrl,
-            author_id: user.id, file_type: assetFile ? assetFile.name.split('.').pop() : 'link'
+            author_id: user.id, file_type: assetFile ? assetFile.name.split('.').pop()?.toUpperCase() : 'LINK'
         }]);
 
         if (error) throw error;
@@ -97,7 +94,7 @@ const UploadPage = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
-                        <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">Maksimum Yükleme Sınırı: {MAX_FILE_SIZE_MB}MB</p>
+                        <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mt-1">Sınır: {MAX_FILE_SIZE_MB}MB</p>
                     </div>
                     <span className="text-[9px] font-black uppercase text-primary bg-primary/5 px-4 py-2 rounded-xl border border-primary/10 tracking-widest italic">{t('admin')}</span>
                 </div>
@@ -113,7 +110,7 @@ const UploadPage = () => {
 
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-2">
-                            {categories.map(c => (
+                            {categories.filter(c => c !== t('tags.all')).map(c => (
                                 <button key={c} type="button" onClick={() => setCategory(c)} className={`px-3 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${category === c ? 'bg-primary border-primary text-white shadow-lg' : 'bg-muted border-border-custom text-white/40'}`}>{c}</button>
                             ))}
                         </div>
@@ -125,15 +122,15 @@ const UploadPage = () => {
 
                         {useExternal ? (
                             <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                                <label className="text-[9px] font-black text-primary uppercase ml-2 italic flex items-center gap-2"><LinkIcon size={12}/> Bulut Depolama Linki (Mega, Drive vb.)</label>
-                                <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white" placeholder="https://mega.nz/..." required />
+                                <label className="text-[9px] font-black text-primary uppercase ml-2 italic flex items-center gap-2"><LinkIcon size={12}/> BULUT DEPOLAMA LİNKİ</label>
+                                <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white" placeholder="https://..." required />
                             </div>
                         ) : (
                             <div className="relative group animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div className={`w-full py-8 rounded-2xl border-2 border-dashed transition-all flex flex-col items-center gap-2 bg-muted/30 ${assetFile ? 'border-primary bg-primary/5' : 'border-border-custom group-hover:border-primary/50'}`}>
                                     <FileArchive size={28} className={assetFile ? 'text-primary' : 'text-muted-foreground'}/>
-                                    <span className="text-[9px] font-black uppercase tracking-widest">{assetFile ? assetFile.name : 'DOSYA SEÇ (MAX 20MB)'}</span>
-                                    <input type="file" onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required={!useExternal} />
+                                    <span className="text-[9px] font-black uppercase tracking-widest">{assetFile ? assetFile.name : 'Asset Seç'}</span>
+                                    <input type="file" accept={ACCEPTED_FILE_TYPES} onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required={!useExternal} />
                                 </div>
                             </div>
                         )}
@@ -147,23 +144,16 @@ const UploadPage = () => {
               </form>
           ) : (
             <div className="text-center py-20 space-y-4">
-                <div className="w-20 h-20 bg-green-500/10 rounded-3xl flex items-center justify-center mx-auto text-green-500 animate-bounce"><CheckCircle2 size={40} /></div>
+                <div className="w-20 h-20 bg-green-500/10 rounded-3xl flex items-center justify-center mx-auto text-green-500"><CheckCircle2 size={40} /></div>
                 <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">{t('uploadSuccess')}</h2>
             </div>
           )}
         </div>
       </main>
-
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
-
-      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0">
-        <span className="text-[8px] font-black uppercase text-white/30 italic">sytexarchive</span>
-        <p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">&copy; {new Date().getFullYear()} sytexarchive</p>
-      </footer>
+      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0"><span className="text-[8px] font-black uppercase text-white/30 italic">sytexarchive</span><p className="text-[8px] font-bold text-white/20 uppercase tracking-widest">&copy; {new Date().getFullYear()} sytexarchive</p></footer>
     </div>
   );
 };
-
-const Loader2 = ({ size, className }: { size: number, className?: string }) => <Upload size={size} className={className} />;
 
 export default UploadPage;
