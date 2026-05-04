@@ -5,6 +5,7 @@ import { Download, ExternalLink, FileText, User, X, Calendar, Share2, PlayCircle
 import { useLanguage } from '@/utils/LanguageContext';
 import { createClient } from '@/utils/supabase/client';
 import { Toast, useToast } from './Toast';
+import Link from 'next/link';
 
 const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean, onDelete?: (id: string) => void }) => {
   const { t } = useLanguage();
