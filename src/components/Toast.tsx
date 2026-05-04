@@ -14,9 +14,23 @@ export const useToast = () => {
 };
 
 export const Toast = ({ message, type, onClose }: { message: string, type: 'success' | 'error' | 'info', onClose: () => void }) => {
+  const [isLeaving, setIsLeaving] = useState(false);
+
   useEffect(() => {
-    const timer = setTimeout(onClose, 3000);
-    return () => clearTimeout(timer);
+    // 3 saniye sonra kaybolma animasyonunu başlat
+    const leaveTimer = setTimeout(() => {
+      setIsLeaving(true);
+    }, 3000);
+
+    // Animasyon bittikten sonra (500ms) bileşeni tamamen kaldır
+    const removeTimer = setTimeout(() => {
+      onClose();
+    }, 3500);
+
+    return () => {
+      clearTimeout(leaveTimer);
+      clearTimeout(removeTimer);
+    };
   }, [onClose]);
 
   const icons = {
@@ -26,17 +40,17 @@ export const Toast = ({ message, type, onClose }: { message: string, type: 'succ
   };
 
   const colors = {
-    success: 'border-green-500/20 bg-black/90 shadow-green-500/20',
-    error: 'border-red-500/20 bg-black/90 shadow-red-500/20',
-    info: 'border-primary/20 bg-black/90 shadow-primary/20'
+    success: 'border-green-500/20 bg-black/95 shadow-green-500/10',
+    error: 'border-red-500/20 bg-black/95 shadow-red-500/10',
+    info: 'border-primary/20 bg-black/95 shadow-primary/10'
   };
 
   return (
-    <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[10000] flex items-center justify-center p-4 pointer-events-none w-full max-w-sm">
-        <div className={`pointer-events-auto flex items-center gap-3 px-6 py-3 rounded-2xl border shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-300 w-full ${colors[type]}`}>
+    <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[10000] flex items-center justify-center p-4 pointer-events-none w-full max-w-sm transition-all duration-500 ease-in-out ${isLeaving ? 'opacity-0 -translate-y-4' : 'opacity-100 translate-y-0'}`}>
+        <div className={`pointer-events-auto flex items-center gap-3 px-6 py-3 rounded-2xl border shadow-2xl backdrop-blur-2xl animate-in fade-in slide-in-from-top-4 duration-500 w-full ${colors[type]}`}>
             {icons[type]}
             <span className="text-[9px] font-black uppercase tracking-widest text-white italic flex-1">{message}</span>
-            <button onClick={onClose} className="opacity-30 hover:opacity-100 transition-opacity">
+            <button onClick={() => { setIsLeaving(true); setTimeout(onClose, 500); }} className="opacity-30 hover:opacity-100 transition-opacity">
                 <X size={14} className="text-white" />
             </button>
         </div>
