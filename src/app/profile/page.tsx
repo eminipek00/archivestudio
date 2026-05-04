@@ -130,7 +130,7 @@ const ProfilePage = () => {
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
       <Navbar />
-      <main className="flex-grow overflow-y-auto px-4 py-8 pt-28 custom-scrollbar">
+      <main className="flex-grow overflow-y-auto px-4 py-8 pt-28 no-scrollbar">
         <div className="max-w-4xl mx-auto space-y-8">
           
           <div className="flex flex-col md:flex-row items-center gap-8 bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl relative overflow-hidden">
@@ -232,7 +232,7 @@ const ProfilePage = () => {
                         <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">{t('noFavorites')}</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="grid grid-cols-1 gap-4 max-h-[600px] overflow-y-auto pr-2 no-scrollbar">
                         {favoriteAssets.map((asset) => (
                             <AssetCard key={asset.id} asset={asset} isAdmin={false} />
                         ))}

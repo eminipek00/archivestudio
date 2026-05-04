@@ -74,3 +74,13 @@ html, body {
 .custom-scrollbar-minimal::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+
+/* HIDE ALL SCROLLBARS GLOBALLY */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
