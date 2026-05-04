@@ -26,7 +26,16 @@ const UploadPage = () => {
 
   const MAX_FILE_SIZE_MB = 20;
 
-  // KATEGORİ BAZLI DOSYA FİLTRESİ (MANTIKLI OLAN)
+  // KATEGORİ BAZLI VARSAYILAN KAPAKLAR (Eğer kullanıcı yüklemezse)
+  const DEFAULT_THUMBS: Record<string, string> = {
+    "Sahne Paketleri": "https://images.unsplash.com/photo-1492619334760-227b9a52a218?w=800&q=80",
+    "After Effects": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+    "Alight Motion": "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=800&q=80",
+    "LUT Paketleri": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&q=80",
+    "Overlay": "https://images.unsplash.com/photo-1493612276216-ee3925520721?w=800&q=80",
+    "Default": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80"
+  };
+
   const getAcceptedFiles = (cat: string) => {
     const c = cat.toLowerCase();
     const common = ".zip,.rar,.7z";
@@ -82,7 +91,8 @@ const UploadPage = () => {
     if (!user) return showToast("Hata: Giriş yapmalısınız.", "error");
 
     try {
-        let uploadedImageUrl = "";
+        let uploadedImageUrl = DEFAULT_THUMBS[category] || DEFAULT_THUMBS["Default"];
+        
         if (imageFile) {
             const imgName = `assets/${Date.now()}-thumb-${imageFile.name}`;
             const { error: imgErr } = await supabase.storage.from('avatars').upload(imgName, imageFile);
@@ -118,7 +128,7 @@ const UploadPage = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
-                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">Sınır: {MAX_FILE_SIZE_MB}MB</p>
+                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">Otomatik Kapak Sistemi Aktif</p>
                     </div>
                     <span className="text-[8px] md:text-[9px] font-black uppercase text-primary bg-primary/5 px-3 md:px-4 py-2 rounded-xl border border-primary/10 tracking-widest italic">{t('admin')}</span>
                 </div>
@@ -126,8 +136,8 @@ const UploadPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                     <div className="space-y-6">
                         <div className="relative aspect-video rounded-3xl bg-muted overflow-hidden border-2 border-dashed border-border-custom hover:border-primary transition-all">
-                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">KAPAK RESMİ</span></div>}
-                            <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" required />
+                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">KAPAK (İSTEĞE BAĞLI)</span></div>}
+                            <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                         </div>
                         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white focus:ring-1 focus:ring-primary/50 outline-none" placeholder="VARLIK BAŞLIĞI" required />
                     </div>
