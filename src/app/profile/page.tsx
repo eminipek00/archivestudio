@@ -82,6 +82,8 @@ const ProfilePage = () => {
     }
   };
 
+  const onCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => { setCroppedAreaPixels(croppedAreaPixels); }, []);
+
   const handleCropSave = async () => {
     if (image && croppedAreaPixels && user) {
         setLoading(true);
