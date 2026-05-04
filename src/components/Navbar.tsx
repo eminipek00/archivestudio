@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, X } from 'lucide-react';
+import { Globe, LogIn, UserPlus, Upload, LogOut, Settings } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
@@ -9,26 +9,17 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from './Logo';
 
-interface NavbarProps {
-  onSearch?: (query: string) => void;
-}
-
-const Navbar = ({ onSearch }: NavbarProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+const Navbar = () => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [localSearch, setLocalSearch] = useState("");
   
   const { language, setLanguage, t } = useLanguage();
   const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-
     const getUser = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
@@ -38,8 +29,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
       }
     };
     getUser();
-
-    return () => window.removeEventListener('scroll', handleScroll);
   }, [supabase]);
 
   const handleLogout = async () => {
@@ -50,13 +39,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     router.refresh();
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setLocalSearch(val);
-    if (onSearch) onSearch(val);
-  };
-
-  // Sadece isimler kalsın, bayraklar ve kodlar kaldırıldı
   const languages: { code: Language; name: string }[] = [
     { code: 'tr', name: 'Türkçe' },
     { code: 'en', name: 'English' },
@@ -74,11 +56,11 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-500 ${isScrolled ? 'py-3 bg-black/80 backdrop-blur-2xl border-b border-border-custom' : 'py-6 bg-transparent'}`}>
+    <nav className="fixed top-0 left-0 right-0 z-[5000] py-4 bg-black border-b border-border-custom shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         
-        {/* LOGO AREA */}
-        <Link href="/" className="flex items-center gap-3 group shrink-0">
+        {/* LOGO AREA - ESKİ YERİNDE */}
+        <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 p-2 bg-primary rounded-xl shadow-lg shadow-primary/20 transform group-hover:rotate-12 transition-transform duration-500">
             <Logo className="w-full h-full text-white" />
           </div>
@@ -88,26 +70,18 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           </div>
         </Link>
 
-        {/* SEARCH BAR (Eğer onSearch varsa göster) */}
-        {onSearch && (
-          <div className="hidden md:flex flex-1 max-w-md mx-8 relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={16} />
-            <input type="text" value={localSearch} onChange={handleSearchChange} placeholder={t('searchPlaceholder')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-xs font-bold text-white outline-none focus:border-primary/50 focus:bg-white/10 transition-all" />
-          </div>
-        )}
-
-        {/* NAVIGATION & ACTIONS */}
-        <div className="flex items-center gap-4 shrink-0">
+        {/* ACTIONS */}
+        <div className="flex items-center gap-4">
           
-          {/* LANGUAGE SELECTOR (SADELEŞTİRİLMİŞ) */}
+          {/* LANGUAGE SELECTOR - TEMİZ VE SADE */}
           <div className="relative">
-            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); }} className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
-              <Globe size={18} />
-              <span className="text-[10px] font-black uppercase tracking-widest">{languages.find(l => l.code === language)?.name}</span>
+            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); }} className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-all flex items-center gap-3">
+              <Globe size={18} className="text-primary" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">{languages.find(l => l.code === language)?.name}</span>
             </button>
             
             {showLangMenu && (
-              <div className="absolute top-full right-0 mt-3 w-48 bg-card border border-border-custom rounded-2xl p-2 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">
+              <div className="absolute top-full right-0 mt-3 w-48 bg-card border border-border-custom rounded-2xl p-2 shadow-2xl animate-in zoom-in-95 duration-200">
                 <div className="grid grid-cols-1 gap-1 max-h-[300px] overflow-y-auto custom-scrollbar">
                   {languages.map((lang) => (
                     <button key={lang.code} onClick={() => { setLanguage(lang.code); setShowLangMenu(false); }} className={`flex items-center justify-start px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${language === lang.code ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:bg-white/5 hover:text-white'}`}>
@@ -122,7 +96,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           {user ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
-                <Link href="/upload" className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                <Link href="/upload" className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
                   <Upload size={14} /> {t('upload')}
                 </Link>
               )}
@@ -158,9 +132,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <Link href="/auth" className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-white/5 text-white/60 hover:text-white hover:bg-white/10 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">
-                <LogIn size={14} /> {t('login')}
-              </Link>
               <Link href="/auth" className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
                 <UserPlus size={14} /> {t('register')}
               </Link>
