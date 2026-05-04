@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import { createClient } from "@/utils/supabase/client";
-import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle, Edit3, Heart, Trophy, Database } from "lucide-react";
+import { User, Lock, Camera, X, AtSign, UserSquare2, Save, Loader2, CheckCircle, Trash2, AlertTriangle, Edit3, Heart, Trophy, Database, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/utils/LanguageContext";
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from "@/utils/imageUtils";
@@ -15,6 +15,7 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState<any>(null);
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [showFavorites, setShowFavorites] = useState(true);
   const [assetCount, setAssetCount] = useState(0);
   const [favoriteAssets, setFavoriteAssets] = useState<any[]>([]);
   
@@ -31,13 +32,12 @@ const ProfilePage = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [isCropping, setIsCropping] = useState(false);
 
-  const fetchFavorites = useCallback(async () => {
-      const favoritesIds = JSON.parse(localStorage.getItem('sytex_favorites') || '[]');
-      if (favoritesIds.length > 0) {
-          const { data } = await supabase
-            .from('assets')
-            .select('*, profiles:author_id (username, avatar_url, full_name)')
-            .in('id', favoritesIds);
+  const fetchFavorites = useCallback(async (userId: string) => {
+      // GLOBAL LIKES TABLOSUNDAN ÇEK
+      const { data: likesData } = await supabase.from('likes').select('asset_id').eq('user_id', userId);
+      if (likesData && likesData.length > 0) {
+          const ids = likesData.map(l => l.asset_id);
+          const { data } = await supabase.from('assets').select('*, profiles:author_id (username, avatar_url, full_name)').in('id', ids);
           if (data) setFavoriteAssets(data);
       } else {
           setFavoriteAssets([]);
@@ -54,19 +54,20 @@ const ProfilePage = () => {
             setProfile(profileData);
             setFullName(profileData.full_name || "");
             setUsername(profileData.username || "");
+            setShowFavorites(profileData.show_favorites ?? true);
         }
 
         const { count } = await supabase.from('assets').select('*', { count: 'exact', head: true }).eq('author_id', authUser.id);
         setAssetCount(count || 0);
+        fetchFavorites(authUser.id);
       }
     };
     getData();
-    fetchFavorites();
 
-    // Listen for local changes to favorites
-    window.addEventListener('favoritesUpdated', fetchFavorites);
-    return () => window.removeEventListener('favoritesUpdated', fetchFavorites);
-  }, [supabase, fetchFavorites]);
+    const handleUpdate = () => { if (user) fetchFavorites(user.id); };
+    window.addEventListener('favoritesUpdated', handleUpdate);
+    return () => window.removeEventListener('favoritesUpdated', handleUpdate);
+  }, [supabase, fetchFavorites, user?.id]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,12 +78,13 @@ const ProfilePage = () => {
             id: user.id,
             full_name: fullName,
             username: username,
+            show_favorites: showFavorites,
             email: user.email,
             updated_at: new Date().toISOString()
         });
         if (error) throw error;
         setIsEditingProfile(false);
-    } catch (err: any) { alert(err.message); } finally { setLoading(true); window.location.reload(); }
+    } catch (err: any) { alert(err.message); } finally { setLoading(false); window.location.reload(); }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,10 +154,9 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* HESAP YÖNETİMİ & FAVORİLER */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div className="space-y-8">
-                {/* HESAP YÖNETİMİ (KOMPAKT TASARIM) */}
+                {/* HESAP YÖNETİMİ */}
                 <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6">
                     <div className="flex items-center justify-between border-b border-white/5 pb-4">
                         <div className="flex items-center gap-3">
@@ -172,6 +173,17 @@ const ProfilePage = () => {
                         <div className="space-y-1">
                             <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('username')}</label>
                             <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
+                        </div>
+                        
+                        {/* GİZLİLİK ANAHTARI (TOGGLE) */}
+                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 mt-2">
+                            <div className="flex items-center gap-3">
+                                {showFavorites ? <Eye size={16} className="text-primary" /> : <EyeOff size={16} className="text-white/20" />}
+                                <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">Favorileri Göster</span>
+                            </div>
+                            <button type="button" onClick={() => setShowFavorites(!showFavorites)} disabled={!isEditingProfile} className={`w-12 h-6 rounded-full transition-all relative ${showFavorites ? 'bg-primary' : 'bg-white/10'} ${!isEditingProfile && 'opacity-30'}`}>
+                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${showFavorites ? 'left-7' : 'left-1'}`} />
+                            </button>
                         </div>
                     </div>
                     {isEditingProfile && (
@@ -193,7 +205,7 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            {/* FAVORİ VARLIKLARIM (CANLI LİSTE) */}
+            {/* FAVORİ VARLIKLARIM (DATABASE LİSTE) */}
             <div className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6 min-h-[400px]">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                     <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><Heart size={20} fill="currentColor" /></div>
@@ -203,7 +215,7 @@ const ProfilePage = () => {
                 {favoriteAssets.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-white/10 text-center space-y-4">
                         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center"><Heart size={32} className="opacity-10" /></div>
-                        <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">HENÜZ FAVORİ VARLIK EKLEMEDİNİZ.<br/>BEĞENDİĞİNİZ PAKETLER BURADA GÖRÜNECEKTİR.</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">HENÜZ FAVORİ VARLIK EKLEMEDİNİZ.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
