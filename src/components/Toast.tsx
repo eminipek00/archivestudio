@@ -20,9 +20,9 @@ export const Toast = ({ message, type, onClose }: { message: string, type: 'succ
   }, [onClose]);
 
   const icons = {
-    success: <CheckCircle2 className="text-green-500" size={18} />,
-    error: <AlertCircle className="text-red-500" size={18} />,
-    info: <Info className="text-primary" size={18} />
+    success: <CheckCircle2 className="text-green-500" size={16} />,
+    error: <AlertCircle className="text-red-500" size={16} />,
+    info: <Info className="text-primary" size={16} />
   };
 
   const colors = {
@@ -32,12 +32,11 @@ export const Toast = ({ message, type, onClose }: { message: string, type: 'succ
   };
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 pointer-events-none">
-        <div className={`pointer-events-auto flex items-center gap-4 px-6 py-4 rounded-2xl border shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in duration-300 ${colors[type]}`}>
+    <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[10000] flex items-center justify-center p-4 pointer-events-none w-full max-w-sm">
+        <div className={`pointer-events-auto flex items-center gap-3 px-6 py-3 rounded-2xl border shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-300 w-full ${colors[type]}`}>
             {icons[type]}
-            <span className="text-[10px] font-black uppercase tracking-widest text-white italic">{message}</span>
-            <div className="w-[1px] h-4 bg-white/10 ml-2" />
-            <button onClick={onClose} className="opacity-40 hover:opacity-100 transition-opacity ml-1">
+            <span className="text-[9px] font-black uppercase tracking-widest text-white italic flex-1">{message}</span>
+            <button onClick={onClose} className="opacity-30 hover:opacity-100 transition-opacity">
                 <X size={14} className="text-white" />
             </button>
         </div>
