@@ -206,7 +206,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute top-[120%] right-0 w-[85vw] max-w-64 md:max-w-72 bg-[#0a0a0a] border border-border-custom rounded-[2rem] md:rounded-[2.5rem] p-4 shadow-2xl animate-in slide-in-from-top-2 duration-300 z-[6000] max-h-[80vh] overflow-y-auto no-scrollbar">
+                  <div className="absolute top-[120%] right-0 w-[85vw] max-w-64 md:max-w-72 bg-[#0a0a0a] border border-border-custom rounded-[2rem] md:rounded-[2.5rem] p-4 shadow-2xl animate-in slide-in-from-top-2 duration-300 z-[6000]">
                     <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b border-white/5 mb-2 text-left">
                       <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-white/10 bg-[#050505]">
                         <img src={profile?.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover" />
