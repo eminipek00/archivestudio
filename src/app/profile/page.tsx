@@ -148,7 +148,7 @@ const ProfilePage = () => {
                 <p className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.2em] italic opacity-60">@{profile?.username || 'user'}</p>
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1 md:pt-2">
                     <div className="px-2 md:px-3 py-1 bg-white/5 border border-white/5 rounded-lg md:rounded-xl flex items-center gap-1.5 md:gap-2">
-                        <Database size={10} className="text-primary md:w-[12px]" />
+                        <Database className="text-primary w-[10px] md:w-[12px]" />
                         <span className="text-[8px] md:text-[10px] font-black text-white italic">{assetCount} {t('uploaded')}</span>
                     </div>
                     <div className="px-2 md:px-3 py-1 bg-white/5 border border-white/5 rounded-lg md:rounded-xl flex items-center gap-1.5 md:gap-2">
@@ -209,7 +209,7 @@ const ProfilePage = () => {
 
                 <div className="bg-card border border-border-custom p-4 md:p-5 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl flex items-center justify-between group">
                     <div className="flex items-center gap-3 md:gap-4 text-left">
-                        <div className="p-2.5 md:p-3 bg-muted rounded-xl md:rounded-2xl text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all"><AtSign size={14} md:size={16} /></div>
+                        <div className="p-2.5 md:p-3 bg-muted rounded-xl md:rounded-2xl text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all"><AtSign className="w-[14px] md:w-[16px]" /></div>
                         <div>
                             <p className="text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-widest mb-0.5">{t('emailAddress')}</p>
                             <p className="text-[9px] md:text-[10px] font-black text-white italic tracking-tight">{user.email}</p>
@@ -220,13 +220,13 @@ const ProfilePage = () => {
 
             <div className="bg-card border border-border-custom p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-4 md:gap-6 h-full min-h-[400px]">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-3 md:pb-4 text-left">
-                    <div className="p-1.5 md:p-2 bg-red-500/10 rounded-lg md:rounded-xl text-red-500"><Heart size={16} md:size={18} fill="currentColor" /></div>
+                    <div className="p-1.5 md:p-2 bg-red-500/10 rounded-lg md:rounded-xl text-red-500"><Heart className="w-[16px] md:w-[18px]" fill="currentColor" /></div>
                     <h3 className="text-sm md:text-lg font-black uppercase italic tracking-tighter text-white">{t('myLikes')}</h3>
                 </div>
                 <div className="flex-grow overflow-y-auto pr-1 no-scrollbar space-y-3 md:space-y-4">
                     {favoriteAssets.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-white/10 text-center space-y-3 opacity-20 py-10">
-                            <Heart size={24} md:size={32} />
+                            <Heart className="w-[24px] md:w-[32px]" />
                             <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest">{t('noFavorites')}</p>
                         </div>
                     ) : (
