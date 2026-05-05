@@ -172,6 +172,9 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                           <Palette size={14} className="md:w-4 md:h-4" /> SİTE EDİTÖRÜ
                         </button>
                       )}
+                      <Link href="/support" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all">
+                        <MessageSquare size={14} className="md:w-4 md:h-4" /> DESTEK MERKEZİ
+                      </Link>
                       <Link href="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all">
                         <Settings size={14} className="md:w-4 md:h-4" /> {t('settings').toUpperCase()}
                       </Link>
