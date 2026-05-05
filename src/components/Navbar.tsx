@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare, Bell, Moon, Sun } from 'lucide-react';
+import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare, Bell } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
@@ -21,7 +21,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
   const [notifications, setNotifications] = useState<any[]>([]);
-  const [isDark, setIsDark] = useState(true);
   
   // LOGO & SITE EDITOR SETTINGS
   const [isEditingLogo, setIsEditingLogo] = useState(false);
@@ -32,14 +31,9 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const router = useRouter();
 
   useEffect(() => {
-    // TEMA AYARINI YÜKLE
-    const savedTheme = localStorage.getItem('sytexTheme');
-    if (savedTheme === 'light') {
-        setIsDark(false);
-        document.documentElement.classList.remove('dark');
-    } else {
-        document.documentElement.classList.add('dark');
-    }
+    // HER ZAMAN KARANLIK MOD
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('sytexTheme', 'dark');
 
     const savedSettings = localStorage.getItem('sytexLogoSettings');
     if (savedSettings) setLogoSettings(JSON.parse(savedSettings));
@@ -57,17 +51,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     };
     getUserData();
   }, [supabase]);
-
-  const toggleTheme = () => {
-      const newDark = !isDark;
-      setIsDark(newDark);
-      localStorage.setItem('sytexTheme', newDark ? 'dark' : 'light');
-      if (newDark) {
-          document.documentElement.classList.add('dark');
-      } else {
-          document.documentElement.classList.remove('dark');
-      }
-  };
 
   const saveLogoSettings = () => {
     localStorage.setItem('sytexLogoSettings', JSON.stringify(logoSettings));
@@ -155,11 +138,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         {/* ACTIONS */}
         <div className="flex items-center gap-2 md:gap-4 shrink-0">
           
-          {/* THEME TOGGLE */}
-          <button onClick={toggleTheme} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-primary transition-all">
-              {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-
           {/* UPLOAD BUTTON */}
           <Link href="/upload" className="hidden sm:flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 bg-white/5 border border-white/10 hover:border-primary/50 text-white rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest transition-all">
             <Upload size={16} className="text-primary md:w-[18px] md:h-[18px]" />

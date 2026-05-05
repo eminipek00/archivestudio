@@ -1,95 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #020617;
+  --background: #000000;
+  --foreground: #ffffff;
   --primary: #3b82f6;
-  --border: #e2e8f0;
-  --muted: #f1f5f9;
+  --border: rgba(255, 255, 255, 0.1);
+  --muted: #0a0a0a;
 }
 
-.dark {
-  --background: #020617;
-  --foreground: #f8fafc;
-  --primary: #3b82f6;
-  --border: #1e293b;
-  --muted: #0f172a;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-border-custom: var(--border);
-  --color-muted: var(--muted);
-}
-
-* {
-  box-sizing: border-box;
-}
-
+/* SİTEYİ EBEDİ KARANLIĞA MÜHÜRLER */
 html, body {
   width: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background: var(--background);
-  color: var(--foreground);
-}
-
-/* TÜM SİTE GENELİ AYDINLIK MOD GÖRÜNÜRLÜK AYARI (CERRAHİ) */
-:root:not(.dark) h1,
-:root:not(.dark) h2, 
-:root:not(.dark) h3,
-:root:not(.dark) h4,
-:root:not(.dark) span,
-:root:not(.dark) p,
-:root:not(.dark) label,
-:root:not(.dark) input,
-:root:not(.dark) textarea,
-:root:not(.dark) .text-white,
-:root:not(.dark) [class*="text-white"] {
-  color: #000000 !important;
-}
-
-/* ARKA PLANLARIN AYDINLIK MODDAKİ DÖNÜŞÜMÜ */
-:root:not(.dark) .bg-card,
-:root:not(.dark) .bg-\[\#0a0a0a\],
-:root:not(.dark) .bg-\[\#050505\],
-:root:not(.dark) .bg-muted {
-  background-color: #f8f8f8 !important;
-  border-color: rgba(0,0,0,0.1) !important;
-}
-
-/* NAV KORUMASI (ANA BAR SİYAH KALMALI, AMA İÇİNDEKİ AÇILIR MENÜLER BEYAZ OLMALI) */
-:root:not(.dark) nav {
-  background-color: #000000 !important;
-}
-
-/* Navbar'ın en üstündeki ana öğeleri beyaz tut */
-:root:not(.dark) nav > div > div:not([class*="absolute"]) *,
-:root:not(.dark) nav > div > div:not([class*="absolute"]) span {
+  background: #000000 !important;
   color: #ffffff !important;
 }
 
-/* Navbar içindeki Arama Çubuğu (Input) özel ayarı */
-:root:not(.dark) nav input {
-  background-color: #f1f1f1 !important;
-  color: #000000 !important;
-}
-
-/* Navbar içindeki açılır menülerin (absolute div) içindeki yazıları SİYAH yap */
-:root:not(.dark) div[class*="absolute"] *,
-:root:not(.dark) div[class*="absolute"] span,
-:root:not(.dark) div[class*="absolute"] p {
-  color: #000000 !important;
-}
-
-/* MAVİ BUTONLARIN İÇİNDEKİ YAZILAR HER ZAMAN BEYAZ KALMALI */
-:root:not(.dark) .bg-primary *,
-:root:not(.dark) .bg-primary span {
-  color: #ffffff !important;
+* {
+  box-sizing: border-box;
 }
 
 .container {
@@ -105,10 +36,6 @@ html, body {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
-}
-
-.dark .glass-card {
-  background: rgba(15, 23, 42, 0.6);
 }
 
 /* CUSTOM SCROLLBAR FOR MENUS */
