@@ -126,45 +126,45 @@ const ProfilePage = () => {
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
       <Navbar />
-      <main className="flex-grow flex flex-col items-center pt-28 pb-8">
-        <div className="w-full max-w-4xl px-4 space-y-6 flex flex-col">
+      <main className="flex-grow flex flex-col items-center pt-24 md:pt-28 pb-8">
+        <div className="w-full max-w-4xl px-3 md:px-4 space-y-4 md:space-y-6 flex flex-col">
           
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 bg-card border border-border-custom p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl relative shrink-0">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 bg-card border border-border-custom p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl relative shrink-0">
             <div className="relative group shrink-0">
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border-4 border-background shadow-2xl bg-[#111]">
+                <div className="w-20 h-20 md:w-32 md:h-32 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden border-4 border-background shadow-2xl bg-[#111]">
                     {profile?.avatar_url ? ( <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" /> ) : (
-                        <div className="w-full h-full flex items-center justify-center p-6"> {isAdmin ? <Logo className="w-full h-full" /> : <User size={56} className="text-white/10" />} </div>
+                        <div className="w-full h-full flex items-center justify-center p-6"> {isAdmin ? <Logo className="w-full h-full" /> : <User size={48} className="text-white/10" />} </div>
                     )}
                 </div>
-                <label className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-[2.5rem] cursor-pointer">
-                    <Camera className="text-white mb-2" size={20} />
+                <label className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-[1.5rem] md:rounded-[2.5rem] cursor-pointer">
+                    <Camera className="text-white mb-2" size={18} />
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </label>
             </div>
-            <div className="flex-1 text-center md:text-left space-y-2">
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                    <h1 className="text-2xl md:text-3xl font-[1000] uppercase italic tracking-tighter text-white leading-none">{profile?.full_name || 'Sytex Editor'}</h1>
-                    {isAdmin && <span className="text-[8px] font-black bg-primary text-white px-2.5 py-1 rounded-xl uppercase italic tracking-widest shadow-lg shadow-primary/20">ADMIN</span>}
+            <div className="flex-1 text-center md:text-left space-y-1 md:space-y-2">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-3">
+                    <h1 className="text-xl md:text-3xl font-[1000] uppercase italic tracking-tighter text-white leading-none">{profile?.full_name || 'Sytex Editor'}</h1>
+                    {isAdmin && <span className="text-[7px] md:text-[8px] font-black bg-primary text-white px-2 py-0.5 rounded-lg uppercase italic tracking-widest shadow-lg shadow-primary/20">ADMIN</span>}
                 </div>
-                <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] italic opacity-60">@{profile?.username || 'user'}</p>
-                <div className="flex items-center justify-center md:justify-start gap-3 pt-2">
-                    <div className="px-3 py-1 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2">
-                        <Database size={12} className="text-primary" />
-                        <span className="text-[10px] font-black text-white italic">{assetCount} {t('uploaded')}</span>
+                <p className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.2em] italic opacity-60">@{profile?.username || 'user'}</p>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1 md:pt-2">
+                    <div className="px-2 md:px-3 py-1 bg-white/5 border border-white/5 rounded-lg md:rounded-xl flex items-center gap-1.5 md:gap-2">
+                        <Database size={10} className="text-primary md:w-[12px]" />
+                        <span className="text-[8px] md:text-[10px] font-black text-white italic">{assetCount} {t('uploaded')}</span>
                     </div>
-                    <div className="px-3 py-1 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2">
-                        <span className="text-[10px] font-black text-white italic">{followerCount} {t('followers')}</span>
+                    <div className="px-2 md:px-3 py-1 bg-white/5 border border-white/5 rounded-lg md:rounded-xl flex items-center gap-1.5 md:gap-2">
+                        <span className="text-[8px] md:text-[10px] font-black text-white italic">{followerCount} {t('followers')}</span>
                     </div>
-                    <div className="px-3 py-1 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2">
-                        <span className="text-[10px] font-black text-white italic">{followingCount} {t('following')}</span>
+                    <div className="px-2 md:px-3 py-1 bg-white/5 border border-white/5 rounded-lg md:rounded-xl flex items-center gap-1.5 md:gap-2">
+                        <span className="text-[8px] md:text-[10px] font-black text-white italic">{followingCount} {t('following')}</span>
                     </div>
                 </div>
             </div>
           </div>
 
-          <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 items-start overflow-hidden">
-            <div className="space-y-6 flex flex-col">
-                <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-6">
+          <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 items-start">
+            <div className="space-y-4 md:space-y-6 flex flex-col">
+                <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-4 md:gap-6">
                     <div className="flex items-center justify-between border-b border-white/5 pb-4 text-left">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-primary/10 rounded-xl text-primary"><UserSquare2 size={20} /></div>
