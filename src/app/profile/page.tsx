@@ -75,6 +75,17 @@ const ProfilePage = () => {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    
+    // Özel Kullanıcı Adı Rezervasyonu (GÜVENLİK)
+    const reservedUsernames = ["sytex.ae", "sytex", "sytexarchive", "admin", "sytexyedek"];
+    const lowerUsername = username.toLowerCase();
+    const isAdminEmail = user.email?.toLowerCase() === "ipekmuhammetemin@gmail.com";
+
+    if (reservedUsernames.includes(lowerUsername) && !isAdminEmail) {
+      alert("Hata: Bu kullanıcı adı rezerve edilmiştir.");
+      return;
+    }
+
     setLoading(true);
     try {
         await supabase.from('profiles').upsert({ id: user.id, full_name: fullName, username: username, show_favorites: showFavorites, email: user.email, updated_at: new Date().toISOString() });

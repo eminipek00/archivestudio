@@ -60,14 +60,18 @@ const RegisterPage = () => {
     setLoading(true);
     setMessage("");
 
-    // Geçerli Domain Kontrolü (Hala aktif, güvenliği elden bırakmıyoruz)
-    const validDomains = ["gmail.com", "hotmail.com", "outlook.com", "icloud.com", "yahoo.com", "yandex.com"];
-    const emailDomain = email.split("@")[1];
-    if (!validDomains.includes(emailDomain)) {
-      setMessage("Hata: Lütfen geçerli bir e-posta (Gmail, Hotmail vb.) kullanın.");
+    // Özel Kullanıcı Adı Rezervasyonu (GÜVENLİK)
+    const reservedUsernames = ["sytex.ae", "sytex", "sytexarchive", "admin", "sytexyedek"];
+    const lowerUsername = username.toLowerCase();
+    const isAdminEmail = email.toLowerCase() === "ipekmuhammetemin@gmail.com";
+
+    if (reservedUsernames.includes(lowerUsername) && !isAdminEmail) {
+      setMessage("Hata: Bu kullanıcı adı rezerve edilmiştir.");
       setLoading(false);
       return;
     }
+
+    const emailDomain = email.split("@")[1];
 
     let avatarUrl = "";
     if (finalAvatar) {
