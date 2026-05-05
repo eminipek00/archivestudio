@@ -17,28 +17,36 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
   const [loading, setLoading] = useState(false);
   
   const [liked, setLiked] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [likeCount, setLikeCount] = useState(asset.likes_count || 0);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   
   const supabase = createClient();
 
   useEffect(() => {
-    const checkLikeStatus = async () => {
+    const checkStatus = async () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
             setCurrentUserId(user.id);
-            const { data } = await supabase.from('likes').select('id').eq('asset_id', asset.id).eq('user_id', user.id).maybeSingle();
-            setLiked(!!data);
+            // CHECK LIKE
+            const { data: likeData } = await supabase.from('likes').select('id').eq('asset_id', asset.id).eq('user_id', user.id).maybeSingle();
+            setLiked(!!likeData);
+            
+            // CHECK FOLLOW
+            if (asset.author_id !== user.id) {
+                const { data: followData } = await supabase.from('follows').select('id').eq('follower_id', user.id).eq('following_id', asset.author_id).maybeSingle();
+                setIsFollowing(!!followData);
+            }
         }
     };
-    checkLikeStatus();
+    checkStatus();
     
     const fetchLikeCount = async () => {
         const { count } = await supabase.from('likes').select('*', { count: 'exact', head: true }).eq('asset_id', asset.id);
         setLikeCount(count || 0);
     };
     fetchLikeCount();
-  }, [asset.id, supabase]);
+  }, [asset.id, asset.author_id, supabase]);
 
   const handleLike = async (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -53,6 +61,30 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
           await supabase.from('likes').insert([{ asset_id: asset.id, user_id: currentUserId }]);
       }
       window.dispatchEvent(new Event('favoritesUpdated'));
+  };
+
+  const handleFollow = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentUserId) { showToast("Takip etmek için giriş yapmalısınız.", "error"); return; }
+    if (currentUserId === asset.author_id) return;
+
+    if (isFollowing) {
+        setIsFollowing(false);
+        await supabase.from('follows').delete().eq('follower_id', currentUserId).eq('following_id', asset.author_id);
+    } else {
+        setIsFollowing(true);
+        const { error } = await supabase.from('follows').insert([{ follower_id: currentUserId, following_id: asset.author_id }]);
+        if (!error) {
+            // SEND NOTIFICATION
+            await supabase.from('notifications').insert([{
+                user_id: asset.author_id,
+                type: 'follow',
+                content: `Birisi seni takip etmeye başladı!`,
+                link: `/profile`
+            }]);
+            showToast("Takip edildi!", "success");
+        }
+    }
   };
 
   // DOSYA YÜKLEME FONKSİYONU (YENİ)
@@ -132,7 +164,14 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                 </div>
                 <div className="flex flex-col">
                     <span className="text-[7px] font-black text-white/30 uppercase tracking-[0.2em] leading-none mb-0.5">{t('uploader')}</span>
-                    <span className="text-[10px] font-black text-white uppercase italic leading-none group-hover/uploader:text-primary transition-colors">@{uploader.username}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-black text-white uppercase italic leading-none group-hover/uploader:text-primary transition-colors">@{uploader.username}</span>
+                      {currentUserId && currentUserId !== asset.author_id && (
+                        <button onClick={handleFollow} className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-md border transition-all ${isFollowing ? 'border-primary text-primary' : 'border-white/10 text-white/40 hover:border-primary hover:text-white'}`}>
+                          {isFollowing ? t('unfollow') : t('follow')}
+                        </button>
+                      )}
+                    </div>
                 </div>
             </Link>
           </div>
@@ -182,10 +221,15 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                         <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0">
                             <img src={uploader.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover" />
                         </div>
-                        <div>
+                        <div className="flex-1">
                             <p className="text-[8px] font-black text-white/20 uppercase tracking-widest leading-none mb-1">{t('uploader')}</p>
                             <p className="text-xs font-black text-white uppercase italic">@{uploader.username}</p>
                         </div>
+                        {currentUserId && currentUserId !== asset.author_id && (
+                          <button onClick={handleFollow} className={`px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${isFollowing ? 'bg-primary text-white shadow-lg' : 'bg-white/5 border border-white/10 text-white/40 hover:text-white hover:border-primary'}`}>
+                            {isFollowing ? t('unfollow') : t('follow')}
+                          </button>
+                        )}
                     </Link>
                 </div>
                 <div className="space-y-4">

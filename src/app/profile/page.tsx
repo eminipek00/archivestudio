@@ -22,6 +22,8 @@ const ProfilePage = () => {
   const [favoriteAssets, setFavoriteAssets] = useState<any[]>([]);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   
   const { t } = useLanguage();
   const supabase = createClient();
@@ -57,6 +59,13 @@ const ProfilePage = () => {
         }
         const { count } = await supabase.from('assets').select('*', { count: 'exact', head: true }).eq('author_id', authUser.id);
         setAssetCount(count || 0);
+        
+        // FETCH FOLLOWS
+        const { count: followers } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', authUser.id);
+        setFollowerCount(followers || 0);
+        const { count: following } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', authUser.id);
+        setFollowingCount(following || 0);
+
         fetchFavorites(authUser.id);
       }
     };
@@ -127,10 +136,16 @@ const ProfilePage = () => {
                     {isAdmin && <span className="text-[8px] font-black bg-primary text-white px-2.5 py-1 rounded-xl uppercase italic tracking-widest shadow-lg shadow-primary/20">ADMIN</span>}
                 </div>
                 <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] italic opacity-60">@{profile?.username || 'user'}</p>
-                <div className="flex items-center justify-center md:justify-start gap-4 pt-2">
+                <div className="flex items-center justify-center md:justify-start gap-3 pt-2">
                     <div className="px-3 py-1 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2">
                         <Database size={12} className="text-primary" />
                         <span className="text-[10px] font-black text-white italic">{assetCount} {t('uploaded')}</span>
+                    </div>
+                    <div className="px-3 py-1 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2">
+                        <span className="text-[10px] font-black text-white italic">{followerCount} {t('followers')}</span>
+                    </div>
+                    <div className="px-3 py-1 bg-white/5 border border-white/5 rounded-xl flex items-center gap-2">
+                        <span className="text-[10px] font-black text-white italic">{followingCount} {t('following')}</span>
                     </div>
                 </div>
             </div>

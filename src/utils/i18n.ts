@@ -49,6 +49,10 @@ export const translations: Record<Language, Record<string, any>> = {
     link: "LİNK",
     selectFile: "DOSYA SEÇ",
     coverImage: "KAPAK FOTOĞRAFI",
+    follow: "TAKİP ET",
+    unfollow: "TAKİBİ BIRAK",
+    followers: "TAKİPÇİ",
+    following: "TAKİP",
     smartCoverActive: "AKILLI KAPAK SİSTEMİ AKTİF",
     uploadSuccess: "BAŞARIYLA YÜKLENDİ!",
     support: {
@@ -112,6 +116,10 @@ export const translations: Record<Language, Record<string, any>> = {
     link: "LINK",
     selectFile: "SELECT FILE",
     coverImage: "COVER IMAGE",
+    follow: "FOLLOW",
+    unfollow: "UNFOLLOW",
+    followers: "FOLLOWERS",
+    following: "FOLLOWING",
     smartCoverActive: "SMART COVER SYSTEM ACTIVE",
     uploadSuccess: "UPLOAD SUCCESSFUL!",
     support: {
@@ -175,6 +183,10 @@ export const translations: Record<Language, Record<string, any>> = {
     link: "LİNK",
     selectFile: "FAYL SEÇ",
     coverImage: "QAPAQ ŞƏKLİ",
+    follow: "İZLƏ",
+    unfollow: "İZLƏMƏNİ DAYANDIR",
+    followers: "İZLƏYİCİ",
+    following: "İZLƏNİLƏN",
     smartCoverActive: "AĞILLI QAPAQ SİSTEMİ AKTİVDİR",
     uploadSuccess: "MÜVƏFFƏQİYYƏTLƏ YÜKLƏNDİ!",
     support: {
