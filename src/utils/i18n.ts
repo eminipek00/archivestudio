@@ -14,6 +14,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "DESTEK MERKEZİ",
     notifications: "BİLDİRİMLER",
     noNotifications: "BİLDİRİM YOK",
+    download: "İNDİR",
+    uploader: "YÜKLEYEN",
+    share: "PAYLAŞ",
     heroTitle: "PROFESYONEL DİJİTAL VARLIKLAR",
     heroSubtitle: "Sahne paketleri, ses efektleri ve geçişler tek bir çatı altında.",
     tags: {
@@ -65,6 +68,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "SUPPORT CENTER",
     notifications: "NOTIFICATIONS",
     noNotifications: "NO NOTIFICATIONS",
+    download: "DOWNLOAD",
+    uploader: "UPLOADER",
+    share: "SHARE",
     heroTitle: "PROFESSIONAL DIGITAL ASSETS",
     heroSubtitle: "Scene packages, sound effects, and transitions under one roof.",
     tags: {
@@ -116,6 +122,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "DƏSTƏK MƏRKƏZİ",
     notifications: "BİLDİRİŞLƏR",
     noNotifications: "BİLDİRİŞ YOXDUR",
+    download: "YÜKLƏ",
+    uploader: "YÜKLƏYƏN",
+    share: "PAYLAŞ",
     heroTitle: "PEŞƏKAR RƏQƏMSAL AKTİVLƏR",
     heroSubtitle: "Səhnə paketləri, səs effektləri və keçidlər tək bir dam altında.",
     tags: {
@@ -167,6 +176,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "CENTRO DE SOPORTE",
     notifications: "NOTIFICACIONES",
     noNotifications: "SIN NOTIFICACIONES",
+    download: "DESCARGAR",
+    uploader: "SUBIDO POR",
+    share: "COMPARTIR",
     heroTitle: "ACTIVOS DIGITALES PROFESIONALES",
     heroSubtitle: "Paquetes de escenas, efectos de sonido y transiciones bajo un mismo techo.",
     tags: {
@@ -218,6 +230,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "CENTRE DE SUPPORT",
     notifications: "NOTIFICATIONS",
     noNotifications: "PAS DE NOTIFICATIONS",
+    download: "TÉLÉCHARGER",
+    uploader: "TÉLÉCHARGÉ PAR",
+    share: "PARTAGER",
     heroTitle: "ACTIFS NUMÉRIQUES PROFESSIONNELS",
     heroSubtitle: "Packs de scènes, effets sonores et transitions sous un même toit.",
     tags: {
@@ -247,7 +262,7 @@ export const translations: Record<Language, Record<string, any>> = {
         title: "TICKET DE SUPPORT",
         subject: "SUJET",
         message: "VOTRE MESSAGE",
-        submit: "ENVOYER LE TICKET",
+        submit: "ENVIAR LE TICKET",
         allTickets: "TOUS LES TICKETS",
         myTickets: "MES TICKETS",
         noTickets: "PAS ENCORE DE TICKETS",
@@ -269,6 +284,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "SUPPORT-CENTER",
     notifications: "BENACHRICHTIGUNGEN",
     noNotifications: "KEINE BENACHRICHTIGUNGEN",
+    download: "HERUNTERLADEN",
+    uploader: "HOCHGELADEN VON",
+    share: "TEILEN",
     heroTitle: "PROFESSIONELLE DIGITALE ASSETS",
     heroSubtitle: "Szenenpakete, Soundeffekte und Übergänge unter einem Dach.",
     tags: {
@@ -320,6 +338,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "مركز الدعم",
     notifications: "إشعارات",
     noNotifications: "لا توجد إشعارات",
+    download: "تحميل",
+    uploader: "بواسطة",
+    share: "مشاركة",
     heroTitle: "الأصول الرقمية الاحترافية",
     heroSubtitle: "حزم المشاهد والمؤثرات الصوتية والانتقالات تحت سقف واحد.",
     tags: {
@@ -371,6 +392,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "ЦЕНТР ПОДДЕРЖКИ",
     notifications: "УВЕДОМЛЕНИЯ",
     noNotifications: "НЕТ УВЕДОМЛЕНИЙ",
+    download: "СКАЧАТЬ",
+    uploader: "ЗАГРУЗИЛ",
+    share: "ПОДЕЛИТЬСЯ",
     heroTitle: "ПРОФЕССИОНАЛЬНЫЕ ЦИФРОВЫЕ АКТИВЫ",
     heroSubtitle: "Сценические пакеты, звуковые эффекты и переходы под одной крышей.",
     tags: {
@@ -422,6 +446,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "支持中心",
     notifications: "通知",
     noNotifications: "暂无通知",
+    download: "下载",
+    uploader: "上传者",
+    share: "分享",
     heroTitle: "专业数字资产",
     heroSubtitle: "场景包、音效和过渡，尽在一个屋檐下。",
     tags: {
@@ -473,6 +500,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "サポートセンター",
     notifications: "通知",
     noNotifications: "通知はありません",
+    download: "ダウンロード",
+    uploader: "アップロード者",
+    share: "共有",
     heroTitle: "プロフェッショナル・デジタル・アセット",
     heroSubtitle: "シーンパッケージ、効果音、トランジションがひとつに。",
     tags: {
@@ -524,6 +554,9 @@ export const translations: Record<Language, Record<string, any>> = {
     supportCenter: "CENTRO DE SUPORTE",
     notifications: "NOTIFICAÇÕES",
     noNotifications: "SEM NOTIFICAÇÕES",
+    download: "BAIXAR",
+    uploader: "ENVIADO POR",
+    share: "COMPARTILHAR",
     heroTitle: "ATIVOS DIGITAIS PROFISSIONAIS",
     heroSubtitle: "Pacotes de cena, efeitos sonoros e transiciones sob o mesmo teto.",
     tags: {
@@ -548,7 +581,7 @@ export const translations: Record<Language, Record<string, any>> = {
     emailAddress: "ENDEREÇO DE E-MAIL",
     myLikes: "MEUS ATIVOS FAVORITOS",
     noFavorites: "VOCÊ AINDA NÃO CURTIU NENHUM ATIVO.",
-    update: "AUTUALIZAR",
+    update: "ATUALIZAR",
     support: {
         title: "TICKET DE SUPORTE",
         subject: "ASSUNTO",

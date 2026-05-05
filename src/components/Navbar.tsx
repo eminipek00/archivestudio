@@ -121,22 +121,22 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                     <Logo className="w-full h-full" />
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-base md:text-lg font-black tracking-tighter text-foreground leading-none uppercase italic">SYTEX<span className="text-primary">ARCHIVE</span></span>
-                    <span className="text-[6px] md:text-[7px] font-black tracking-[0.4em] text-muted-foreground leading-none uppercase mt-1">Professional Digital Assets</span>
+                    <span className="text-base md:text-lg font-black tracking-tighter text-white leading-none uppercase italic">SYTEX<span className="text-primary">ARCHIVE</span></span>
+                    <span className="text-[6px] md:text-[7px] font-black tracking-[0.4em] text-white/30 leading-none uppercase mt-1">Professional Digital Assets</span>
                 </div>
             </Link>
 
             {isAdmin && (
                 <div className="hidden sm:flex items-center ml-2">
                     {isEditingLogo ? (
-                        <div className="flex items-center gap-2 bg-card p-2 rounded-xl border border-primary/30 shadow-2xl animate-in zoom-in-95 duration-200">
-                            <input type="number" value={logoSettings.x} onChange={(e) => setLogoSettings({...logoSettings, x: parseInt(e.target.value) || 0})} className="w-8 bg-background text-[8px] text-foreground text-center rounded border border-border-custom" />
-                            <input type="number" value={logoSettings.y} onChange={(e) => setLogoSettings({...logoSettings, y: parseInt(e.target.value) || 0})} className="w-8 bg-background text-[8px] text-foreground text-center rounded border border-border-custom" />
-                            <input type="number" step="0.1" value={logoSettings.scale} onChange={(e) => setLogoSettings({...logoSettings, scale: parseFloat(e.target.value) || 1})} className="w-8 bg-background text-[8px] text-foreground text-center rounded border border-border-custom" />
+                        <div className="flex items-center gap-2 bg-[#0a0a0a] p-2 rounded-xl border border-primary/30 shadow-2xl animate-in zoom-in-95 duration-200">
+                            <input type="number" value={logoSettings.x} onChange={(e) => setLogoSettings({...logoSettings, x: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
+                            <input type="number" value={logoSettings.y} onChange={(e) => setLogoSettings({...logoSettings, y: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
+                            <input type="number" step="0.1" value={logoSettings.scale} onChange={(e) => setLogoSettings({...logoSettings, scale: parseFloat(e.target.value) || 1})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
                             <button onClick={saveLogoSettings} className="p-1.5 bg-primary text-white rounded-lg"><Check size={12}/></button>
                         </div>
                     ) : (
-                        <button onClick={() => setIsEditingLogo(true)} className="p-2 text-muted-foreground hover:text-primary transition-all rounded-lg">
+                        <button onClick={() => setIsEditingLogo(true)} className="p-2 text-white/5 hover:text-primary transition-all rounded-lg">
                             <Edit3 size={12}/>
                         </button>
                     )}
@@ -147,8 +147,8 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         {/* SEARCH BAR (DESKTOP ONLY) */}
         {onSearch && (
           <div className="hidden lg:flex flex-1 max-w-md relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={16} />
-            <input type="text" value={localSearch} onChange={handleSearchChange} placeholder={t('searchPlaceholder')} className="w-full bg-card border border-border-custom rounded-2xl py-3 pl-12 pr-4 text-[10px] font-black uppercase tracking-widest text-foreground outline-none focus:border-primary/50 transition-all shadow-inner" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={16} />
+            <input type="text" value={localSearch} onChange={handleSearchChange} placeholder={t('searchPlaceholder')} className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/50 transition-all shadow-inner" />
           </div>
         )}
 
@@ -156,12 +156,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         <div className="flex items-center gap-2 md:gap-4 shrink-0">
           
           {/* THEME TOGGLE */}
-          <button onClick={toggleTheme} className="p-2.5 rounded-xl bg-white/5 border border-border-custom text-muted-foreground hover:text-primary transition-all">
+          <button onClick={toggleTheme} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-primary transition-all">
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
           {/* UPLOAD BUTTON */}
-          <Link href="/upload" className="hidden sm:flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 bg-white/5 border border-border-custom hover:border-primary/50 text-foreground rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest transition-all">
+          <Link href="/upload" className="hidden sm:flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 bg-white/5 border border-white/10 hover:border-primary/50 text-white rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest transition-all">
             <Upload size={16} className="text-primary md:w-[18px] md:h-[18px]" />
             <span>{t('upload')}</span>
           </Link>
@@ -169,22 +169,22 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           {/* NOTIFICATION BELL */}
           {user && (
             <div className="relative">
-                <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowLangMenu(false); setShowUserMenu(false); }} className="p-2.5 rounded-xl bg-white/5 border border-border-custom text-muted-foreground hover:text-primary transition-all relative">
+                <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowLangMenu(false); setShowUserMenu(false); }} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-primary transition-all relative">
                     <Bell size={18} />
                     {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50" />}
                 </button>
                 
                 {showNotifMenu && (
-                  <div className="absolute top-full right-0 mt-3 w-72 bg-card border border-border-custom rounded-[2rem] p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-4 mb-4">{t('notifications')}</h3>
+                  <div className="absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a] border border-border-custom rounded-[2rem] p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">{t('notifications')}</h3>
                     <div className="space-y-1">
                         {notifications.length === 0 ? (
-                            <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase text-foreground">{t('noNotifications')}</p></div>
+                            <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">{t('noNotifications')}</p></div>
                         ) : (
                             notifications.map(n => (
-                                <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-background/50 border border-border-custom hover:border-primary/20 transition-all group">
-                                    <p className="text-[9px] font-black text-foreground group-hover:text-primary transition-colors mb-1">{n.content}</p>
-                                    <p className="text-[7px] font-bold text-muted-foreground uppercase tracking-widest">{new Date(n.created_at).toLocaleDateString()}</p>
+                                <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group">
+                                    <p className="text-[9px] font-black text-white group-hover:text-primary transition-colors mb-1">{n.content}</p>
+                                    <p className="text-[7px] font-bold text-white/20 uppercase tracking-widest">{new Date(n.created_at).toLocaleDateString()}</p>
                                 </Link>
                             ))
                         )}
@@ -196,16 +196,16 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
           {/* LANGUAGE SELECTOR */}
           <div className="relative">
-            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-background border border-border-custom text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all flex items-center gap-2 md:gap-3">
+            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white/60 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2 md:gap-3">
               <Globe size={16} className="text-primary md:w-[18px] md:h-[18px]" />
               <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">{languages.find(l => l.code === language)?.code.toUpperCase()}</span>
             </button>
             
             {showLangMenu && (
-              <div className="absolute top-full right-0 mt-3 w-40 md:w-48 bg-card border border-border-custom rounded-2xl p-2 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000]">
+              <div className="absolute top-full right-0 mt-3 w-40 md:w-48 bg-[#0a0a0a] border border-border-custom rounded-2xl p-2 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000]">
                 <div className="grid grid-cols-1 gap-1 max-h-[300px] overflow-y-auto no-scrollbar">
                   {languages.map((lang) => (
-                    <button key={lang.code} onClick={() => { setLanguage(lang.code); setShowLangMenu(false); }} className={`flex items-center justify-start px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest transition-all ${language === lang.code ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'}`}>
+                    <button key={lang.code} onClick={() => { setLanguage(lang.code); setShowLangMenu(false); }} className={`flex items-center justify-start px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest transition-all ${language === lang.code ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:bg-white/5 hover:text-white'}`}>
                       {lang.name}
                     </button>
                   ))}
@@ -216,18 +216,18 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
           {user ? (
             <div className="relative flex items-center">
-                <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLangMenu(false); setShowNotifMenu(false); }} className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden border-2 border-border-custom hover:border-primary transition-all p-0.5 bg-card">
+                <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLangMenu(false); setShowNotifMenu(false); }} className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden border-2 border-white/10 hover:border-primary transition-all p-0.5 bg-[#0a0a0a]">
                   <img src={profile?.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover rounded-lg" />
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute top-[110%] right-0 w-56 md:w-64 bg-card border border-border-custom rounded-[1.5rem] md:rounded-[2.5rem] p-3 md:p-4 shadow-2xl animate-in slide-in-from-top-2 duration-300 z-[6000]">
-                    <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b border-border-custom mb-2 text-left">
-                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-border-custom bg-background">
+                  <div className="absolute top-[110%] right-0 w-56 md:w-64 bg-[#0a0a0a] border border-border-custom rounded-[1.5rem] md:rounded-[2.5rem] p-3 md:p-4 shadow-2xl animate-in slide-in-from-top-2 duration-300 z-[6000]">
+                    <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 border-b border-white/5 mb-2 text-left">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-white/10 bg-[#050505]">
                         <img src={profile?.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <span className="text-[10px] md:text-xs font-black text-foreground uppercase italic truncate">@{profile?.username || 'user'}</span>
+                        <span className="text-[10px] md:text-xs font-black text-white uppercase italic truncate">@{profile?.username || 'user'}</span>
                         <span className="text-[7px] md:text-[8px] font-black text-primary uppercase tracking-widest">{isAdmin ? t('admin') : t('editor')}</span>
                       </div>
                     </div>
@@ -238,10 +238,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                           <Palette size={14} className="md:w-4 md:h-4" /> {t('siteEditor').toUpperCase()}
                         </button>
                       )}
-                      <Link href="/support" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all text-left">
+                      <Link href="/support" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all text-left">
                         <MessageSquare size={14} className="md:w-4 md:h-4" /> {t('supportCenter').toUpperCase()}
                       </Link>
-                      <Link href="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all text-left">
+                      <Link href="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all text-left">
                         <Settings size={14} className="md:w-4 md:h-4" /> {t('settings').toUpperCase()}
                       </Link>
                       <button onClick={handleLogout} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all text-left">

@@ -199,7 +199,7 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                         </a>
                     )}
                     <button onClick={handleShare} className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all">
-                        <Share2 size={16} />PAYLAŞ
+                        <Share2 size={16} />{t('share')}
                     </button>
                 </div>
             </div>

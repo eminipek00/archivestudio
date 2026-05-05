@@ -3,25 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
-  --card: #f8f8f8;
-  --border-custom: rgba(0, 0, 0, 0.1);
-  --primary: #3b82f6;
-  --muted-foreground: #666666;
-}
-
-.dark {
   --background: #000000;
   --foreground: #ffffff;
   --card: #0a0a0a;
   --border-custom: rgba(255, 255, 255, 0.1);
+  --primary: #3b82f6;
   --muted-foreground: rgba(255, 255, 255, 0.4);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #000000;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -35,6 +30,6 @@ body {
 
 @layer components {
   .border-border-custom {
-    border-color: var(--border-custom);
+    border-color: rgba(255, 255, 255, 0.1);
   }
 }
