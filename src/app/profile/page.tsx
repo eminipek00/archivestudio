@@ -153,7 +153,7 @@ const ProfilePage = () => {
 
           <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6 items-start overflow-hidden">
             <div className="space-y-6 flex flex-col">
-                <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6">
+                <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-6">
                     <div className="flex items-center justify-between border-b border-white/5 pb-4 text-left">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-primary/10 rounded-xl text-primary"><UserSquare2 size={20} /></div>

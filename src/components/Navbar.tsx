@@ -160,7 +160,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </button>
                 
                 {showNotifMenu && (
-                  <div className="absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a] border border-border-custom rounded-[2rem] p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
+                  <div className="absolute top-full right-0 mt-3 w-64 md:w-72 bg-[#0a0a0a] border border-border-custom rounded-[1.5rem] md:rounded-[2rem] p-3 md:p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
                     <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">{t('notifications')}</h3>
                     <div className="space-y-1">
                         {notifications.length === 0 ? (
