@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { useLanguage } from '@/utils/LanguageContext';
 import { createClient } from '@/utils/supabase/client';
-import { MessageSquare, Send, Loader2, CheckCircle, Clock, Trash2 } from 'lucide-react';
+import { MessageSquare, Send, Loader2, Clock, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const SupportPage = () => {
@@ -38,7 +38,6 @@ const SupportPage = () => {
     setFetching(true);
     let query = supabase.from('tickets').select('*, profiles:user_id(username, avatar_url)');
     
-    // Admin değilse sadece kendi biletlerini görsün
     if (!adminMode) {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) query = query.eq('user_id', user.id);
@@ -88,33 +87,33 @@ const SupportPage = () => {
             <div className="bg-card border border-border-custom p-6 rounded-[2.5rem] shadow-xl space-y-6">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                     <div className="p-2 bg-primary/10 rounded-xl text-primary"><MessageSquare size={20} /></div>
-                    <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">DESTEK TALEBİ</h3>
+                    <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{t('support.title')}</h3>
                 </div>
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-1 text-left">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">KONU</label>
-                        <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Örn: Ödeme Sorunu" className="w-full bg-[#111] border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white outline-none focus:border-primary/50 transition-all" />
+                        <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('support.subject')}</label>
+                        <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={t('support.placeholderSubject')} className="w-full bg-[#111] border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white outline-none focus:border-primary/50 transition-all" />
                     </div>
                     <div className="space-y-1 text-left">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">MESAJINIZ</label>
-                        <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder="Detayları buraya yazın..." className="w-full bg-[#111] border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white outline-none focus:border-primary/50 transition-all resize-none" />
+                        <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('support.message')}</label>
+                        <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder={t('support.placeholderMessage')} className="w-full bg-[#111] border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white outline-none focus:border-primary/50 transition-all resize-none" />
                     </div>
                     <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all">
-                        {loading ? <Loader2 className="animate-spin" size={16}/> : <Send size={16}/>} TALEBİ GÖNDER
+                        {loading ? <Loader2 className="animate-spin" size={16}/> : <Send size={16}/>} {t('support.submit')}
                     </button>
                 </form>
             </div>
           </div>
 
           {/* TICKETS LIST */}
-          <div className="flex-grow flex flex-col bg-card border border-border-custom rounded-[3rem] shadow-xl overflow-hidden">
+          <div className="flex-grow flex flex-col bg-card border border-border-custom rounded-[3rem] shadow-xl overflow-hidden text-left">
             <div className="p-6 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-white/5 rounded-xl text-white/40"><Clock size={18} /></div>
-                    <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{isAdmin ? 'TÜM TALEPLER' : 'TALEPLERİM'}</h3>
+                    <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{isAdmin ? t('support.allTickets') : t('support.myTickets')}</h3>
                 </div>
-                <span className="px-3 py-1 bg-white/5 rounded-lg text-[9px] font-black text-white/40">{tickets.length} TOPLAM</span>
+                <span className="px-3 py-1 bg-white/5 rounded-lg text-[9px] font-black text-white/40">{tickets.length} {t('support.total')}</span>
             </div>
             
             <div className="flex-grow overflow-y-auto p-4 no-scrollbar space-y-4">
@@ -123,7 +122,7 @@ const SupportPage = () => {
                 ) : tickets.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-white/10 opacity-20">
                         <MessageSquare size={48} />
-                        <p className="mt-4 text-[10px] font-black uppercase tracking-widest">HENÜZ TALEP YOK</p>
+                        <p className="mt-4 text-[10px] font-black uppercase tracking-widest">{t('support.noTickets')}</p>
                     </div>
                 ) : (
                     tickets.map((ticket) => (

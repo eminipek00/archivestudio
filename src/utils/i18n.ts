@@ -1,6 +1,6 @@
 export type Language = 'tr' | 'en' | 'az' | 'es' | 'fr' | 'de' | 'ar' | 'ru' | 'zh' | 'ja' | 'pt';
 
-export const translations: Record<Language, Record<string, string>> = {
+export const translations: Record<Language, Record<string, any>> = {
   tr: {
     searchPlaceholder: "ARAMAK İÇİN YAZIN...",
     upload: "YÜKLE",
@@ -14,11 +14,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "DESTEK MERKEZİ",
     heroTitle: "PROFESYONEL DİJİTAL VARLIKLAR",
     heroSubtitle: "Sahne paketleri, ses efektleri ve geçişler tek bir çatı altında.",
-    all: "HEPSİ",
-    presets: "PRESETLER",
-    overlays: "OVERLAYLER",
-    sfx: "SES EFEKTLERİ",
-    transitions: "GEÇİŞLER",
+    tags: {
+        all: "HEPSİ",
+        scene: "SAHNE",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTLAR",
+        overlay: "OVERLAYLER"
+    },
     noResults: "SONUÇ BULUNAMADI",
     tryAnotherSearch: "BAŞKA BİR ARAMA YAPMAYI DENEYİN.",
     accountManagement: "HESAP YÖNETİMİ",
@@ -33,7 +36,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "E-POSTA ADRESİ",
     myLikes: "FAVORİ VARLIKLARIM",
     noFavorites: "HENÜZ BİR VARLIK BEĞENMEDİNİZ.",
-    update: "GÜNCELLE"
+    update: "GÜNCELLE",
+    support: {
+        title: "DESTEK TALEBİ",
+        subject: "KONU",
+        message: "MESAJINIZ",
+        submit: "TALEBİ GÖNDER",
+        allTickets: "TÜM TALEPLER",
+        myTickets: "TALEPLERİM",
+        noTickets: "HENÜZ TALEP YOK",
+        total: "TOPLAM",
+        placeholderSubject: "Örn: Ödeme Sorunu",
+        placeholderMessage: "Detayları buraya yazın..."
+    }
   },
   en: {
     searchPlaceholder: "TYPE TO SEARCH...",
@@ -48,11 +63,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "SUPPORT CENTER",
     heroTitle: "PROFESSIONAL DIGITAL ASSETS",
     heroSubtitle: "Scene packages, sound effects, and transitions under one roof.",
-    all: "ALL",
-    presets: "PRESETS",
-    overlays: "OVERLAYS",
-    sfx: "SFX",
-    transitions: "TRANSITIONS",
+    tags: {
+        all: "ALL",
+        scene: "SCENE",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTS",
+        overlay: "OVERLAYS"
+    },
     noResults: "NO RESULTS FOUND",
     tryAnotherSearch: "TRY ANOTHER SEARCH QUERY.",
     accountManagement: "ACCOUNT MANAGEMENT",
@@ -67,7 +85,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "EMAIL ADDRESS",
     myLikes: "MY FAVORITE ASSETS",
     noFavorites: "YOU HAVEN'T LIKED ANY ASSETS YET.",
-    update: "UPDATE"
+    update: "UPDATE",
+    support: {
+        title: "SUPPORT TICKET",
+        subject: "SUBJECT",
+        message: "YOUR MESSAGE",
+        submit: "SUBMIT TICKET",
+        allTickets: "ALL TICKETS",
+        myTickets: "MY TICKETS",
+        noTickets: "NO TICKETS YET",
+        total: "TOTAL",
+        placeholderSubject: "Ex: Payment Issue",
+        placeholderMessage: "Type details here..."
+    }
   },
   az: {
     searchPlaceholder: "AXTARMAQ ÜÇÜN YAZIN...",
@@ -82,11 +112,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "DƏSTƏK MƏRKƏZİ",
     heroTitle: "PEŞƏKAR RƏQƏMSAL AKTİVLƏR",
     heroSubtitle: "Səhnə paketləri, səs effektləri və keçidlər tək bir dam altında.",
-    all: "HAMISI",
-    presets: "PRESETLƏR",
-    overlays: "OVERLAYLAR",
-    sfx: "SƏS EFFEKTLƏRİ",
-    transitions: "KEÇİDLƏR",
+    tags: {
+        all: "HAMISI",
+        scene: "SƏHNƏ",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTLAR",
+        overlay: "OVERLAYLAR"
+    },
     noResults: "NƏTİCƏ TAPILMADI",
     tryAnotherSearch: "BAŞQA BİR AXTARIŞ ETMƏYİ SINAYIN.",
     accountManagement: "HESABIN İDARƏ EDİLMƏSİ",
@@ -101,7 +134,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "E-POÇT ÜNVANI",
     myLikes: "FAVORİ AKTİVLƏRİM",
     noFavorites: "HƏLƏ HEC BİR AKTİVİ BƏYƏNMƏMİSİNİZ.",
-    update: "YENİLƏ"
+    update: "YENİLƏ",
+    support: {
+        title: "DƏSTƏK TƏLƏBİ",
+        subject: "MÖVZU",
+        message: "MESAJINIZ",
+        submit: "TƏLƏBİ GÖNDƏR",
+        allTickets: "BÜTÜN TƏLƏBLƏR",
+        myTickets: "TƏLƏBLƏRİM",
+        noTickets: "HƏLƏ TƏLƏB YOXDUR",
+        total: "CƏMİ",
+        placeholderSubject: "Məs: Ödəniş Problemi",
+        placeholderMessage: "Detalları bura yazın..."
+    }
   },
   es: {
     searchPlaceholder: "ESCRIBE PARA BUSCAR...",
@@ -116,11 +161,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "CENTRO DE SOPORTE",
     heroTitle: "ACTIVOS DIGITALES PROFESIONALES",
     heroSubtitle: "Paquetes de escenas, efectos de sonido y transiciones bajo un mismo techo.",
-    all: "TODO",
-    presets: "AJUSTES PREESTABLECIDOS",
-    overlays: "SUPERPOSICIONES",
-    sfx: "EFECTOS DE SONIDO",
-    transitions: "TRANSICIONES",
+    tags: {
+        all: "TODO",
+        scene: "ESCENA",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTS",
+        overlay: "SUPERPOSICIONES"
+    },
     noResults: "NO SE ENCONTRARON RESULTADOS",
     tryAnotherSearch: "INTENTE OTRA BÚSQUEDA.",
     accountManagement: "GESTIÓN DE CUENTA",
@@ -135,7 +183,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "CORREO ELECTRÓNICO",
     myLikes: "MIS ACTIVOS FAVORITOS",
     noFavorites: "AÚN NO TE HA GUSTADO NINGÚN ACTIVO.",
-    update: "ACTUALIZAR"
+    update: "ACTUALIZAR",
+    support: {
+        title: "TICKET DE SOPORTE",
+        subject: "ASUNTO",
+        message: "TU MENSAJE",
+        submit: "ENVIAR TICKET",
+        allTickets: "TODOS LOS TICKETS",
+        myTickets: "MIS TICKETS",
+        noTickets: "SIN TICKETS AÚN",
+        total: "TOTAL",
+        placeholderSubject: "Ej: Problema de Pago",
+        placeholderMessage: "Escribe los detalles aquí..."
+    }
   },
   fr: {
     searchPlaceholder: "TAPER POUR RECHERCHER...",
@@ -150,11 +210,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "CENTRE DE SUPPORT",
     heroTitle: "ACTIFS NUMÉRIQUES PROFESSIONNELS",
     heroSubtitle: "Packs de scènes, effets sonores et transitions sous un même toit.",
-    all: "TOUT",
-    presets: "PRÉRÉGLAGES",
-    overlays: "SUPERPOSITIONS",
-    sfx: "EFFETS SONORES",
-    transitions: "TRANSITIONS",
+    tags: {
+        all: "TOUT",
+        scene: "SCÈNE",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTS",
+        overlay: "SUPERPOSITIONS"
+    },
     noResults: "AUCUN RÉSULTAT TROUVÉ",
     tryAnotherSearch: "ESSAYEZ UNE AUTRE RECHERCHE.",
     accountManagement: "GESTION DU COMPTE",
@@ -169,7 +232,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "ADRESSE E-MAIL",
     myLikes: "MES ACTIFS FAVORIS",
     noFavorites: "VOUS N'AVEZ ENCORE AIMÉ AUCUN ACTIF.",
-    update: "METTRE À JOUR"
+    update: "METTRE À JOUR",
+    support: {
+        title: "TICKET DE SUPPORT",
+        subject: "SUJET",
+        message: "VOTRE MESSAGE",
+        submit: "ENVOYER LE TICKET",
+        allTickets: "TOUS LES TICKETS",
+        myTickets: "MES TICKETS",
+        noTickets: "PAS ENCORE DE TICKETS",
+        total: "TOTAL",
+        placeholderSubject: "Ex: Problème de Paiement",
+        placeholderMessage: "Écrivez les détails ici..."
+    }
   },
   de: {
     searchPlaceholder: "SUCHEN...",
@@ -184,11 +259,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "SUPPORT-CENTER",
     heroTitle: "PROFESSIONELLE DIGITALE ASSETS",
     heroSubtitle: "Szenenpakete, Soundeffekte und Übergänge unter einem Dach.",
-    all: "ALLE",
-    presets: "PRESETS",
-    overlays: "OVERLAYS",
-    sfx: "SOUNDEFFEKTE",
-    transitions: "ÜBERGÄNGE",
+    tags: {
+        all: "ALLE",
+        scene: "SZENE",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTS",
+        overlay: "OVERLAYS"
+    },
     noResults: "KEINE ERGEBNISSE GEFUNDEN",
     tryAnotherSearch: "VERSUCHEN SIE EINE ANDERE SUCHE.",
     accountManagement: "KONTOVERWALTUNG",
@@ -203,7 +281,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "E-MAIL-ADRESSE",
     myLikes: "MEINE FAVORITEN",
     noFavorites: "DU HAST NOCH KEINE ASSETS GELIKT.",
-    update: "AKTUALISIEREN"
+    update: "AKTUALISIEREN",
+    support: {
+        title: "SUPPORT-TICKET",
+        subject: "BETREFF",
+        message: "IHRE NACHRICHT",
+        submit: "TICKET SENDEN",
+        allTickets: "ALLE TICKETS",
+        myTickets: "MEINE TICKETS",
+        noTickets: "NOCH KEINE TICKETS",
+        total: "GESAMT",
+        placeholderSubject: "Z.B.: Zahlungsproblem",
+        placeholderMessage: "Details hier eingeben..."
+    }
   },
   ar: {
     searchPlaceholder: "اكتب للبحث...",
@@ -218,11 +308,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "مركز الدعم",
     heroTitle: "الأصول الرقمية الاحترافية",
     heroSubtitle: "حزم المشاهد والمؤثرات الصوتية والانتقالات تحت سقف واحد.",
-    all: "الكل",
-    presets: "الإعدادات المسبقة",
-    overlays: "التراكبات",
-    sfx: "المؤثرات الصوتية",
-    transitions: "الانتقالات",
+    tags: {
+        all: "الكل",
+        scene: "مشهد",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTs",
+        overlay: "تراكبات"
+    },
     noResults: "لم يتم العثور على نتائج",
     tryAnotherSearch: "حاول البحث عن شيء آخر.",
     accountManagement: "إدارة الحساب",
@@ -237,7 +330,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "البريد الإلكتروني",
     myLikes: "أصولي المفضلة",
     noFavorites: "لم تعجب بأي أصول بعد.",
-    update: "تحديث"
+    update: "تحديث",
+    support: {
+        title: "تذكرة دعم",
+        subject: "الموضوع",
+        message: "رسالتك",
+        submit: "إرسال التذكرة",
+        allTickets: "كل التذاكر",
+        myTickets: "تذاكري",
+        noTickets: "لا توجد تذاكر بعد",
+        total: "إجمالي",
+        placeholderSubject: "مثال: مشكلة في الدفع",
+        placeholderMessage: "اكتب التفاصيل هنا..."
+    }
   },
   ru: {
     searchPlaceholder: "ПОИСК...",
@@ -252,11 +357,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "ЦЕНТР ПОДДЕРЖКИ",
     heroTitle: "ПРОФЕССИОНАЛЬНЫЕ ЦИФРОВЫЕ АКТИВЫ",
     heroSubtitle: "Сценические пакеты, звуковые эффекты и переходы под одной крышей.",
-    all: "ВСЕ",
-    presets: "ПРЕСЕТЫ",
-    overlays: "ОВЕРЛЕИ",
-    sfx: "ЗВУКОВЫЕ ЭФФЕКТЫ",
-    transitions: "ПЕРЕХОДЫ",
+    tags: {
+        all: "ВСЕ",
+        scene: "СЦЕНА",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTы",
+        overlay: "ОВЕРЛЕИ"
+    },
     noResults: "РЕЗУЛЬТАТОВ НЕ НАЙДЕНО",
     tryAnotherSearch: "ПОПРОБУЙТЕ ДРУГОЙ ЗАПРОС.",
     accountManagement: "УПРАВЛЕНИЕ АККАУНТОМ",
@@ -271,7 +379,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "ЭЛЕКТРОННАЯ ПОЧТА",
     myLikes: "МОИ ЛЮБИМЫЕ АКТИВЫ",
     noFavorites: "ВЫ ЕЩЕ НЕ ДОБАВИЛИ НИ ОДНОГО АКТИВА.",
-    update: "ОБНОВИТЬ"
+    update: "ОБНОВИТЬ",
+    support: {
+        title: "ТИКЕТ ПОДДЕРЖКИ",
+        subject: "ТЕМА",
+        message: "ВАШЕ СООБЩЕНИЕ",
+        submit: "ОТПРАВИТЬ ТИКЕТ",
+        allTickets: "ВСЕ ТИКЕТЫ",
+        myTickets: "МОИ ТИКЕТЫ",
+        noTickets: "ТИКЕТОВ ПОКА НЕТ",
+        total: "ВСЕГО",
+        placeholderSubject: "Напр.: Проблема с оплатой",
+        placeholderMessage: "Введите детали здесь..."
+    }
   },
   zh: {
     searchPlaceholder: "输入以搜索...",
@@ -286,11 +406,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "支持中心",
     heroTitle: "专业数字资产",
     heroSubtitle: "场景包、音效和过渡，尽在一个屋檐下。",
-    all: "全部",
-    presets: "预设",
-    overlays: "叠加层",
-    sfx: "音效",
-    transitions: "过渡",
+    tags: {
+        all: "全部",
+        scene: "场景",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTs",
+        overlay: "叠加层"
+    },
     noResults: "未找到结果",
     tryAnotherSearch: "尝试其他搜索词。",
     accountManagement: "账户管理",
@@ -304,8 +427,20 @@ export const translations: Record<Language, Record<string, string>> = {
     uploaded: "上传次数",
     emailAddress: "电子邮件地址",
     myLikes: "我收藏的资产",
-    noFavorites: "您还没有收藏任何资产。",
-    update: "更新"
+    noFavorites: "您还没有收藏 any 资产。",
+    update: "更新",
+    support: {
+        title: "支持工单",
+        subject: "主题",
+        message: "您的信息",
+        submit: "提交工单",
+        allTickets: "所有工单",
+        myTickets: "我的工单",
+        noTickets: "尚无工单",
+        total: "总计",
+        placeholderSubject: "例如：支付问题",
+        placeholderMessage: "在这里输入详细信息..."
+    }
   },
   ja: {
     searchPlaceholder: "検索する...",
@@ -320,11 +455,14 @@ export const translations: Record<Language, Record<string, string>> = {
     supportCenter: "サポートセンター",
     heroTitle: "プロフェッショナル・デジタル・アセット",
     heroSubtitle: "シーンパッケージ、効果音、トランジションがひとつに。",
-    all: "すべて",
-    presets: "プリセット",
-    overlays: "オーバーレイ",
-    sfx: "効果音",
-    transitions: "トランジション",
+    tags: {
+        all: "すべて",
+        scene: "シーン",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTs",
+        overlay: "オーバーレイ"
+    },
     noResults: "結果が見つかりません",
     tryAnotherSearch: "別のキーワードで検索してください。",
     accountManagement: "アカウント管理",
@@ -339,7 +477,19 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "メールアドレス",
     myLikes: "お気に入りのアセット",
     noFavorites: "お気に入りのアセットはまだありません。",
-    update: "更新"
+    update: "更新",
+    support: {
+        title: "サポートチケット",
+        subject: "件名",
+        message: "メッセージ",
+        submit: "チケットを送信",
+        allTickets: "すべてのチケット",
+        myTickets: "マイチケット",
+        noTickets: "チケットはまだありません",
+        total: "合計",
+        placeholderSubject: "例：支払いに関する問題",
+        placeholderMessage: "詳細をここに入力..."
+    }
   },
   pt: {
     searchPlaceholder: "DIGITE PARA BUSCAR...",
@@ -353,12 +503,15 @@ export const translations: Record<Language, Record<string, string>> = {
     siteEditor: "EDITOR DO SITE",
     supportCenter: "CENTRO DE SUPORTE",
     heroTitle: "ATIVOS DIGITAIS PROFISSIONAIS",
-    heroSubtitle: "Pacotes de cena, efeitos sonoros e transições sob o mesmo teto.",
-    all: "TUDO",
-    presets: "PRESETS",
-    overlays: "OVERLAYS",
-    sfx: "EFEITOS SONOROS",
-    transitions: "TRANSIÇÕES",
+    heroSubtitle: "Pacotes de cena, efeitos sonoros e transiciones sob o mesmo teto.",
+    tags: {
+        all: "TUDO",
+        scene: "CENA",
+        ae: "AFTER EFFECTS",
+        am: "ALIGHT MOTION",
+        lut: "LUTs",
+        overlay: "OVERLAYS"
+    },
     noResults: "NENHUM RESULTADO ENCONTRADO",
     tryAnotherSearch: "TENTE OUTRA BUSCA.",
     accountManagement: "GESTÃO DE CONTA",
@@ -373,6 +526,18 @@ export const translations: Record<Language, Record<string, string>> = {
     emailAddress: "ENDEREÇO DE E-MAIL",
     myLikes: "MEUS ATIVOS FAVORITOS",
     noFavorites: "VOCÊ AINDA NÃO CURTIU NENHUM ATIVO.",
-    update: "ATUALIZAR"
+    update: "ATUALIZAR",
+    support: {
+        title: "TICKET DE SUPORTE",
+        subject: "ASSUNTO",
+        message: "SUA MENSAGEM",
+        submit: "ENVIAR TICKET",
+        allTickets: "TODOS OS TICKETS",
+        myTickets: "MEUS TICKETS",
+        noTickets: "SEM TICKETS AINDA",
+        total: "TOTAL",
+        placeholderSubject: "Ex: Problema de Pagamento",
+        placeholderMessage: "Digite os detalhes aqui..."
+    }
   }
 };
