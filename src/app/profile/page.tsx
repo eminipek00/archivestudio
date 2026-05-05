@@ -118,9 +118,9 @@ const ProfilePage = () => {
       <main className="flex-grow flex flex-col items-center pt-28 pb-8">
         <div className="w-full max-w-4xl px-4 space-y-6 flex flex-col">
           
-          <div className="flex flex-col md:flex-row items-center gap-8 bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl relative shrink-0">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 bg-card border border-border-custom p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl relative shrink-0">
             <div className="relative group shrink-0">
-                <div className="w-28 h-28 md:w-32 md:h-32 rounded-[2.5rem] overflow-hidden border-4 border-background shadow-2xl bg-[#111]">
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border-4 border-background shadow-2xl bg-[#111]">
                     {profile?.avatar_url ? ( <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" /> ) : (
                         <div className="w-full h-full flex items-center justify-center p-6"> {isAdmin ? <Logo className="w-full h-full" /> : <User size={56} className="text-white/10" />} </div>
                     )}
@@ -207,7 +207,7 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            <div className="bg-card border border-border-custom p-8 rounded-[3rem] shadow-xl flex flex-col gap-6 h-full overflow-hidden">
+            <div className="bg-card border border-border-custom p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-6 h-full overflow-hidden">
                 <div className="flex items-center gap-3 border-b border-white/5 pb-4 text-left">
                     <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><Heart size={18} fill="currentColor" /></div>
                     <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{t('myLikes')}</h3>
