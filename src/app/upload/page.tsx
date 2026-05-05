@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
-import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box, FileType, ShieldAlert } from "lucide-react";
+import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box, FileType, ShieldAlert, Crop as CropIcon, Check, X } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useLanguage } from "@/utils/LanguageContext";
 import { Toast, useToast } from "@/components/Toast";
 import { useRouter } from "next/navigation";
+import Cropper from 'react-easy-crop';
+import { getCroppedImg } from "@/utils/cropImage";
 
 const UploadPage = () => {
   const [loading, setLoading] = useState(false);
@@ -21,6 +23,13 @@ const UploadPage = () => {
   const [externalUrl, setExternalUrl] = useState("");
   const [useExternal, setUseExternal] = useState(false);
   
+  // CROP STATES
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [tempImage, setTempImage] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+
   const { t } = useLanguage();
   const { toast, showToast, hideToast } = useToast();
   const supabase = createClient();
@@ -29,7 +38,6 @@ const UploadPage = () => {
   const categories = [t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
   const ADMIN_EMAIL = "ipekmuhammetemin@gmail.com";
 
-  // KATEGORİ BAZLI PROFESYONEL EDİTÖR KAPAKLARI
   const DEFAULT_THUMBS: Record<string, string> = {
     "Sahne Paketleri": "https://images.unsplash.com/photo-1574717024453-354056afd6fc?w=800&q=80",
     "After Effects": "https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&q=80",
@@ -51,46 +59,39 @@ const UploadPage = () => {
     checkAccess();
   }, [supabase, router]);
 
-  const MAX_FILE_SIZE_MB = 20;
-
-  const getAcceptedFiles = (cat: string) => {
-    const c = cat.toLowerCase();
-    const common = ".zip,.rar,.7z";
-    if (c.includes('sahne') || c.includes('scene')) return `${common},.mp4,.mov`;
-    if (c.includes('after') || c.includes('ae')) return `${common},.aep,.ffx,.prproj`;
-    if (c.includes('alight') || c.includes('am')) return `${common},.xml`;
-    if (c.includes('lut')) return `${common},.cube`;
-    if (c.includes('overlay')) return `${common},.mp4,.mov,.png,.jpg`;
-    return `${common},.mp4,.mov,.aep,.xml,.cube`;
-  };
-
-  const getCategoryContext = (cat: string) => {
-    const c = cat.toLowerCase();
-    if (c.includes('sahne') || c.includes('scene')) return { label: `${t('selectFile')} (MP4/RAR)`, icon: <Box size={28} /> };
-    if (c.includes('after') || c.includes('ae')) return { label: t('selectFile'), icon: <FileCode2 size={28} /> };
-    if (c.includes('alight') || c.includes('am')) return { label: t('selectFile'), icon: <FileType size={28} /> };
-    if (c.includes('lut')) return { label: t('selectFile'), icon: <FileArchive size={28} /> };
-    if (c.includes('overlay')) return { label: t('selectFile'), icon: <Film size={28} /> };
-    return { label: t('selectFile'), icon: <FileArchive size={28} /> };
-  };
-
-  const currentContext = getCategoryContext(category);
-  const acceptedFiles = getAcceptedFiles(category);
+  const onCropComplete = useCallback((_croppedArea: any, pixelCrop: any) => {
+    setCroppedAreaPixels(pixelCrop);
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 2 * 1024 * 1024) return showToast("Kapak fotoğrafı 2MB'dan büyük olamaz!", "error");
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      setTempImage(URL.createObjectURL(file));
+      setShowCropper(true);
+    }
+  };
+
+  const handleCropSave = async () => {
+    try {
+      if (tempImage && croppedAreaPixels) {
+        const croppedBlob = await getCroppedImg(tempImage, croppedAreaPixels);
+        if (croppedBlob) {
+          const croppedFile = new File([croppedBlob], 'cropped-image.jpg', { type: 'image/jpeg' });
+          setImageFile(croppedFile);
+          setImagePreview(URL.createObjectURL(croppedBlob));
+          setShowCropper(false);
+        }
+      }
+    } catch (e) {
+      showToast("Kırpma sırasında hata oluştu!", "error");
     }
   };
 
   const handleAssetFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) { 
         const file = e.target.files[0];
-        if (file.size / (1024 * 1024) > MAX_FILE_SIZE_MB) {
-            showToast(`Dosya ${MAX_FILE_SIZE_MB}MB'dan büyük! Lütfen Link kullanın.`, "error");
+        if (file.size / (1024 * 1024) > 20) {
+            showToast(`Dosya 20MB'dan büyük! Lütfen Link kullanın.`, "error");
             e.target.value = "";
             return;
         }
@@ -140,6 +141,36 @@ const UploadPage = () => {
       <Navbar />
       <main className="flex-grow overflow-y-auto px-4 py-8 custom-scrollbar">
         <div className="max-w-4xl mx-auto bg-card border border-border-custom p-6 md:p-12 rounded-[3rem] shadow-2xl relative overflow-hidden">
+          
+          {/* CROPPER MODAL */}
+          {showCropper && tempImage && (
+            <div className="fixed inset-0 z-[10000] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-4">
+              <div className="relative w-full max-w-4xl aspect-video bg-[#050505] rounded-3xl overflow-hidden border border-white/10">
+                <Cropper
+                  image={tempImage}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={16 / 9}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+              </div>
+              <div className="mt-8 flex items-center gap-4">
+                <button onClick={() => setShowCropper(false)} className="flex items-center gap-2 px-8 py-3 bg-white/5 border border-white/10 text-white/40 hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
+                  <X size={18} /> {t('cancel')}
+                </button>
+                <button onClick={handleCropSave} className="flex items-center gap-2 px-12 py-3 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                  <Check size={18} /> {t('save')}
+                </button>
+              </div>
+              <div className="mt-6 flex items-center gap-4 w-full max-w-xs">
+                <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">ZOOM</span>
+                <input type="range" value={zoom} min={1} max={3} step={0.1} onChange={(e) => setZoom(Number(e.target.value))} className="flex-1 accent-primary" />
+              </div>
+            </div>
+          )}
+
           {step === 1 ? (
               <form onSubmit={handleUpload} className="space-y-8">
                 <div className="flex justify-between items-center">
@@ -158,6 +189,11 @@ const UploadPage = () => {
                         <div className="relative aspect-video rounded-3xl bg-muted overflow-hidden border-2 border-dashed border-border-custom hover:border-primary transition-all">
                             {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">{t('tags.overlay')} ({t('optional')})</span></div>}
                             <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                            {imagePreview && (
+                              <button type="button" onClick={() => setShowCropper(true)} className="absolute bottom-4 right-4 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl text-white hover:text-primary transition-all shadow-xl">
+                                <CropIcon size={16} />
+                              </button>
+                            )}
                         </div>
                         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white focus:ring-1 focus:ring-primary/50 outline-none" placeholder={t('assetTitle')} required />
                     </div>
@@ -205,6 +241,7 @@ const UploadPage = () => {
         </div>
       </main>
       <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0 text-[8px] font-black uppercase text-white/30 italic"><span>sytexarchive</span><p>&copy; {new Date().getFullYear()} sytexarchive</p></footer>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </div>
   );
 };
