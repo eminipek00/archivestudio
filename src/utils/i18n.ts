@@ -48,6 +48,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "DOSYA",
     link: "LİNK",
     selectFile: "DOSYA SEÇ",
+    coverImage: "KAPAK FOTOĞRAFI",
     smartCoverActive: "AKILLI KAPAK SİSTEMİ AKTİF",
     uploadSuccess: "BAŞARIYLA YÜKLENDİ!",
     support: {
@@ -110,6 +111,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "FILE",
     link: "LINK",
     selectFile: "SELECT FILE",
+    coverImage: "COVER IMAGE",
     smartCoverActive: "SMART COVER SYSTEM ACTIVE",
     uploadSuccess: "UPLOAD SUCCESSFUL!",
     support: {
@@ -172,6 +174,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "FAYL",
     link: "LİNK",
     selectFile: "FAYL SEÇ",
+    coverImage: "QAPAQ ŞƏKLİ",
     smartCoverActive: "AĞILLI QAPAQ SİSTEMİ AKTİVDİR",
     uploadSuccess: "MÜVƏFFƏQİYYƏTLƏ YÜKLƏNDİ!",
     support: {
@@ -234,6 +237,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "ARCHIVO",
     link: "ENLACE",
     selectFile: "SELECCIONAR ARCHIVO",
+    coverImage: "IMAGEN DE PORTADA",
     smartCoverActive: "SISTEMA DE PORTADA INTELIGENTE ACTIVO",
     uploadSuccess: "¡SUBIDA EXITOSA!",
     support: {
@@ -296,6 +300,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "FICHIER",
     link: "LIEN",
     selectFile: "SÉLECTIONNER LE FICHIER",
+    coverImage: "IMAGE DE COUVERTURE",
     smartCoverActive: "SYSTÈME DE COUVERTURE INTELLIGENT ACTIF",
     uploadSuccess: "TÉLÉCHARGEMENT RÉUSSI !",
     support: {
@@ -358,6 +363,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "DATEI",
     link: "LINK",
     selectFile: "DATEI AUSWÄHLEN",
+    coverImage: "TITELBILD",
     smartCoverActive: "INTELLIGENTES COVER-SYSTEM AKTIV",
     uploadSuccess: "UPLOAD ERFOLGREICH!",
     support: {
@@ -420,6 +426,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "ملف",
     link: "رابط",
     selectFile: "اختر ملفاً",
+    coverImage: "صورة الغلاف",
     smartCoverActive: "نظام الغلاف الذكي نشط",
     uploadSuccess: "تم الرفع بنجاح!",
     support: {
@@ -482,6 +489,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "ФАЙЛ",
     link: "ССЫЛКА",
     selectFile: "ВЫБРАТЬ ФАЙЛ",
+    coverImage: "ОБЛОЖКА",
     smartCoverActive: "СИСТЕМА УМНЫХ ОБЛОЖЕК АКТИВНА",
     uploadSuccess: "ЗАГРУЗКА УСПЕШНА!",
     support: {
@@ -544,6 +552,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "文件",
     link: "链接",
     selectFile: "选择文件",
+    coverImage: "封面图片",
     smartCoverActive: "智能封面系统已激活",
     uploadSuccess: "上传成功！",
     support: {
@@ -606,6 +615,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "ファイル",
     link: "リンク",
     selectFile: "ファイルを選択",
+    coverImage: "カバー画像",
     smartCoverActive: "スマートカバーシステム有効",
     uploadSuccess: "アップロード完了！",
     support: {
@@ -668,6 +678,7 @@ export const translations: Record<Language, Record<string, any>> = {
     file: "ARQUIVO",
     link: "LINK",
     selectFile: "SELECIONAR ARQUIVO",
+    coverImage: "IMAGEM DE CAPA",
     smartCoverActive: "SISTEMA DE CAPA INTELIGENTE ATIVO",
     uploadSuccess: "UPLOAD CONCLUÍDO!",
     support: {

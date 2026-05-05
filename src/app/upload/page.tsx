@@ -200,7 +200,6 @@ const UploadPage = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
-                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">{t('smartCoverActive')}</p>
                     </div>
                     <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 text-primary italic">
                         <ShieldAlert size={14} />
@@ -211,7 +210,7 @@ const UploadPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
                         <div className="relative aspect-video rounded-3xl bg-muted overflow-hidden border-2 border-dashed border-border-custom hover:border-primary transition-all">
-                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">{t('tags.overlay')} ({t('optional')})</span></div>}
+                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">{t('coverImage')} ({t('optional')})</span></div>}
                             <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                             {imagePreview && (
                               <button type="button" onClick={() => setShowCropper(true)} className="absolute bottom-4 right-4 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl text-white hover:text-primary transition-all shadow-xl">
