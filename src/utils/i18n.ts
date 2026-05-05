@@ -2,6 +2,8 @@ export type Language = 'tr' | 'en' | 'ru' | 'ar' | 'de' | 'fr' | 'es' | 'it' | '
 
 export const translations: Record<string, any> = {
   tr: {
+    heroTitle: "Profesyonel Dijital Arşiv",
+    heroSubtitle: "En kaliteli oyun varlıkları ve düzenleme araçları için tek adresiniz.",
     welcome: "Hoş Geldiniz",
     searchPlaceholder: "Dijital varlıkları arayın...",
     categories: "Kategoriler",
@@ -34,6 +36,9 @@ export const translations: Record<string, any> = {
     newPassword: "Yeni Şifre",
     update: "Güncelle",
     footer: "Tüm hakları saklıdır.",
+    support: "Destek",
+    privacy: "Gizlilik",
+    terms: "Şartlar",
     tags: {
       all: "Hepsi",
       football: "Futbol",
@@ -44,6 +49,8 @@ export const translations: Record<string, any> = {
     }
   },
   en: {
+    heroTitle: "Professional Digital Archive",
+    heroSubtitle: "Your one-stop destination for high-quality gaming assets and editing tools.",
     welcome: "Welcome",
     searchPlaceholder: "Search assets...",
     categories: "Categories",
@@ -76,6 +83,9 @@ export const translations: Record<string, any> = {
     newPassword: "New Password",
     update: "Update",
     footer: "All rights reserved.",
+    support: "Support",
+    privacy: "Privacy",
+    terms: "Terms",
     tags: {
       all: "All",
       football: "Football",
@@ -86,6 +96,8 @@ export const translations: Record<string, any> = {
     }
   },
   az: {
+    heroTitle: "Peşəkar Rəqəmsal Arxiv",
+    heroSubtitle: "Yüksək keyfiyyətli oyun varlıqları və redaktə alətləri üçün tək ünvanınız.",
     welcome: "Xoş Gəlmisiniz",
     searchPlaceholder: "Varlıqları axtarın...",
     categories: "Kateqoriyalar",
@@ -118,6 +130,9 @@ export const translations: Record<string, any> = {
     newPassword: "Yeni Şifrə",
     update: "Yenilə",
     footer: "Bütün hüquqlar qorunur.",
+    support: "Dəstək",
+    privacy: "Məxfilik",
+    terms: "Şərtlər",
     tags: {
       all: "Hamısı",
       football: "Futbol",
@@ -128,6 +143,8 @@ export const translations: Record<string, any> = {
     }
   },
   ru: {
+    heroTitle: "Профессиональный цифровой архив",
+    heroSubtitle: "Ваш единый центр высококачественных игровых ресурсов и инструментов редактирования.",
     welcome: "Добро пожаловать",
     searchPlaceholder: "Поиск активов...",
     categories: "Категории",
@@ -160,6 +177,9 @@ export const translations: Record<string, any> = {
     newPassword: "Новый пароль",
     update: "Обновить",
     footer: "Все права защищены.",
+    support: "Поддержка",
+    privacy: "Конфиденциальность",
+    terms: "Условия",
     tags: {
       all: "Все",
       football: "Футбол",
@@ -170,6 +190,8 @@ export const translations: Record<string, any> = {
     }
   },
   ar: {
+    heroTitle: "الأرشيف الرقمي الاحترافي",
+    heroSubtitle: "وجهتك الواحدة لأصول الألعاب وأدوات التحرير عالية الجودة.",
     welcome: "أهلاً بك",
     searchPlaceholder: "البحث عن الأصول...",
     categories: "الفئات",
@@ -202,6 +224,9 @@ export const translations: Record<string, any> = {
     newPassword: "كلمة مرور جديدة",
     update: "تحديث",
     footer: "جميع الحقوق محفوظة.",
+    support: "الدعم",
+    privacy: "الخصوصية",
+    terms: "الشروط",
     tags: {
       all: "الكل",
       football: "كرة القدم",
@@ -212,6 +237,8 @@ export const translations: Record<string, any> = {
     }
   },
   de: {
+    heroTitle: "Professionelles digitales Archiv",
+    heroSubtitle: "Ihre zentrale Anlaufstelle für hochwertige Gaming-Assets und Bearbeitungswerkzeuge.",
     welcome: "Willkommen",
     searchPlaceholder: "Assets suchen...",
     categories: "Kategorien",
@@ -244,6 +271,9 @@ export const translations: Record<string, any> = {
     newPassword: "Neues Passwort",
     update: "Aktualisieren",
     footer: "Alle Rechte vorbehalten.",
+    support: "Support",
+    privacy: "Datenschutz",
+    terms: "Bedingungen",
     tags: {
       all: "Alle",
       football: "Fußball",
@@ -254,6 +284,8 @@ export const translations: Record<string, any> = {
     }
   },
   fr: {
+    heroTitle: "Archives numériques professionnelles",
+    heroSubtitle: "Votre destination unique pour des actifs de jeu et des outils d'édition de haute qualité.",
     welcome: "Bienvenue",
     searchPlaceholder: "Rechercher...",
     categories: "Catégories",
@@ -286,6 +318,9 @@ export const translations: Record<string, any> = {
     newPassword: "Nouveau mot de passe",
     update: "Mettre à jour",
     footer: "Tous droits réservés.",
+    support: "Support",
+    privacy: "Confidentialité",
+    terms: "Conditions",
     tags: {
       all: "Tout",
       football: "Football",
@@ -296,6 +331,8 @@ export const translations: Record<string, any> = {
     }
   },
   es: {
+    heroTitle: "Archivo Digital Profesional",
+    heroSubtitle: "Tu destino único para activos de juegos y herramientas de edición de alta calidad.",
     welcome: "Bienvenido",
     searchPlaceholder: "Buscar activos...",
     categories: "Categorías",
@@ -328,6 +365,9 @@ export const translations: Record<string, any> = {
     newPassword: "Nueva contraseña",
     update: "Actualizar",
     footer: "Todos los derechos reservados.",
+    support: "Soporte",
+    privacy: "Privacidad",
+    terms: "Términos",
     tags: {
       all: "Todo",
       football: "Fútbol",
@@ -338,6 +378,8 @@ export const translations: Record<string, any> = {
     }
   },
   it: {
+    heroTitle: "Archivio digitale professionale",
+    heroSubtitle: "La tua destinazione unica per asset di gioco e strumenti di editing di alta qualità.",
     welcome: "Benvenuto",
     searchPlaceholder: "Cerca...",
     categories: "Categorie",
@@ -370,6 +412,9 @@ export const translations: Record<string, any> = {
     newPassword: "Nuova password",
     update: "Aggiorna",
     footer: "Tutti i diritti riservati.",
+    support: "Supporto",
+    privacy: "Privacy",
+    terms: "Termini",
     tags: {
       all: "Tutto",
       football: "Calcio",
@@ -380,6 +425,8 @@ export const translations: Record<string, any> = {
     }
   },
   pt: {
+    heroTitle: "Arquivo Digital Profissional",
+    heroSubtitle: "Seu destino único para ativos de jogos e ferramentas de edição de alta qualidade.",
     welcome: "Bem-vindo",
     searchPlaceholder: "Pesquisar...",
     categories: "Categorias",
@@ -412,6 +459,9 @@ export const translations: Record<string, any> = {
     newPassword: "Nova senha",
     update: "Atualizar",
     footer: "Todos os direitos reservados.",
+    support: "Suporte",
+    privacy: "Privacidade",
+    terms: "Termos",
     tags: {
       all: "Tudo",
       football: "Futebol",
@@ -422,6 +472,8 @@ export const translations: Record<string, any> = {
     }
   },
   nl: {
+    heroTitle: "Professioneel digitaal archief",
+    heroSubtitle: "Uw one-stop-bestemming voor hoogwaardige gaming-assets en bewerkingstools.",
     welcome: "Welkom",
     searchPlaceholder: "Zoeken...",
     categories: "Categorieën",
@@ -454,6 +506,9 @@ export const translations: Record<string, any> = {
     newPassword: "Nieuw wachtwoord",
     update: "Bijwerken",
     footer: "Alle rechten voorbehouden.",
+    support: "Ondersteuning",
+    privacy: "Privacy",
+    terms: "Voorwaarden",
     tags: {
       all: "Alle",
       football: "Voetbal",
@@ -464,6 +519,8 @@ export const translations: Record<string, any> = {
     }
   },
   pl: {
+    heroTitle: "Profesjonalne Archiwum Cyfrowe",
+    heroSubtitle: "Twoje centrum wysokiej jakości zasobów do gier i narzędzi do edycji.",
     welcome: "Witaj",
     searchPlaceholder: "Szukaj...",
     categories: "Kategorie",
@@ -496,6 +553,9 @@ export const translations: Record<string, any> = {
     newPassword: "Nowe hasło",
     update: "Aktualizuj",
     footer: "Wszelkie prawa zastrzeżone.",
+    support: "Pomoc",
+    privacy: "Prywatność",
+    terms: "Warunki",
     tags: {
       all: "Wszystko",
       football: "Piłka nożna",
@@ -506,6 +566,8 @@ export const translations: Record<string, any> = {
     }
   },
   zh: {
+    heroTitle: "专业数字档案",
+    heroSubtitle: "高质量游戏资产和编辑工具的一站式目的地。",
     welcome: "欢迎",
     searchPlaceholder: "搜索...",
     categories: "类别",
@@ -538,6 +600,9 @@ export const translations: Record<string, any> = {
     newPassword: "新密码",
     update: "更新",
     footer: "版权所有。",
+    support: "支持",
+    privacy: "隐私",
+    terms: "条款",
     tags: {
       all: "全部",
       football: "足球",
@@ -548,6 +613,8 @@ export const translations: Record<string, any> = {
     }
   },
   ja: {
+    heroTitle: "プロフェッショナル・デジタルアーカイブ",
+    heroSubtitle: "高品質なゲームアセットと編集ツールのワンストップ・デスティネーション。",
     welcome: "ようこそ",
     searchPlaceholder: "検索...",
     categories: "カテゴリー",
@@ -580,6 +647,9 @@ export const translations: Record<string, any> = {
     newPassword: "新しいパスワード",
     update: "更新",
     footer: "全著作権所有。",
+    support: "サポート",
+    privacy: "プライバシー",
+    terms: "規約",
     tags: {
       all: "すべて",
       football: "サッカー",

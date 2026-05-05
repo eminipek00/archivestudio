@@ -123,7 +123,7 @@ const ProfilePage = () => {
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-background">
+    <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
       <Navbar />
       <main className="flex-grow flex flex-col items-center pt-24 md:pt-32 pb-12">
         <div className="w-full max-w-6xl px-3 md:px-8 space-y-6 md:space-y-10 flex flex-col">
@@ -223,7 +223,7 @@ const ProfilePage = () => {
                     <div className="p-2 md:p-3 bg-red-500/10 rounded-xl md:rounded-2xl text-red-500"><Heart className="w-[20px] md:w-[28px]" fill="currentColor" /></div>
                     <h3 className="text-sm md:text-3xl font-black uppercase italic tracking-tighter text-white">{t('myLikes')}</h3>
                 </div>
-                <div className="space-y-4 md:space-y-6">
+                <div className="flex-grow overflow-y-auto pr-1 no-scrollbar space-y-4 md:space-y-6">
                     {favoriteAssets.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-white/10 text-center space-y-6 opacity-20 py-20">
                             <Heart className="w-[32px] md:w-[64px]" />
