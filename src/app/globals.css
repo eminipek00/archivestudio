@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
 :root {
+  --background: #ffffff;
+  --foreground: #020617;
+  --primary: #3b82f6;
+  --border: #e2e8f0;
+  --muted: #f1f5f9;
+}
+
+.dark {
   --background: #020617;
   --foreground: #f8fafc;
   --primary: #3b82f6;
@@ -8,19 +16,26 @@
   --muted: #0f172a;
 }
 
-/* SİTEYİ ORİJİNAL v6.0.3 TONUNA MÜHÜRLER */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-border-custom: var(--border);
+  --color-muted: var(--muted);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 html, body {
   width: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background: var(--background) !important;
-  color: var(--foreground) !important;
-}
-
-* {
-  box-sizing: border-box;
+  background: #020617 !important; /* v6.0.3 Orijinal Karanlık Arka Plan */
+  color: #f8fafc !important; /* v6.0.3 Orijinal Metin Rengi */
 }
 
 .container {
@@ -36,6 +51,10 @@ html, body {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
+}
+
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.6);
 }
 
 /* CUSTOM SCROLLBAR FOR MENUS */

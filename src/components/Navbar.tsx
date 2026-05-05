@@ -33,7 +33,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   useEffect(() => {
     // HER ZAMAN KARANLIK MOD
     document.documentElement.classList.add('dark');
-    localStorage.setItem('sytexTheme', 'dark');
 
     const savedSettings = localStorage.getItem('sytexLogoSettings');
     if (savedSettings) setLogoSettings(JSON.parse(savedSettings));
