@@ -90,7 +90,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
       <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between gap-2 md:gap-8">
         
         {/* LOGO AREA */}
-        <div className="flex items-center gap-2 md:gap-6 shrink-0">
+        <div className="flex items-center gap-2 md:gap-6 shrink-0 text-left">
             <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0">
                 <div 
                   className="w-8 h-8 md:w-10 md:h-10 shrink-0 transition-transform duration-500 hover:rotate-12"
@@ -151,10 +151,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 
                 {showNotifMenu && (
                   <div className="absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a] border border-border-custom rounded-[2rem] p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">BİLDİRİMLER</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">{t('notifications')}</h3>
                     <div className="space-y-1">
                         {notifications.length === 0 ? (
-                            <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">Bildirim Yok</p></div>
+                            <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">{t('noNotifications')}</p></div>
                         ) : (
                             notifications.map(n => (
                                 <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group">
