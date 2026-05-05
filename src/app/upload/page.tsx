@@ -39,12 +39,12 @@ const UploadPage = () => {
   const ADMIN_EMAIL = "ipekmuhammetemin@gmail.com";
 
   const DEFAULT_THUMBS: Record<string, string> = {
-    "Sahne Paketleri": "https://images.unsplash.com/photo-1574717024453-354056afd6fc?w=800&q=80",
-    "After Effects": "https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&q=80",
-    "Alight Motion": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
-    "LUT Paketleri": "https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=800&q=80",
-    "Overlay": "https://images.unsplash.com/photo-1535016120720-40c646bebbbb?w=800&q=80",
-    "Default": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80"
+    "Sahne Paketleri": "/default-cover.png",
+    "After Effects": "/default-cover.png",
+    "Alight Motion": "/default-cover.png",
+    "LUT Paketleri": "/default-cover.png",
+    "Overlay": "/default-cover.png",
+    "Default": "/default-cover.png"
   };
 
   useEffect(() => {
