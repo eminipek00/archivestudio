@@ -1,4 +1,4 @@
-export type Language = 'tr' | 'en' | 'ru' | 'ar' | 'de' | 'fr' | 'es' | 'it' | 'pt' | 'nl' | 'pl';
+export type Language = 'tr' | 'en' | 'ru' | 'ar' | 'de' | 'fr' | 'es' | 'it' | 'pt' | 'nl' | 'pl' | 'az';
 
 export const translations: Record<string, any> = {
   tr: {
@@ -41,6 +41,48 @@ export const translations: Record<string, any> = {
       gaming: "Oyun",
       music: "Müzik",
       other: "Diğer"
+    }
+  },
+  az: {
+    welcome: "Xoş Gəlmisiniz",
+    searchPlaceholder: "Rəqəmsal varlıqları axtarın...",
+    categories: "Kateqoriyalar",
+    all: "Hamısı",
+    login: "GİRİŞ",
+    register: "QEYDİYYAT",
+    logout: "Çıxış Et",
+    profile: "Profil",
+    myAssets: "Varlıqlarım",
+    upload: "Yüklə",
+    settings: "Ayarlar",
+    notifications: "Bildirişlər",
+    noNotifications: "Bildiriş yoxdur",
+    uploaded: "Yükləmə",
+    followers: "İzləyici",
+    following: "İzləmə",
+    accountSettings: "Hesab İdarəetməsi",
+    fullName: "Ad Soyad",
+    username: "İstifadəçi Adı",
+    emailAddress: "E-poçt Ünvanı",
+    showFavorites: "Favoritləri Göstər",
+    favoritesDesc: "Profilinizdə favorit varlıqlarınızı siyahıya alın",
+    saveChanges: "Dəyişiklikləri Saxla",
+    saving: "Saxlanılır...",
+    save: "Saxla",
+    cancel: "Ləğv Et",
+    edit: "Düzəliş Et",
+    myLikes: "Favoritlərim",
+    noFavorites: "Hələ favorit varlığınız yoxdur",
+    newPassword: "Yeni Şifrə",
+    update: "Yenilə",
+    footer: "Bütün hüquqlar qorunur.",
+    tags: {
+      all: "Hamısı",
+      football: "Futbol",
+      basketball: "Basketbol",
+      gaming: "Oyun",
+      music: "Musiqi",
+      other: "Digər"
     }
   },
   en: {
