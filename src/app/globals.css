@@ -38,6 +38,31 @@ html, body {
   color: var(--foreground);
 }
 
+/* AYDINLIK MODDA YAZILARIN KAYBOLMASINI ENGELLEYEN CERRAHİ MÜDAHALE */
+:root:not(.dark) body *:not(nav *):not(.bg-primary *) {
+  /* text-white ve türevlerini aydınlık modda koyu yapar, ama navbar ve mavi butonları ellemez */
+}
+
+:root:not(.dark) .text-white:not(nav *):not(.bg-primary *) {
+  color: #000000 !important;
+}
+
+:root:not(.dark) .text-white\/40:not(nav *):not(.bg-primary *) {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+
+:root:not(.dark) .text-white\/20:not(nav *):not(.bg-primary *) {
+  color: rgba(0, 0, 0, 0.2) !important;
+}
+
+:root:not(.dark) .bg-card {
+  background-color: #f8f8f8 !important;
+}
+
+:root:not(.dark) .bg-muted {
+  background-color: #f1f1f1 !important;
+}
+
 .container {
   width: 100%;
   max-width: 1280px;
