@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Archive, Mail, ArrowRight, Lock, User, Camera, AtSign, Eye, EyeOff, X, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Cropper from 'react-easy-crop';
-import { getCroppedImg } from "@/utils/imageUtils";
+import { getCroppedImg } from "@/utils/cropImage";
 import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {

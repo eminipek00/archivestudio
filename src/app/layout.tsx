@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="tr" className="dark">
       <body className={`${inter.className} bg-black text-white no-scrollbar`}>
         <LanguageProvider>
           {children}
