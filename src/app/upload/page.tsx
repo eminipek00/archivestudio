@@ -8,9 +8,6 @@ import { useLanguage } from "@/utils/LanguageContext";
 import { Toast, useToast } from "@/components/Toast";
 import { useRouter } from "next/navigation";
 
-// Bu import hata verebilir, Lucide kütüphanesinden doğru çekilmeli.
-import { LucideIcon } from "lucide-react";
-
 const UploadPage = () => {
   const [loading, setLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(true);
@@ -34,11 +31,11 @@ const UploadPage = () => {
 
   // KATEGORİ BAZLI PROFESYONEL EDİTÖR KAPAKLARI
   const DEFAULT_THUMBS: Record<string, string> = {
-    "Sahne Paketleri": "https://images.unsplash.com/photo-1574717024453-354056afd6fc?w=800&q=80", // Video Editing abstract
-    "After Effects": "https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&q=80", // Digital workspace
-    "Alight Motion": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80", // Mobile editing feel
-    "LUT Paketleri": "https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=800&q=80", // Color grading
-    "Overlay": "https://images.unsplash.com/photo-1535016120720-40c646bebbbb?w=800&q=80", // Cinema feel
+    "Sahne Paketleri": "https://images.unsplash.com/photo-1574717024453-354056afd6fc?w=800&q=80",
+    "After Effects": "https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=800&q=80",
+    "Alight Motion": "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&q=80",
+    "LUT Paketleri": "https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=800&q=80",
+    "Overlay": "https://images.unsplash.com/photo-1535016120720-40c646bebbbb?w=800&q=80",
     "Default": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80"
   };
 
@@ -48,7 +45,7 @@ const UploadPage = () => {
       if (!user) { router.push("/login"); return; }
       const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
       if (user.email === ADMIN_EMAIL || profile?.is_admin) { setIsAdmin(true); } 
-      else { showToast("Bu sayfaya erişim yetkiniz yok lo!", "error"); setTimeout(() => router.push("/"), 2000); }
+      else { showToast("Bu sayfaya erişim yetkiniz yok!", "error"); setTimeout(() => router.push("/"), 2000); }
       setIsVerifying(false);
     };
     checkAccess();
@@ -69,12 +66,12 @@ const UploadPage = () => {
 
   const getCategoryContext = (cat: string) => {
     const c = cat.toLowerCase();
-    if (c.includes('sahne') || c.includes('scene')) return { label: 'PAKET SEÇ (MP4/RAR)', icon: <Box size={28} /> };
-    if (c.includes('after') || c.includes('ae')) return { label: 'PROJE / PRESET SEÇ', icon: <FileCode2 size={28} /> };
-    if (c.includes('alight') || c.includes('am')) return { label: 'XML / PROJE SEÇ', icon: <FileType size={28} /> };
-    if (c.includes('lut')) return { label: 'LUT / CUBE SEÇ', icon: <FileArchive size={28} /> };
-    if (c.includes('overlay')) return { label: 'VİDEO / OVERLAY SEÇ', icon: <Film size={28} /> };
-    return { label: 'DOSYA SEÇ', icon: <FileArchive size={28} /> };
+    if (c.includes('sahne') || c.includes('scene')) return { label: `${t('selectFile')} (MP4/RAR)`, icon: <Box size={28} /> };
+    if (c.includes('after') || c.includes('ae')) return { label: t('selectFile'), icon: <FileCode2 size={28} /> };
+    if (c.includes('alight') || c.includes('am')) return { label: t('selectFile'), icon: <FileType size={28} /> };
+    if (c.includes('lut')) return { label: t('selectFile'), icon: <FileArchive size={28} /> };
+    if (c.includes('overlay')) return { label: t('selectFile'), icon: <Film size={28} /> };
+    return { label: t('selectFile'), icon: <FileArchive size={28} /> };
   };
 
   const currentContext = getCategoryContext(category);
@@ -148,7 +145,7 @@ const UploadPage = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
-                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">Akıllı Kapak Sistemi Aktif</p>
+                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest mt-1 italic">{t('smartCoverActive')}</p>
                     </div>
                     <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 text-primary italic">
                         <ShieldAlert size={14} />
@@ -159,10 +156,10 @@ const UploadPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
                         <div className="relative aspect-video rounded-3xl bg-muted overflow-hidden border-2 border-dashed border-border-custom hover:border-primary transition-all">
-                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">KAPAK (OPSİYONEL)</span></div>}
+                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">{t('tags.overlay')} ({t('optional')})</span></div>}
                             <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                         </div>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white focus:ring-1 focus:ring-primary/50 outline-none" placeholder="VARLIK BAŞLIĞI" required />
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white focus:ring-1 focus:ring-primary/50 outline-none" placeholder={t('assetTitle')} required />
                     </div>
 
                     <div className="space-y-6">
@@ -173,13 +170,13 @@ const UploadPage = () => {
                         </div>
                         
                         <div className="p-1 bg-[#111] rounded-2xl flex gap-1 border border-border-custom">
-                            <button type="button" onClick={() => setUseExternal(false)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${!useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>Dosya</button>
-                            <button type="button" onClick={() => setUseExternal(true)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>Link</button>
+                            <button type="button" onClick={() => setUseExternal(false)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${!useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>{t('file')}</button>
+                            <button type="button" onClick={() => setUseExternal(true)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>{t('link')}</button>
                         </div>
 
                         {useExternal ? (
                             <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                                <label className="text-[9px] font-black text-primary uppercase ml-2 italic flex items-center gap-2"><LinkIcon size={12}/> LİNK</label>
+                                <label className="text-[9px] font-black text-primary uppercase ml-2 italic flex items-center gap-2"><LinkIcon size={12}/> {t('link')}</label>
                                 <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white outline-none" placeholder="https://..." required />
                             </div>
                         ) : (
@@ -207,7 +204,6 @@ const UploadPage = () => {
           )}
         </div>
       </main>
-      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
       <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0 text-[8px] font-black uppercase text-white/30 italic"><span>sytexarchive</span><p>&copy; {new Date().getFullYear()} sytexarchive</p></footer>
     </div>
   );
