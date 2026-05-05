@@ -60,7 +60,6 @@ const ProfilePage = () => {
         const { count } = await supabase.from('assets').select('*', { count: 'exact', head: true }).eq('author_id', authUser.id);
         setAssetCount(count || 0);
         
-        // FETCH FOLLOWS
         const { count: followers } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', authUser.id);
         setFollowerCount(followers || 0);
         const { count: following } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', authUser.id);
@@ -76,7 +75,6 @@ const ProfilePage = () => {
     e.preventDefault();
     if (!user) return;
     
-    // Özel Kullanıcı Adı Rezervasyonu (GÜVENLİK)
     const reservedUsernames = ["sytex.ae", "sytex", "sytexarchive", "admin", "sytexyedek"];
     const lowerUsername = username.toLowerCase();
     const isAdminEmail = user.email?.toLowerCase() === "ipekmuhammetemin@gmail.com";
@@ -91,7 +89,8 @@ const ProfilePage = () => {
         await supabase.from('profiles').upsert({ id: user.id, full_name: fullName, username: username, show_favorites: showFavorites, email: user.email, updated_at: new Date().toISOString() });
         if (newPassword.length >= 6) await supabase.auth.updateUser({ password: newPassword });
         setIsEditingProfile(false);
-    } catch (err: any) { alert(err.message); } finally { setLoading(false); window.location.reload(); }
+        window.location.reload();
+    } catch (err: any) { alert(err.message); } finally { setLoading(false); }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +123,7 @@ const ProfilePage = () => {
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
+    <div className="min-h-screen w-full flex flex-col bg-background">
       <Navbar />
       <main className="flex-grow flex flex-col items-center pt-24 md:pt-28 pb-8">
         <div className="w-full max-w-4xl px-3 md:px-4 space-y-4 md:space-y-6 flex flex-col">
@@ -164,70 +163,71 @@ const ProfilePage = () => {
 
           <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 items-start">
             <div className="space-y-4 md:space-y-6 flex flex-col">
-                <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-4 md:gap-6">
-                    <div className="flex items-center justify-between border-b border-white/5 pb-4 text-left">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-primary/10 rounded-xl text-primary"><UserSquare2 size={20} /></div>
-                            <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{t('accountManagement')}</h3>
+                <form onSubmit={handleUpdateProfile} className="bg-card border border-border-custom p-4 md:p-8 rounded-[1.5rem] md:rounded-[3rem] shadow-xl flex flex-col gap-3 md:gap-6">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-3 md:pb-4 text-left">
+                        <div className="flex items-center gap-2 md:gap-3">
+                            <div className="p-1.5 md:p-2 bg-primary/10 rounded-lg text-primary"><UserSquare2 size={16} /></div>
+                            <h3 className="text-sm md:text-lg font-black uppercase italic tracking-tighter text-white">{t('accountSettings')}</h3>
                         </div>
-                        <button type="button" onClick={() => setIsEditingProfile(!isEditingProfile)} className="text-[9px] font-black uppercase text-primary hover:underline">{isEditingProfile ? t('cancel') : t('edit')}</button>
+                        <button type="button" onClick={() => setIsEditingProfile(!isEditingProfile)} className="text-[8px] md:text-[9px] font-black uppercase text-primary hover:underline">{isEditingProfile ? t('cancel') : t('edit')}</button>
                     </div>
-                    <div className="grid grid-cols-1 gap-4 text-left">
+
+                    <div className="grid grid-cols-1 gap-3 md:gap-4 text-left">
                         <div className="space-y-1">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('fullName')}</label>
-                            <input type="text" disabled={!isEditingProfile} value={fullName} onChange={(e) => setFullName(e.target.value.toUpperCase())} className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
+                            <label className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-white/20 ml-1">{t('fullName')}</label>
+                            <input type="text" disabled={!isEditingProfile} value={fullName} onChange={(e) => setFullName(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-lg md:rounded-xl py-2.5 md:py-4 px-4 text-[11px] md:text-sm font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('username')}</label>
-                            <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value)} className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
+                            <label className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-white/20 ml-1">{t('username')}</label>
+                            <input type="text" disabled={!isEditingProfile} value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className={`w-full bg-muted border border-border-custom rounded-lg md:rounded-xl py-2.5 md:py-4 px-4 text-[11px] md:text-sm font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
                         </div>
-                        <div className="space-y-1 relative">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-white/20 ml-2">{t('newPassword')}</label>
+                        <div className="space-y-1">
+                            <label className="text-[8px] md:text-[10px] font-black uppercase tracking-wider text-white/20 ml-1">{t('newPassword')}</label>
                             <div className="relative">
-                                <input type={showPassword ? "text" : "password"} disabled={!isEditingProfile} value={newPassword} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={`w-full bg-muted border border-border-custom rounded-2xl py-3 px-5 pr-12 text-xs font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
+                                <input type={showPassword ? "text" : "password"} disabled={!isEditingProfile} value={newPassword} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className={`w-full bg-muted border border-border-custom rounded-lg md:rounded-xl py-2.5 md:py-4 px-4 pr-12 text-[11px] md:text-sm font-bold text-white transition-all ${!isEditingProfile ? 'opacity-40' : 'ring-1 ring-primary/20 bg-background'}`} />
                                 <button type="button" onClick={() => setShowPassword(!showPassword)} disabled={!isEditingProfile} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors">
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
                             </div>
                         </div>
-                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-                            <div className="flex items-center gap-3">
-                                {showFavorites ? <Eye size={16} className="text-primary" /> : <EyeOff size={16} className="text-white/20" />}
-                                <span className="text-[10px] font-black uppercase text-white/60 tracking-widest">{t('showFavorites')}</span>
+                        <div className="flex items-center justify-between p-3 md:p-4 bg-white/5 rounded-lg md:rounded-2xl border border-white/5">
+                            <div className="flex flex-col gap-0.5">
+                                <span className="text-[9px] md:text-[11px] font-black text-white uppercase italic">{t('showFavorites')}</span>
+                                <span className="text-[7px] md:text-[9px] font-medium text-white/30 uppercase tracking-widest italic">{t('favoritesDesc')}</span>
                             </div>
-                            <button type="button" onClick={() => setShowFavorites(!showFavorites)} disabled={!isEditingProfile} className={`w-12 h-6 rounded-full transition-all relative ${showFavorites ? 'bg-primary' : 'bg-white/10'} ${!isEditingProfile && 'opacity-30'}`}>
-                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${showFavorites ? 'left-7' : 'left-1'}`} />
+                            <button type="button" onClick={() => setShowFavorites(!showFavorites)} disabled={!isEditingProfile} className={`w-10 md:w-12 h-5 md:h-6 rounded-full relative transition-all ${showFavorites ? 'bg-primary' : 'bg-white/10'} ${!isEditingProfile && 'opacity-30'}`}>
+                                <div className={`absolute top-0.5 md:top-1 w-4 h-4 bg-white rounded-full transition-all ${showFavorites ? 'left-5 md:left-7' : 'left-1'}`} />
                             </button>
                         </div>
                     </div>
                     {isEditingProfile && (
-                        <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all">
-                            {loading ? <Loader2 className="animate-spin" size={16}/> : <Save size={16}/>} {t('save')}
+                        <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-3 md:py-4 rounded-lg md:rounded-2xl font-black text-[9px] md:text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all">
+                            {loading ? <Loader2 className="animate-spin" size={14}/> : <Save size={14}/>} {t('save')}
                         </button>
                     )}
                 </form>
 
-                <div className="bg-card border border-border-custom p-5 rounded-[2.5rem] shadow-xl flex items-center justify-between group">
-                    <div className="flex items-center gap-4 text-left">
-                        <div className="p-3 bg-muted rounded-2xl text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all"><AtSign size={16} /></div>
+                <div className="bg-card border border-border-custom p-4 md:p-5 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl flex items-center justify-between group">
+                    <div className="flex items-center gap-3 md:gap-4 text-left">
+                        <div className="p-2.5 md:p-3 bg-muted rounded-xl md:rounded-2xl text-white/40 group-hover:bg-primary/10 group-hover:text-primary transition-all"><AtSign size={14} md:size={16} /></div>
                         <div>
-                            <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-0.5">{t('emailAddress')}</p>
-                            <p className="text-[10px] font-black text-white italic tracking-tight">{user.email}</p>
+                            <p className="text-[7px] md:text-[8px] font-black text-white/20 uppercase tracking-widest mb-0.5">{t('emailAddress')}</p>
+                            <p className="text-[9px] md:text-[10px] font-black text-white italic tracking-tight">{user.email}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-card border border-border-custom p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-6 h-full overflow-hidden">
-                <div className="flex items-center gap-3 border-b border-white/5 pb-4 text-left">
-                    <div className="p-2 bg-red-500/10 rounded-xl text-red-500"><Heart size={18} fill="currentColor" /></div>
-                    <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">{t('myLikes')}</h3>
+            <div className="bg-card border border-border-custom p-5 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl flex flex-col gap-4 md:gap-6 h-full min-h-[400px]">
+                <div className="flex items-center gap-3 border-b border-white/5 pb-3 md:pb-4 text-left">
+                    <div className="p-1.5 md:p-2 bg-red-500/10 rounded-lg md:rounded-xl text-red-500"><Heart size={16} md:size={18} fill="currentColor" /></div>
+                    <h3 className="text-sm md:text-lg font-black uppercase italic tracking-tighter text-white">{t('myLikes')}</h3>
                 </div>
-                <div className="flex-grow overflow-y-auto pr-2 no-scrollbar space-y-4">
+                <div className="flex-grow overflow-y-auto pr-1 no-scrollbar space-y-3 md:space-y-4">
                     {favoriteAssets.length === 0 ? (
-                        <div className="h-full flex flex-col items-center justify-center text-white/10 text-center space-y-4 opacity-30">
-                            <Heart size={32} />
-                            <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">{t('noFavorites')}</p>
+                        <div className="h-full flex flex-col items-center justify-center text-white/10 text-center space-y-3 opacity-20 py-10">
+                            <Heart size={24} md:size={32} />
+                            <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest">{t('noFavorites')}</p>
                         </div>
                     ) : (
                         favoriteAssets.map((asset) => (
@@ -241,19 +241,22 @@ const ProfilePage = () => {
 
         {isCropping && (
             <div className="fixed inset-0 z-[6000] bg-black/98 flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
-                <div className="relative w-full max-w-xl aspect-square bg-muted rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+                <div className="relative w-full max-w-xl aspect-square bg-muted rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
                     <Cropper image={image!} crop={crop} zoom={zoom} aspect={1} onCropChange={setCrop} onCropComplete={onCropComplete} onZoomChange={setZoom} />
                 </div>
-                <div className="mt-8 w-full max-w-xl flex gap-4">
-                    <button onClick={() => setIsCropping(false)} className="flex-1 py-4 rounded-2xl bg-muted text-white font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">{t('cancel')}</button>
-                    <button onClick={handleCropSave} className="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-primary/40">
-                        {loading ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />} {t('update').toUpperCase()}
+                <div className="mt-8 w-full max-w-xl flex gap-3">
+                    <button onClick={() => setIsCropping(false)} className="flex-1 py-3 md:py-4 rounded-xl md:rounded-2xl bg-muted text-white font-black text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all">{t('cancel')}</button>
+                    <button onClick={handleCropSave} className="flex-1 py-3 md:py-4 rounded-xl md:rounded-2xl bg-primary text-white font-black text-[9px] md:text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-2xl shadow-primary/40">
+                        {loading ? <Loader2 className="animate-spin" size={14} /> : <CheckCircle size={14} />} {t('update').toUpperCase()}
                     </button>
                 </div>
             </div>
         )}
       </main>
-      <footer className="bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between text-[8px] font-black uppercase text-white/30 italic"><span>sytexarchive</span><p>&copy; {new Date().getFullYear()} sytexarchive</p></footer>
+      <footer className="bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between text-[8px] font-black uppercase text-white/30 italic shrink-0">
+          <span>sytexarchive</span>
+          <p>&copy; {new Date().getFullYear()} sytexarchive</p>
+      </footer>
     </div>
   );
 };
