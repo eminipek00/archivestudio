@@ -133,6 +133,30 @@ const UploadPage = () => {
     } catch (err: any) { showToast(err.message, "error"); } finally { setLoading(false); }
   };
 
+  const getAcceptedFiles = (cat: string) => {
+    const c = cat.toLowerCase();
+    const common = ".zip,.rar,.7z";
+    if (c.includes('sahne') || c.includes('scene')) return `${common},.mp4,.mov`;
+    if (c.includes('after') || c.includes('ae')) return `${common},.aep,.ffx,.prproj`;
+    if (c.includes('alight') || c.includes('am')) return `${common},.xml`;
+    if (c.includes('lut')) return `${common},.cube`;
+    if (c.includes('overlay')) return `${common},.mp4,.mov,.png,.jpg`;
+    return `${common},.mp4,.mov,.aep,.xml,.cube`;
+  };
+
+  const getCategoryContext = (cat: string) => {
+    const c = cat.toLowerCase();
+    if (c.includes('sahne') || c.includes('scene')) return { label: `${t('selectFile')} (MP4/RAR)`, icon: <Box size={28} /> };
+    if (c.includes('after') || c.includes('ae')) return { label: t('selectFile'), icon: <FileCode2 size={28} /> };
+    if (c.includes('alight') || c.includes('am')) return { label: t('selectFile'), icon: <FileType size={28} /> };
+    if (c.includes('lut')) return { label: t('selectFile'), icon: <FileArchive size={28} /> };
+    if (c.includes('overlay')) return { label: t('selectFile'), icon: <Film size={28} /> };
+    return { label: t('selectFile'), icon: <FileArchive size={28} /> };
+  };
+
+  const currentContext = getCategoryContext(category);
+  const acceptedFiles = getAcceptedFiles(category);
+
   if (isVerifying) return <div className="h-screen w-full bg-black flex items-center justify-center"><Loader2 size={40} className="text-primary animate-spin" /></div>;
   if (!isAdmin) return null;
 
