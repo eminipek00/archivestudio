@@ -31,10 +31,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className="dark">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#020617" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+      </head>
       <body className={`${inter.className} bg-black text-white no-scrollbar`}>
         <LanguageProvider>
           {children}
         </LanguageProvider>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js');
+              });
+            }
+          `
+        }} />
       </body>
     </html>
   );
