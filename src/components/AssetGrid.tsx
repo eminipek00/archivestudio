@@ -80,7 +80,7 @@ const AssetGrid = ({ searchQuery, activeCategory }: AssetGridProps) => {
                 </div>
                 <div className="text-center">
                     <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">{t('noResults')}</h3>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">BAŞKA BİR ARAMA YAPMAYI DENEYİN.</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">{t('tryAnotherSearch')}</p>
                 </div>
             </div>
         ) : (

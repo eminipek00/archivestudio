@@ -62,7 +62,7 @@ const Hero = ({ activeCategory, onCategoryChange, totalAssets = 0 }: HeroProps) 
         </div>
         
         <p className="max-w-2xl mx-auto text-muted-foreground text-[10px] font-bold uppercase tracking-[0.3em] opacity-40 italic">
-          Sahne paketleri, ses efektleri ve geçişler tek bir çatı altında.
+          {t('heroSubtitle')}
         </p>
       </div>
     </section>

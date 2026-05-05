@@ -169,7 +169,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                     <div className="grid grid-cols-1 gap-0.5 md:gap-1">
                       {isAdmin && (
                         <button onClick={() => { window.dispatchEvent(new CustomEvent('toggleSiteEditor')); setShowUserMenu(false); }} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-primary hover:bg-primary/10 transition-all text-left">
-                          <Palette size={14} className="md:w-4 md:h-4" /> SİTE EDİTÖRÜ
+                          <Palette size={14} className="md:w-4 md:h-4" /> {t('siteEditor').toUpperCase()}
                         </button>
                       )}
                       <Link href="/support" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all">
