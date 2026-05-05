@@ -46,7 +46,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "TALEPLERİM",
         noTickets: "HENÜZ TALEP YOK",
         total: "TOPLAM",
-        placeholderSubject: "Örn: Ödeme Sorunu",
+        placeholderSubject: "Örn: Paket Sorunu",
         placeholderMessage: "Detayları buraya yazın..."
     }
   },
@@ -95,7 +95,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "MY TICKETS",
         noTickets: "NO TICKETS YET",
         total: "TOTAL",
-        placeholderSubject: "Ex: Payment Issue",
+        placeholderSubject: "Ex: Asset Issue",
         placeholderMessage: "Type details here..."
     }
   },
@@ -144,7 +144,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "TƏLƏBLƏRİM",
         noTickets: "HƏLƏ TƏLƏB YOXDUR",
         total: "CƏMİ",
-        placeholderSubject: "Məs: Ödəniş Problemi",
+        placeholderSubject: "Məs: Paket Problemi",
         placeholderMessage: "Detalları bura yazın..."
     }
   },
@@ -193,7 +193,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "MIS TICKETS",
         noTickets: "SIN TICKETS AÚN",
         total: "TOTAL",
-        placeholderSubject: "Ej: Problema de Pago",
+        placeholderSubject: "Ej: Problema con un Pack",
         placeholderMessage: "Escribe los detalles aquí..."
     }
   },
@@ -242,7 +242,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "MES TICKETS",
         noTickets: "PAS ENCORE DE TICKETS",
         total: "TOTAL",
-        placeholderSubject: "Ex: Problème de Paiement",
+        placeholderSubject: "Ex: Problème de Pack",
         placeholderMessage: "Écrivez les détails ici..."
     }
   },
@@ -291,7 +291,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "MEINE TICKETS",
         noTickets: "NOCH KEINE TICKETS",
         total: "GESAMT",
-        placeholderSubject: "Z.B.: Zahlungsproblem",
+        placeholderSubject: "Z.B.: Paket-Problem",
         placeholderMessage: "Details hier eingeben..."
     }
   },
@@ -340,7 +340,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "تذاكري",
         noTickets: "لا توجد تذاكر بعد",
         total: "إجمالي",
-        placeholderSubject: "مثال: مشكلة في الدفع",
+        placeholderSubject: "مثال: مشكلة في الحزمة",
         placeholderMessage: "اكتب التفاصيل هنا..."
     }
   },
@@ -389,7 +389,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "МОИ ТИКЕТЫ",
         noTickets: "ТИКЕТОВ ПОКА НЕТ",
         total: "ВСЕГО",
-        placeholderSubject: "Напр.: Проблема с оплатой",
+        placeholderSubject: "Напр.: Проблема с пакетом",
         placeholderMessage: "Введите детали здесь..."
     }
   },
@@ -438,7 +438,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "我的工单",
         noTickets: "尚无工单",
         total: "总计",
-        placeholderSubject: "例如：支付问题",
+        placeholderSubject: "例如：包的问题",
         placeholderMessage: "在这里输入详细信息..."
     }
   },
@@ -487,7 +487,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "マイチケット",
         noTickets: "チケットはまだありません",
         total: "合計",
-        placeholderSubject: "例：支払いに関する問題",
+        placeholderSubject: "例：アセットの問題",
         placeholderMessage: "詳細をここに入力..."
     }
   },
@@ -536,7 +536,7 @@ export const translations: Record<Language, Record<string, any>> = {
         myTickets: "MEUS TICKETS",
         noTickets: "SEM TICKETS AINDA",
         total: "TOTAL",
-        placeholderSubject: "Ex: Problema de Pagamento",
+        placeholderSubject: "Ex: Problema com Ativo",
         placeholderMessage: "Digite os detalhes aqui..."
     }
   }
