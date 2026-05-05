@@ -125,7 +125,7 @@ const ProfilePage = () => {
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
       <Navbar />
-      <main className="flex-grow flex flex-col items-center pt-24 md:pt-32 pb-12">
+      <main className="flex-grow flex flex-col items-center pt-24 md:pt-28 pb-6 overflow-hidden">
         <div className="w-full max-w-6xl px-3 md:px-8 space-y-6 md:space-y-10 flex flex-col">
           
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-10 bg-card border border-border-custom p-5 md:p-10 rounded-[2rem] md:rounded-[4rem] shadow-2xl relative shrink-0">

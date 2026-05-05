@@ -2,7 +2,7 @@ export type Language = 'tr' | 'en' | 'ru' | 'ar' | 'de' | 'fr' | 'es' | 'it' | '
 
 export const translations: Record<string, any> = {
   tr: {
-    heroTitle: "Profesyonel Dijital Arşiv",
+    heroTitle: "PROFESYONEL DİJİTAL ARŞİV",
     heroSubtitle: "En kaliteli oyun varlıkları ve düzenleme araçları için tek adresiniz.",
     welcome: "Hoş Geldiniz",
     searchPlaceholder: "Dijital varlıkları arayın...",
@@ -41,15 +41,16 @@ export const translations: Record<string, any> = {
     terms: "Şartlar",
     tags: {
       all: "Hepsi",
-      football: "Futbol",
-      basketball: "Basketbol",
-      gaming: "Oyun",
-      music: "Müzik",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Diğer"
     }
   },
   en: {
-    heroTitle: "Professional Digital Archive",
+    heroTitle: "PROFESSIONAL DIGITAL ARCHIVE",
     heroSubtitle: "Your one-stop destination for high-quality gaming assets and editing tools.",
     welcome: "Welcome",
     searchPlaceholder: "Search assets...",
@@ -88,15 +89,16 @@ export const translations: Record<string, any> = {
     terms: "Terms",
     tags: {
       all: "All",
-      football: "Football",
-      basketball: "Basketball",
-      gaming: "Gaming",
-      music: "Music",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Other"
     }
   },
   az: {
-    heroTitle: "Peşəkar Rəqəmsal Arxiv",
+    heroTitle: "PEŞƏKAR RƏQƏMSAL ARXIV",
     heroSubtitle: "Yüksək keyfiyyətli oyun varlıqları və redaktə alətləri üçün tək ünvanınız.",
     welcome: "Xoş Gəlmisiniz",
     searchPlaceholder: "Varlıqları axtarın...",
@@ -135,15 +137,16 @@ export const translations: Record<string, any> = {
     terms: "Şərtlər",
     tags: {
       all: "Hamısı",
-      football: "Futbol",
-      basketball: "Basketbol",
-      gaming: "Oyun",
-      music: "Musiqi",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Digər"
     }
   },
   ru: {
-    heroTitle: "Профессиональный цифровой архив",
+    heroTitle: "ПРОФЕССИОНАЛЬНЫЙ ЦИФРОВОЙ АРХИВ",
     heroSubtitle: "Ваш единый центр высококачественных игровых ресурсов и инструментов редактирования.",
     welcome: "Добро пожаловать",
     searchPlaceholder: "Поиск активов...",
@@ -182,10 +185,11 @@ export const translations: Record<string, any> = {
     terms: "Условия",
     tags: {
       all: "Все",
-      football: "Футбол",
-      basketball: "Баскетбол",
-      gaming: "Игры",
-      music: "Музыка",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Другое"
     }
   },
@@ -229,15 +233,16 @@ export const translations: Record<string, any> = {
     terms: "الشروط",
     tags: {
       all: "الكل",
-      football: "كرة القدم",
-      basketball: "كرة السلة",
-      gaming: "الألعاب",
-      music: "الموسيقى",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "أخرى"
     }
   },
   de: {
-    heroTitle: "Professionelles digitales Archiv",
+    heroTitle: "PROFESSIONELLES DIGITALES ARCHIV",
     heroSubtitle: "Ihre zentrale Anlaufstelle für hochwertige Gaming-Assets und Bearbeitungswerkzeuge.",
     welcome: "Willkommen",
     searchPlaceholder: "Assets suchen...",
@@ -276,15 +281,16 @@ export const translations: Record<string, any> = {
     terms: "Bedingungen",
     tags: {
       all: "Alle",
-      football: "Fußball",
-      basketball: "Basketball",
-      gaming: "Gaming",
-      music: "Musik",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Andere"
     }
   },
   fr: {
-    heroTitle: "Archives numériques professionnelles",
+    heroTitle: "ARCHIVES NUMÉRIQUES PROFESSIONNELLES",
     heroSubtitle: "Votre destination unique pour des actifs de jeu et des outils d'édition de haute qualité.",
     welcome: "Bienvenue",
     searchPlaceholder: "Rechercher...",
@@ -323,15 +329,16 @@ export const translations: Record<string, any> = {
     terms: "Conditions",
     tags: {
       all: "Tout",
-      football: "Football",
-      basketball: "Basketball",
-      gaming: "Jeux",
-      music: "Musique",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Autre"
     }
   },
   es: {
-    heroTitle: "Archivo Digital Profesional",
+    heroTitle: "ARCHIVO DIGITAL PROFESIONAL",
     heroSubtitle: "Tu destino único para activos de juegos y herramientas de edición de alta calidad.",
     welcome: "Bienvenido",
     searchPlaceholder: "Buscar activos...",
@@ -370,15 +377,16 @@ export const translations: Record<string, any> = {
     terms: "Términos",
     tags: {
       all: "Todo",
-      football: "Fútbol",
-      basketball: "Baloncesto",
-      gaming: "Juegos",
-      music: "Música",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Otro"
     }
   },
   it: {
-    heroTitle: "Archivio digitale professionale",
+    heroTitle: "ARCHIVIO DIGITALE PROFESSIONALE",
     heroSubtitle: "La tua destinazione unica per asset di gioco e strumenti di editing di alta qualità.",
     welcome: "Benvenuto",
     searchPlaceholder: "Cerca...",
@@ -417,15 +425,16 @@ export const translations: Record<string, any> = {
     terms: "Termini",
     tags: {
       all: "Tutto",
-      football: "Calcio",
-      basketball: "Basket",
-      gaming: "Gaming",
-      music: "Musica",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Altro"
     }
   },
   pt: {
-    heroTitle: "Arquivo Digital Profissional",
+    heroTitle: "ARQUIVO DIGITAL PROFISSIONAL",
     heroSubtitle: "Seu destino único para ativos de jogos e ferramentas de edição de alta qualidade.",
     welcome: "Bem-vindo",
     searchPlaceholder: "Pesquisar...",
@@ -464,15 +473,16 @@ export const translations: Record<string, any> = {
     terms: "Termos",
     tags: {
       all: "Tudo",
-      football: "Futebol",
-      basketball: "Basquete",
-      gaming: "Jogos",
-      music: "Música",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Outro"
     }
   },
   nl: {
-    heroTitle: "Professioneel digitaal archief",
+    heroTitle: "PROFESSIONEEL DIGITAAL ARCHIEF",
     heroSubtitle: "Uw one-stop-bestemming voor hoogwaardige gaming-assets en bewerkingstools.",
     welcome: "Welkom",
     searchPlaceholder: "Zoeken...",
@@ -511,15 +521,16 @@ export const translations: Record<string, any> = {
     terms: "Voorwaarden",
     tags: {
       all: "Alle",
-      football: "Voetbal",
-      basketball: "Basketbal",
-      gaming: "Gamen",
-      music: "Muziek",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Ander"
     }
   },
   pl: {
-    heroTitle: "Profesjonalne Archiwum Cyfrowe",
+    heroTitle: "PROFESJONALNE ARCHIWUM CYFROWE",
     heroSubtitle: "Twoje centrum wysokiej jakości zasobów do gier i narzędzi do edycji.",
     welcome: "Witaj",
     searchPlaceholder: "Szukaj...",
@@ -558,10 +569,11 @@ export const translations: Record<string, any> = {
     terms: "Warunki",
     tags: {
       all: "Wszystko",
-      football: "Piłka nożna",
-      basketball: "Koszykówka",
-      gaming: "Gry",
-      music: "Muzyka",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "Inne"
     }
   },
@@ -605,10 +617,11 @@ export const translations: Record<string, any> = {
     terms: "条款",
     tags: {
       all: "全部",
-      football: "足球",
-      basketball: "篮球",
-      gaming: "游戏",
-      music: "音乐",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "其他"
     }
   },
@@ -652,10 +665,11 @@ export const translations: Record<string, any> = {
     terms: "規約",
     tags: {
       all: "すべて",
-      football: "サッカー",
-      basketball: "バスケットボール",
-      gaming: "ゲーム",
-      music: "音楽",
+      scene: "Scene",
+      ae: "After Effects",
+      am: "Alight Motion",
+      lut: "LUTs",
+      overlay: "Overlay",
       other: "その他"
     }
   }
