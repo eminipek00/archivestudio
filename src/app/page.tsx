@@ -15,21 +15,33 @@ export default function Home() {
   
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState(t('tags.all'));
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [totalAssets, setTotalAssets] = useState(0);
 
   useEffect(() => {
     const fetchCount = async () => {
         const { count } = await supabase.from('assets').select('*', { count: 'exact', head: true });
         setTotalAssets(count || 0);
+
+        // FETCH FOLLOWS
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+            const { count: followers } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', authUser.id);
+            setFollowerCount(followers || 0);
+            const { count: following } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', authUser.id);
+            setFollowingCount(following || 0);
+        }
     };
     fetchCount();
   }, [supabase]);
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
+    <div className="min-h-screen w-full flex flex-col bg-background">
       <Navbar onSearch={setSearchQuery} />
       
-      <main className="flex-grow overflow-y-auto no-scrollbar scroll-smooth pt-24">
+      <main className="flex-grow pt-24">
         <div id="assets" className="container mx-auto pb-10">
           <Hero 
             activeCategory={activeCategory} 
@@ -41,8 +53,12 @@ export default function Home() {
       </main>
       
       <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-            <span className="text-[8px] font-black uppercase italic tracking-tighter text-white/30">sytexarchive</span>
+        <div className="flex flex-col min-w-0">
+            <span className="text-[10px] md:text-xs font-black text-white uppercase italic truncate">@user</span>
+            <div className="flex items-center gap-2 mt-1">
+                <span className="text-[7px] md:text-[8px] font-black text-white/30 uppercase tracking-widest">{followerCount} {t('followers')}</span>
+                <span className="text-[7px] md:text-[8px] font-black text-white/30 uppercase tracking-widest">{followingCount} {t('following')}</span>
+            </div>
         </div>
         <p className="text-[8px] font-bold text-white/10 uppercase tracking-widest italic">
           &copy; {new Date().getFullYear()} sytexarchive. {t('footer')}
@@ -54,7 +70,6 @@ export default function Home() {
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        body { overflow: hidden !important; height: 100vh; }
       `}</style>
     </div>
   );

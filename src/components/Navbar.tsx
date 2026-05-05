@@ -21,6 +21,8 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   
   // LOGO & SITE EDITOR SETTINGS
   const [isEditingLogo, setIsEditingLogo] = useState(false);
@@ -46,6 +48,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         
         const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', authUser.id).order('created_at', { ascending: false }).limit(5);
         if (notifs) setNotifications(notifs);
+
+        // FETCH FOLLOWS
+        const { count: followers } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', authUser.id);
+        setFollowerCount(followers || 0);
+        const { count: following } = await supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', authUser.id);
+        setFollowingCount(following || 0);
       }
     };
     getUserData();
@@ -205,7 +213,10 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                       </div>
                       <div className="flex flex-col min-w-0">
                         <span className="text-[10px] md:text-xs font-black text-white uppercase italic truncate">@{profile?.username || 'user'}</span>
-                        <span className="text-[7px] md:text-[8px] font-black text-primary uppercase tracking-widest">{isAdmin ? t('admin') : t('editor')}</span>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[7px] md:text-[8px] font-black text-white/30 uppercase tracking-widest">{followerCount} {t('followers')}</span>
+                          <span className="text-[7px] md:text-[8px] font-black text-white/30 uppercase tracking-widest">{followingCount} {t('following')}</span>
+                        </div>
                       </div>
                     </div>
                     
