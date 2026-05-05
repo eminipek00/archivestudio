@@ -1,3 +1,5 @@
+export type Language = 'tr' | 'en' | 'ru' | 'ar' | 'de' | 'fr' | 'es' | 'it' | 'pt' | 'nl' | 'pl';
+
 export const translations: Record<string, any> = {
   tr: {
     welcome: "Hoş Geldiniz",
