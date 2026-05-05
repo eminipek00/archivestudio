@@ -38,46 +38,58 @@ html, body {
   color: var(--foreground);
 }
 
-/* AYDINLIK MODDA SPESİFİK YAZI DÜZELTMELERİ (CERRAHİ) */
+/* TÜM SİTE GENELİ AYDINLIK MOD GÖRÜNÜRLÜK AYARI (CERRAHİ) */
+:root:not(.dark) h1,
 :root:not(.dark) h2, 
 :root:not(.dark) h3,
+:root:not(.dark) h4,
+:root:not(.dark) span,
+:root:not(.dark) p,
+:root:not(.dark) label,
+:root:not(.dark) input,
+:root:not(.dark) textarea,
 :root:not(.dark) .text-white,
 :root:not(.dark) [class*="text-white"] {
-  color: #111111 !important;
+  color: #000000 !important;
 }
 
-/* PAYLAŞ BUTONU VE YÜKLEYEN ETİKETİ İÇİN ÖZEL AYAR */
-:root:not(.dark) button:not(.bg-primary *),
-:root:not(.dark) a:not(.bg-primary *),
-:root:not(.dark) .text-white\/30,
-:root:not(.dark) .text-white\/40,
-:root:not(.dark) .text-white\/60 {
-  color: #444444 !important;
+/* ARKA PLANLARIN AYDINLIK MODDAKİ DÖNÜŞÜMÜ */
+:root:not(.dark) .bg-card,
+:root:not(.dark) .bg-\[\#0a0a0a\],
+:root:not(.dark) .bg-\[\#050505\],
+:root:not(.dark) .bg-muted {
+  background-color: #f8f8f8 !important;
+  border-color: rgba(0,0,0,0.1) !important;
 }
 
-/* NAV KORUMASI (NAVBAR HER ZAMAN SİYAH KALDIĞI İÇİN YAZILARI BEYAZ KALMALI) */
-:root:not(.dark) nav *, 
-:root:not(.dark) nav span,
-:root:not(.dark) nav .text-white,
-:root:not(.dark) nav [class*="text-white"] {
+/* NAV KORUMASI (ANA BAR SİYAH KALMALI, AMA İÇİNDEKİ AÇILIR MENÜLER BEYAZ OLMALI) */
+:root:not(.dark) nav {
+  background-color: #000000 !important;
+}
+
+/* Navbar'ın en üstündeki ana öğeleri beyaz tut */
+:root:not(.dark) nav > div > div:not([class*="absolute"]) *,
+:root:not(.dark) nav > div > div:not([class*="absolute"]) span {
   color: #ffffff !important;
 }
 
-:root:not(.dark) nav .text-white\/30,
-:root:not(.dark) nav .text-white\/40,
-:root:not(.dark) nav .text-white\/20 {
-  color: rgba(255, 255, 255, 0.4) !important;
-}
-
-/* MODAL VE KART ARKA PLANLARI */
-:root:not(.dark) .bg-card,
-:root:not(.dark) .bg-\[\#050505\],
-:root:not(.dark) .bg-\[\#0a0a0a\] {
-  background-color: #fcfcfc !important;
-}
-
-:root:not(.dark) .bg-muted {
+/* Navbar içindeki Arama Çubuğu (Input) özel ayarı */
+:root:not(.dark) nav input {
   background-color: #f1f1f1 !important;
+  color: #000000 !important;
+}
+
+/* Navbar içindeki açılır menülerin (absolute div) içindeki yazıları SİYAH yap */
+:root:not(.dark) div[class*="absolute"] *,
+:root:not(.dark) div[class*="absolute"] span,
+:root:not(.dark) div[class*="absolute"] p {
+  color: #000000 !important;
+}
+
+/* MAVİ BUTONLARIN İÇİNDEKİ YAZILAR HER ZAMAN BEYAZ KALMALI */
+:root:not(.dark) .bg-primary *,
+:root:not(.dark) .bg-primary span {
+  color: #ffffff !important;
 }
 
 .container {
