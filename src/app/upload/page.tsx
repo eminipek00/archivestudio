@@ -161,40 +161,40 @@ const UploadPage = () => {
   if (!isAdmin) return null;
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-background">
+    <div className="min-h-screen flex flex-col bg-background relative">
       <Navbar />
-      <main className="flex-grow overflow-y-auto px-4 py-8 custom-scrollbar">
-        <div className="max-w-4xl mx-auto bg-card border border-border-custom p-6 md:p-12 rounded-[3rem] shadow-2xl relative overflow-hidden">
-          
-          {/* CROPPER MODAL */}
-          {showCropper && tempImage && (
-            <div className="fixed inset-0 z-[10000] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-4">
-              <div className="relative w-full max-w-4xl aspect-video bg-[#050505] rounded-3xl overflow-hidden border border-white/10">
-                <Cropper
-                  image={tempImage}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={16 / 9}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
-                />
-              </div>
-              <div className="mt-8 flex items-center gap-4">
-                <button onClick={() => setShowCropper(false)} className="flex items-center gap-2 px-8 py-3 bg-white/5 border border-white/10 text-white/40 hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
-                  <X size={18} /> {t('cancel')}
-                </button>
-                <button onClick={handleCropSave} className="flex items-center gap-2 px-12 py-3 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
-                  <Check size={18} /> {t('save')}
-                </button>
-              </div>
-              <div className="mt-6 flex items-center gap-4 w-full max-w-xs">
-                <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">ZOOM</span>
-                <input type="range" value={zoom} min={1} max={3} step={0.1} onChange={(e) => setZoom(Number(e.target.value))} className="flex-1 accent-primary" />
-              </div>
-            </div>
-          )}
+      
+      {/* CROPPER MODAL (FIXED AT HIGHEST Z-INDEX) */}
+      {showCropper && tempImage && (
+        <div className="fixed inset-0 z-[99999] bg-black flex flex-col items-center justify-center p-4">
+          <div className="relative w-full max-w-4xl h-[60vh] bg-[#050505] rounded-3xl overflow-hidden border border-white/10">
+            <Cropper
+              image={tempImage}
+              crop={crop}
+              zoom={zoom}
+              aspect={16 / 9}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
+          </div>
+          <div className="mt-8 flex items-center gap-4">
+            <button onClick={() => setShowCropper(false)} className="flex items-center gap-2 px-8 py-3 bg-white/5 border border-white/10 text-white/40 hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
+              <X size={18} /> {t('cancel')}
+            </button>
+            <button onClick={handleCropSave} className="flex items-center gap-2 px-12 py-3 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+              <Check size={18} /> {t('save')}
+            </button>
+          </div>
+          <div className="mt-6 flex items-center gap-4 w-full max-w-xs">
+            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">ZOOM</span>
+            <input type="range" value={zoom} min={1} max={3} step={0.1} onChange={(e) => setZoom(Number(e.target.value))} className="flex-1 accent-primary" />
+          </div>
+        </div>
+      )}
 
+      <main className="flex-grow pt-24 pb-12 px-4 md:px-8">
+        <div className="max-w-4xl mx-auto bg-card border border-border-custom p-6 md:p-12 rounded-[3rem] shadow-2xl relative">
           {step === 1 ? (
               <form onSubmit={handleUpload} className="space-y-8">
                 <div className="flex justify-between items-center">
@@ -264,7 +264,12 @@ const UploadPage = () => {
           )}
         </div>
       </main>
-      <footer className="z-[2000] bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between shrink-0 text-[8px] font-black uppercase text-white/30 italic"><span>sytexarchive</span><p>&copy; {new Date().getFullYear()} sytexarchive</p></footer>
+      
+      <footer className="bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between text-[8px] font-black uppercase text-white/30 italic">
+        <span>sytexarchive</span>
+        <p>&copy; {new Date().getFullYear()} sytexarchive</p>
+      </footer>
+      
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </div>
   );
