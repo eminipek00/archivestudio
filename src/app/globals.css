@@ -38,25 +38,42 @@ html, body {
   color: var(--foreground);
 }
 
-/* AYDINLIK MODDA YAZILARIN KAYBOLMASINI ENGELLEYEN CERRAHİ MÜDAHALE */
-:root:not(.dark) body *:not(nav *):not(.bg-primary *) {
-  /* text-white ve türevlerini aydınlık modda koyu yapar, ama navbar ve mavi butonları ellemez */
+/* AYDINLIK MODDA SPESİFİK YAZI DÜZELTMELERİ (CERRAHİ) */
+:root:not(.dark) h2, 
+:root:not(.dark) h3,
+:root:not(.dark) .text-white,
+:root:not(.dark) [class*="text-white"] {
+  color: #111111 !important;
 }
 
-:root:not(.dark) .text-white:not(nav *):not(.bg-primary *) {
-  color: #000000 !important;
+/* PAYLAŞ BUTONU VE YÜKLEYEN ETİKETİ İÇİN ÖZEL AYAR */
+:root:not(.dark) button:not(.bg-primary *),
+:root:not(.dark) a:not(.bg-primary *),
+:root:not(.dark) .text-white\/30,
+:root:not(.dark) .text-white\/40,
+:root:not(.dark) .text-white\/60 {
+  color: #444444 !important;
 }
 
-:root:not(.dark) .text-white\/40:not(nav *):not(.bg-primary *) {
-  color: rgba(0, 0, 0, 0.4) !important;
+/* NAV KORUMASI (NAVBAR HER ZAMAN SİYAH KALDIĞI İÇİN YAZILARI BEYAZ KALMALI) */
+:root:not(.dark) nav *, 
+:root:not(.dark) nav span,
+:root:not(.dark) nav .text-white,
+:root:not(.dark) nav [class*="text-white"] {
+  color: #ffffff !important;
 }
 
-:root:not(.dark) .text-white\/20:not(nav *):not(.bg-primary *) {
-  color: rgba(0, 0, 0, 0.2) !important;
+:root:not(.dark) nav .text-white\/30,
+:root:not(.dark) nav .text-white\/40,
+:root:not(.dark) nav .text-white\/20 {
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 
-:root:not(.dark) .bg-card {
-  background-color: #f8f8f8 !important;
+/* MODAL VE KART ARKA PLANLARI */
+:root:not(.dark) .bg-card,
+:root:not(.dark) .bg-\[\#050505\],
+:root:not(.dark) .bg-\[\#0a0a0a\] {
+  background-color: #fcfcfc !important;
 }
 
 :root:not(.dark) .bg-muted {
