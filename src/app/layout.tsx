@@ -1,14 +1,27 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/utils/LanguageContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Sytex Archive", // ARTIK SADECE SYTEX ARCHIVE YAZIYOR
-  description: "Professional digital assets for editors, scene packs, presets and more.",
+  title: "Sytex Archive | Professional Digital Assets & Creative Presets",
+  description: "Download professional scene packages, sound effects, overlays, and transitions. The ultimate archive for creative editors and digital artists.",
+  keywords: ["Sytex Archive", "Digital Assets", "Video Editing", "Presets", "After Effects", "Alight Motion", "Sound Effects", "Overlays"],
+  authors: [{ name: "Muhammet Emin İpek" }],
+  openGraph: {
+    title: "Sytex Archive",
+    description: "The professional digital asset archive.",
+    url: "https://sytexarchive.vercel.app",
+    siteName: "Sytex Archive",
+    images: [{ url: "/logo.png" }],
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  }
 };
 
 export default function RootLayout({
@@ -17,18 +30,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <LanguageProvider>
-            {children}
-          </LanguageProvider>
-        </ThemeProvider>
+    <html lang="en">
+      <body className={`${inter.className} bg-black text-white no-scrollbar`}>
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

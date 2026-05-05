@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare } from 'lucide-react';
+import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare, Bell } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
@@ -18,7 +18,9 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [profile, setProfile] = useState<any>(null);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
+  const [notifications, setNotifications] = useState<any[]>([]);
   
   // LOGO & SITE EDITOR SETTINGS
   const [isEditingLogo, setIsEditingLogo] = useState(false);
@@ -32,15 +34,19 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     const savedSettings = localStorage.getItem('sytexLogoSettings');
     if (savedSettings) setLogoSettings(JSON.parse(savedSettings));
 
-    const getUser = async () => {
+    const getUserData = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
         setUser(authUser);
         const { data: profileData } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
         setProfile(profileData);
+        
+        // BİLDİRİMLERİ GETİR
+        const { data: notifs } = await supabase.from('notifications').select('*').eq('user_id', authUser.id).order('created_at', { ascending: false }).limit(5);
+        if (notifs) setNotifications(notifs);
       }
     };
-    getUser();
+    getUserData();
   }, [supabase]);
 
   const saveLogoSettings = () => {
@@ -77,6 +83,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   ];
 
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[5000] py-3 md:py-4 bg-black border-b border-border-custom shadow-2xl">
@@ -134,9 +141,37 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             <span>{t('upload')}</span>
           </Link>
 
+          {/* NOTIFICATION BELL */}
+          {user && (
+            <div className="relative">
+                <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowLangMenu(false); setShowUserMenu(false); }} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-primary transition-all relative">
+                    <Bell size={18} />
+                    {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50" />}
+                </button>
+                
+                {showNotifMenu && (
+                  <div className="absolute top-full right-0 mt-3 w-72 bg-[#0a0a0a] border border-border-custom rounded-[2rem] p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">BİLDİRİMLER</h3>
+                    <div className="space-y-1">
+                        {notifications.length === 0 ? (
+                            <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">Bildirim Yok</p></div>
+                        ) : (
+                            notifications.map(n => (
+                                <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group">
+                                    <p className="text-[9px] font-black text-white group-hover:text-primary transition-colors mb-1">{n.content}</p>
+                                    <p className="text-[7px] font-bold text-white/20 uppercase tracking-widest">{new Date(n.created_at).toLocaleDateString()}</p>
+                                </Link>
+                            ))
+                        )}
+                    </div>
+                  </div>
+                )}
+            </div>
+          )}
+
           {/* LANGUAGE SELECTOR */}
           <div className="relative">
-            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); }} className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white/60 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2 md:gap-3">
+            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white/60 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2 md:gap-3">
               <Globe size={16} className="text-primary md:w-[18px] md:h-[18px]" />
               <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">{languages.find(l => l.code === language)?.code.toUpperCase()}</span>
             </button>
@@ -156,7 +191,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
           {user ? (
             <div className="relative flex items-center">
-                <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLangMenu(false); }} className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden border-2 border-white/10 hover:border-primary transition-all p-0.5 bg-[#0a0a0a]">
+                <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLangMenu(false); setShowNotifMenu(false); }} className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden border-2 border-white/10 hover:border-primary transition-all p-0.5 bg-[#0a0a0a]">
                   <img src={profile?.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover rounded-lg" />
                 </button>
 
@@ -178,13 +213,13 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                           <Palette size={14} className="md:w-4 md:h-4" /> {t('siteEditor').toUpperCase()}
                         </button>
                       )}
-                      <Link href="/support" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all">
-                        <MessageSquare size={14} className="md:w-4 md:h-4" /> DESTEK MERKEZİ
+                      <Link href="/support" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all text-left">
+                        <MessageSquare size={14} className="md:w-4 md:h-4" /> {t('supportCenter').toUpperCase()}
                       </Link>
-                      <Link href="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all">
+                      <Link href="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all text-left">
                         <Settings size={14} className="md:w-4 md:h-4" /> {t('settings').toUpperCase()}
                       </Link>
-                      <button onClick={handleLogout} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all">
+                      <button onClick={handleLogout} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all text-left">
                         <LogOut size={14} className="md:w-4 md:h-4" /> {t('logout').toUpperCase()}
                       </button>
                     </div>
