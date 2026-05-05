@@ -103,7 +103,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         <div className="flex items-center gap-2 md:gap-6 shrink-0 text-left">
             <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0">
                 <div 
-                  className="w-8 h-8 md:w-10 md:h-10 shrink-0 transition-transform duration-500 hover:rotate-12"
+                  className="w-10 h-10 md:w-14 md:h-14 shrink-0 transition-transform duration-500 hover:rotate-12"
                   style={{ 
                     transform: `translate(${logoSettings.x}px, ${logoSettings.y}px) scale(${logoSettings.scale})` 
                   }}

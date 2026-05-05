@@ -218,12 +218,12 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            <div className="bg-card border border-border-custom p-5 md:p-12 rounded-[2rem] md:rounded-[4rem] shadow-2xl flex flex-col gap-4 md:gap-8 h-full min-h-[500px]">
+            <div className="bg-card border border-border-custom p-5 md:p-12 rounded-[2rem] md:rounded-[4rem] shadow-2xl flex flex-col gap-4 md:gap-8 h-fit">
                 <div className="flex items-center gap-4 border-b border-white/5 pb-4 md:pb-8 text-left">
                     <div className="p-2 md:p-3 bg-red-500/10 rounded-xl md:rounded-2xl text-red-500"><Heart className="w-[20px] md:w-[28px]" fill="currentColor" /></div>
                     <h3 className="text-sm md:text-3xl font-black uppercase italic tracking-tighter text-white">{t('myLikes')}</h3>
                 </div>
-                <div className="flex-grow overflow-y-auto pr-1 no-scrollbar space-y-4 md:space-y-6">
+                <div className="space-y-4 md:space-y-6">
                     {favoriteAssets.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-white/10 text-center space-y-6 opacity-20 py-20">
                             <Heart className="w-[32px] md:w-[64px]" />
