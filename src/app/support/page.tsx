@@ -24,7 +24,7 @@ const SupportPage = () => {
     const checkUser = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) {
-        router.push('/auth');
+        router.push('/login');
         return;
       }
       setUser(authUser);

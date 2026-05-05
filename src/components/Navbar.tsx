@@ -60,7 +60,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
-    router.push('/');
+    router.push('/login');
     router.refresh();
   };
 
@@ -230,7 +230,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
             </div>
           ) : (
             <div className="flex items-center">
-              <Link href="/auth" className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-2.5 bg-primary text-white rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+              <Link href="/login" className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-2.5 bg-primary text-white rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
                 <UserPlus size={12} className="md:w-[14px] md:h-[14px]" /> <span className="hidden sm:inline">{t('register')}</span><span className="sm:hidden">GİRİŞ</span>
               </Link>
             </div>
