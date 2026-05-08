@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare, Bell, Home, User, LifeBuoy, X } from 'lucide-react';
+import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare, Bell, Home, User, LifeBuoy, X, ChevronLeft } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
@@ -114,23 +114,28 @@ const Navbar = ({ onSearch }: NavbarProps) => {
       <div className="fixed inset-0 z-[4500] bg-black/5" onClick={closeAllMenus} />
     )}
 
-    <nav className="fixed top-0 left-0 right-0 z-[5000] py-3 md:py-4 bg-black border-b border-border-custom shadow-2xl">
+    <nav className="fixed top-0 left-0 right-0 z-[5000] py-3 md:py-4 bg-black border-b border-white/5 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between gap-2 md:gap-8 min-h-[48px]">
         
         {isMobileSearchActive ? (
           /* MOBILE ACTIVE SEARCH BAR */
-          <div className="flex-1 flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
-            <Search className="text-primary shrink-0" size={18} />
-            <input 
-              autoFocus
-              type="text" 
-              value={localSearch} 
-              onChange={handleSearchChange} 
-              placeholder={t('searchPlaceholder')} 
-              className="flex-1 bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-white outline-none"
-            />
-            <button onClick={() => { setIsMobileSearchActive(false); if(onSearch) onSearch(""); setLocalSearch(""); }} className="p-2 text-white/20 hover:text-white transition-all">
-              <X size={18} />
+          <div className="flex-1 flex items-center gap-3 animate-in slide-in-from-left-4 duration-300">
+            <button onClick={() => { setIsMobileSearchActive(false); if(onSearch) onSearch(""); setLocalSearch(""); }} className="p-2 text-white/40 hover:text-primary transition-all">
+              <ChevronLeft size={20} />
+            </button>
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" size={14} />
+              <input 
+                autoFocus
+                type="text" 
+                value={localSearch} 
+                onChange={handleSearchChange} 
+                placeholder={t('searchPlaceholder')} 
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-[11px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/30"
+              />
+            </div>
+            <button onClick={() => { setIsMobileSearchActive(false); if(onSearch) onSearch(""); setLocalSearch(""); }} className="text-[9px] font-black uppercase tracking-widest text-white/20 px-2">
+              {t('cancel')}
             </button>
           </div>
         ) : (
@@ -204,7 +209,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                       <div className="space-y-1">
                           {notifications.length === 0 ? ( <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">{t('noNotifications')}</p></div> ) : (
                               notifications.map(n => (
-                                  <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group">
+                                  <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group text-left">
                                       <p className="text-[9px] font-black text-white group-hover:text-primary transition-colors mb-1">{n.content}</p>
                                       <p className="text-[7px] font-bold text-white/20 uppercase tracking-widest">{new Date(n.created_at).toLocaleDateString()}</p>
                                   </Link>
