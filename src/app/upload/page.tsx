@@ -1,51 +1,38 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import Navbar from "@/components/Navbar";
-import { Upload, Camera, FileArchive, CheckCircle2, ChevronRight, Link as LinkIcon, Loader2, FileCode2, Film, Box, FileType, ShieldAlert, Crop as CropIcon, Check, X } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
-import { useLanguage } from "@/utils/LanguageContext";
-import { Toast, useToast } from "@/components/Toast";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Navbar from '@/components/Navbar';
+import { createClient } from '@/utils/supabase/client';
+import { Upload, X, Check, Loader2, Image as ImageIcon, Link as LinkIcon, FileText, Plus, Info, Search, Heart, Eye } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/utils/LanguageContext';
 import Cropper from 'react-easy-crop';
-import { getCroppedImg } from "@/utils/cropImage";
+import { getCroppedImg } from '@/utils/imageUtils';
+
+const ADMIN_EMAIL = 'ipekmuhammetemin@gmail.com';
 
 const UploadPage = () => {
-  const [loading, setLoading] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [step, setStep] = useState(1);
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Sahne Paketleri");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [assetFile, setAssetFile] = useState<File | null>(null);
-  const [externalUrl, setExternalUrl] = useState("");
-  const [useExternal, setUseExternal] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
+  const [fileUrl, setFileUrl] = useState('');
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
   
-  // CROP STATES
+  const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-  const [tempImage, setTempImage] = useState<string | null>(null);
-  const [showCropper, setShowCropper] = useState(false);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [isCropping, setIsCropping] = useState(false);
 
   const { t } = useLanguage();
-  const { toast, showToast, hideToast } = useToast();
   const supabase = createClient();
   const router = useRouter();
-  
-  const categories = [t('tags.scene'), t('tags.ae'), t('tags.am'), t('tags.lut'), t('tags.overlay')];
-  const ADMIN_EMAIL = "ipekmuhammetemin@gmail.com";
-
-  const DEFAULT_THUMBS: Record<string, string> = {
-    "Sahne Paketleri": "/default-cover.png",
-    "After Effects": "/default-cover.png",
-    "Alight Motion": "/default-cover.png",
-    "LUT Paketleri": "/default-cover.png",
-    "Overlay": "/default-cover.png",
-    "Default": "/default-cover.png"
-  };
 
   useEffect(() => {
     const checkUser = async () => {
@@ -67,213 +54,228 @@ const UploadPage = () => {
     setCroppedAreaPixels(pixelCrop);
   }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setTempImage(URL.createObjectURL(file));
-      setShowCropper(true);
+      const reader = new FileReader();
+      reader.addEventListener('load', () => {
+        setImage(reader.result as string);
+        setIsCropping(true);
+      });
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleCropSave = async () => {
+  const saveCroppedImage = async () => {
     try {
-      if (tempImage && croppedAreaPixels) {
-        const croppedBlob = await getCroppedImg(tempImage, croppedAreaPixels);
-        if (croppedBlob) {
-          const croppedFile = new File([croppedBlob], 'cropped-image.jpg', { type: 'image/jpeg' });
-          setImageFile(croppedFile);
-          setImagePreview(URL.createObjectURL(croppedBlob));
-          setShowCropper(false);
-        }
-      }
+      const croppedImage = await getCroppedImg(image!, croppedAreaPixels);
+      setCoverPreview(URL.createObjectURL(croppedImage));
+      
+      // Convert Blob to File
+      const file = new File([croppedImage], "cover.jpg", { type: "image/jpeg" });
+      setCoverImage(file);
+      setIsCropping(false);
     } catch (e) {
-      showToast("Kırpma sırasında hata oluştu!", "error");
-    }
-  };
-
-  const handleAssetFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) { 
-        const file = e.target.files[0];
-        if (file.size / (1024 * 1024) > 20) {
-            showToast(`Dosya 20MB'dan büyük! Lütfen Link kullanın.`, "error");
-            e.target.value = "";
-            return;
-        }
-        setAssetFile(file); 
+      console.error(e);
     }
   };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!useExternal && !assetFile) return showToast("Lütfen bir dosya seçin.", "error");
-    setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return showToast("Hata: Giriş yapmalısınız.", "error");
+    if (!title || !category || !fileUrl || !user) return;
 
+    setIsUploading(true);
     try {
-        let uploadedImageUrl = DEFAULT_THUMBS[category] || DEFAULT_THUMBS["Default"];
-        if (imageFile) {
-            const imgName = `assets/${Date.now()}-thumb-${imageFile.name}`;
-            const { error: imgErr } = await supabase.storage.from('avatars').upload(imgName, imageFile);
-            if (!imgErr) uploadedImageUrl = supabase.storage.from('avatars').getPublicUrl(imgName).data.publicUrl;
-        }
+      let cover_url = '';
+      if (coverImage) {
+        const fileExt = coverImage.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${user.id}/${fileName}`;
 
-        let finalDownloadUrl = externalUrl;
-        if (!useExternal && assetFile) {
-            const fileName = `assets/${Date.now()}-file-${assetFile.name}`;
-            const { error: fileErr } = await supabase.storage.from('avatars').upload(fileName, assetFile);
-            if (!fileErr) finalDownloadUrl = supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
-            else throw fileErr;
-        }
+        const { error: uploadError } = await supabase.storage
+          .from('asset-covers')
+          .upload(filePath, coverImage);
 
-        const { error } = await supabase.from('assets').insert([{
-            title, category, download_url: finalDownloadUrl, image_url: uploadedImageUrl,
-            author_id: user.id, file_type: assetFile ? assetFile.name.split('.').pop()?.toUpperCase() : 'LINK'
-        }]);
+        if (uploadError) throw uploadError;
 
-        if (error) throw error;
-        setStep(2);
-        setTimeout(() => window.location.href = "/", 1500);
-    } catch (err: any) { showToast(err.message, "error"); } finally { setLoading(false); }
+        const { data } = supabase.storage
+          .from('asset-covers')
+          .getPublicUrl(filePath);
+        
+        cover_url = data.publicUrl;
+      }
+
+      const { error } = await supabase.from('assets').insert({
+        title,
+        category,
+        tags,
+        file_url: fileUrl,
+        cover_url,
+        author_id: user.id,
+        downloads: 0,
+        likes: 0,
+        views: 0
+      });
+
+      if (error) throw error;
+      setUploadSuccess(true);
+      setTimeout(() => router.push('/'), 2000);
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  const getAcceptedFiles = (cat: string) => {
-    const c = cat.toLowerCase();
-    const common = ".zip,.rar,.7z";
-    if (c.includes('sahne') || c.includes('scene')) return `${common},.mp4,.mov`;
-    if (c.includes('after') || c.includes('ae')) return `${common},.aep,.ffx,.prproj`;
-    if (c.includes('alight') || c.includes('am')) return `${common},.xml`;
-    if (c.includes('lut')) return `${common},.cube`;
-    if (c.includes('overlay')) return `${common},.mp4,.mov,.png,.jpg`;
-    return `${common},.mp4,.mov,.aep,.xml,.cube`;
+  const toggleTag = (tag: string) => {
+    if (tags.includes(tag)) {
+      setTags(tags.filter(t => t !== tag));
+    } else {
+      setTags([...tags, tag]);
+    }
   };
 
-  const getCategoryContext = (cat: string) => {
-    const c = cat.toLowerCase();
-    if (c.includes('sahne') || c.includes('scene')) return { label: `${t('selectFile')} (MP4/RAR)`, icon: <Box size={28} /> };
-    if (c.includes('after') || c.includes('ae')) return { label: t('selectFile'), icon: <FileCode2 size={28} /> };
-    if (c.includes('alight') || c.includes('am')) return { label: t('selectFile'), icon: <FileType size={28} /> };
-    if (c.includes('lut')) return { label: t('selectFile'), icon: <FileArchive size={28} /> };
-    if (c.includes('overlay')) return { label: t('selectFile'), icon: <Film size={28} /> };
-    return { label: t('selectFile'), icon: <FileArchive size={28} /> };
-  };
-
-  const currentContext = getCategoryContext(category);
-  const acceptedFiles = getAcceptedFiles(category);
-
-  if (isVerifying) return <div className="h-screen w-full bg-black flex items-center justify-center"><Loader2 size={40} className="text-primary animate-spin" /></div>;
-  if (!isAdmin) return null;
+  if (loading) return <div className="h-screen w-full bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background relative">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
       <Navbar />
       
-      {/* CROPPER MODAL (FIXED AT HIGHEST Z-INDEX) */}
-      {showCropper && tempImage && (
-        <div className="fixed inset-0 z-[99999] bg-black flex flex-col items-center justify-center p-4">
-          <div className="relative w-full max-w-4xl h-[60vh] bg-[#050505] rounded-3xl overflow-hidden border border-white/10">
+      <main className="flex-1 pt-24 pb-32 md:pb-12 px-4 md:px-6 flex flex-col items-center">
+        <div className="w-full max-w-2xl space-y-8">
+          <div className="space-y-2 text-center md:text-left">
+            <h1 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter text-white">
+              {t('uploadAsset')}
+            </h1>
+            <p className="text-[10px] md:text-xs font-bold text-white/20 uppercase tracking-[0.3em]">
+              Sytex Archive Premium Dashboard
+            </p>
+          </div>
+
+          <form onSubmit={handleUpload} className="space-y-6">
+            {/* COVER IMAGE */}
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">
+                {t('coverImage')} <span className="text-primary/40 italic">({t('optional')})</span>
+              </label>
+              <div 
+                className="relative aspect-video rounded-[2rem] border-2 border-dashed border-white/10 hover:border-primary/50 bg-[#0a0a0a] transition-all overflow-hidden group cursor-pointer"
+                onClick={() => document.getElementById('cover-input')?.click()}
+              >
+                {coverPreview ? (
+                  <img src={coverPreview} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white/20 group-hover:text-primary transition-colors">
+                    <ImageIcon size={40} strokeWidth={1} />
+                    <span className="text-[10px] font-black uppercase mt-4 tracking-widest">{t('selectFile')}</span>
+                  </div>
+                )}
+                <input id="cover-input" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+              </div>
+            </div>
+
+            {/* TITLE & CATEGORY */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">{t('assetTitle')}</label>
+                <input 
+                  type="text" 
+                  value={title} 
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-4 px-6 text-xs font-black uppercase tracking-widest text-white focus:border-primary transition-all outline-none"
+                  placeholder="MY NEW EDIT PACK..."
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">{t('categories')}</label>
+                <select 
+                  value={category} 
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-4 px-6 text-xs font-black uppercase tracking-widest text-white focus:border-primary transition-all outline-none appearance-none"
+                >
+                  <option value="">{t('all')}</option>
+                  <option value="scene">SCENE</option>
+                  <option value="ae">AFTER EFFECTS</option>
+                  <option value="am">ALIGHT MOTION</option>
+                  <option value="lut">LUTS</option>
+                  <option value="overlay">OVERLAY</option>
+                </select>
+              </div>
+            </div>
+
+            {/* FILE URL */}
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Asset {t('link')}</label>
+              <div className="relative">
+                <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                <input 
+                  type="url" 
+                  value={fileUrl} 
+                  onChange={(e) => setFileUrl(e.target.value)}
+                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-4 pl-16 pr-6 text-xs font-black lowercase text-white focus:border-primary transition-all outline-none"
+                  placeholder="https://mega.nz/file/..."
+                />
+              </div>
+            </div>
+
+            {/* TAGS */}
+            <div className="space-y-4">
+              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Tags</label>
+              <div className="flex flex-wrap gap-2">
+                {['scene', 'ae', 'am', 'lut', 'overlay', 'other'].map((tag) => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => toggleTag(tag)}
+                    className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                      tags.includes(tag) 
+                        ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' 
+                        : 'bg-white/5 text-white/30 hover:bg-white/10'
+                    }`}
+                  >
+                    {t(`tags.${tag}`)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* SUBMIT */}
+            <button
+              type="submit"
+              disabled={isUploading || uploadSuccess}
+              className={`w-full py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all shadow-2xl ${
+                uploadSuccess 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-primary text-white hover:scale-[1.02] active:scale-95 shadow-primary/20'
+              }`}
+            >
+              {isUploading ? <Loader2 className="animate-spin" /> : uploadSuccess ? <Check /> : <Upload />}
+              {uploadSuccess ? t('uploadSuccess') : t('upload').toUpperCase()}
+            </button>
+          </form>
+        </div>
+      </main>
+
+      {/* CROP MODAL */}
+      {isCropping && (
+        <div className="fixed inset-0 z-[6000] bg-black/95 flex flex-col items-center justify-center p-6">
+          <div className="relative w-full max-w-2xl aspect-video bg-[#0a0a0a] rounded-[2rem] overflow-hidden border border-white/10">
             <Cropper
-              image={tempImage}
+              image={image!}
               crop={crop}
               zoom={zoom}
               aspect={16 / 9}
               onCropChange={setCrop}
-              onZoomChange={setZoom}
               onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
             />
           </div>
-          <div className="mt-8 flex items-center gap-4">
-            <button onClick={() => setShowCropper(false)} className="flex items-center gap-2 px-8 py-3 bg-white/5 border border-white/10 text-white/40 hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
-              <X size={18} /> {t('cancel')}
-            </button>
-            <button onClick={handleCropSave} className="flex items-center gap-2 px-12 py-3 bg-primary text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
-              <Check size={18} /> {t('save')}
-            </button>
-          </div>
-          <div className="mt-6 flex items-center gap-4 w-full max-w-xs">
-            <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">ZOOM</span>
-            <input type="range" value={zoom} min={1} max={3} step={0.1} onChange={(e) => setZoom(Number(e.target.value))} className="flex-1 accent-primary" />
+          <div className="mt-8 flex gap-4 w-full max-w-2xl">
+            <button onClick={() => setIsCropping(false)} className="flex-1 py-4 rounded-2xl bg-white/5 text-white font-black uppercase text-xs tracking-widest">{t('cancel')}</button>
+            <button onClick={saveCroppedImage} className="flex-1 py-4 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest">{t('save')}</button>
           </div>
         </div>
       )}
-
-      <main className="flex-grow pt-24 pb-12 px-4 md:px-8">
-        <div className="max-w-4xl mx-auto bg-card border border-border-custom p-6 md:p-12 rounded-[3rem] shadow-2xl relative">
-          {step === 1 ? (
-              <form onSubmit={handleUpload} className="space-y-8">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-2xl font-black uppercase italic tracking-tighter text-white">{t('upload')}</h1>
-                    </div>
-                    <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 text-primary italic">
-                        <ShieldAlert size={14} />
-                        <span className="text-[9px] font-black uppercase tracking-widest">SECURE ADMIN</span>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-6">
-                        <div className="relative aspect-video rounded-3xl bg-muted overflow-hidden border-2 border-dashed border-border-custom hover:border-primary transition-all">
-                            {imagePreview ? <img src={imagePreview} alt="P" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center gap-2"><Camera size={24} className="text-muted-foreground"/><span className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">{t('coverImage')} ({t('optional')})</span></div>}
-                            <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
-                            {imagePreview && (
-                              <button type="button" onClick={() => setShowCropper(true)} className="absolute bottom-4 right-4 p-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl text-white hover:text-primary transition-all shadow-xl">
-                                <CropIcon size={16} />
-                              </button>
-                            )}
-                        </div>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white focus:ring-1 focus:ring-primary/50 outline-none" placeholder={t('assetTitle')} required />
-                    </div>
-
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-2">
-                            {categories.map(c => (
-                                <button key={c} type="button" onClick={() => setCategory(c)} className={`px-3 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${category === c ? 'bg-primary border-primary text-white shadow-lg' : 'bg-muted border-border-custom text-white/40'}`}>{c}</button>
-                            ))}
-                        </div>
-                        
-                        <div className="p-1 bg-[#111] rounded-2xl flex gap-1 border border-border-custom">
-                            <button type="button" onClick={() => setUseExternal(false)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${!useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>{t('file')}</button>
-                            <button type="button" onClick={() => setUseExternal(true)} className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${useExternal ? 'bg-muted text-white shadow-inner' : 'text-white/30'}`}>{t('link')}</button>
-                        </div>
-
-                        {useExternal ? (
-                            <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                                <label className="text-[9px] font-black text-primary uppercase ml-2 italic flex items-center gap-2"><LinkIcon size={12}/> {t('link')}</label>
-                                <input type="url" value={externalUrl} onChange={(e) => setExternalUrl(e.target.value)} className="w-full bg-muted border border-border-custom rounded-xl py-4 px-5 text-xs font-bold text-white outline-none" placeholder="https://..." required />
-                            </div>
-                        ) : (
-                            <div className="relative group animate-in fade-in slide-in-from-top-2 duration-300">
-                                <div className={`w-full py-8 rounded-2xl border-2 border-dashed transition-all flex flex-col items-center gap-2 bg-muted/30 ${assetFile ? 'border-primary bg-primary/5' : 'border-border-custom group-hover:border-primary/50'}`}>
-                                    <div className={assetFile ? 'text-primary' : 'text-muted-foreground'}>{currentContext.icon}</div>
-                                    <span className="text-[9px] font-black uppercase tracking-widest">{assetFile ? assetFile.name : currentContext.label}</span>
-                                    <input type="file" accept={acceptedFiles} onChange={handleAssetFileChange} className="absolute inset-0 opacity-0 cursor-pointer" required={!useExternal} />
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                <button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/20 disabled:opacity-50">
-                    {loading ? <Loader2 size={18} className="animate-spin" /> : t('save')}
-                    {!loading && <ChevronRight size={18} />}
-                </button>
-              </form>
-          ) : (
-            <div className="text-center py-20 space-y-4">
-                <div className="w-20 h-20 bg-green-500/10 rounded-3xl flex items-center justify-center mx-auto text-green-500"><CheckCircle2 size={40} /></div>
-                <h2 className="text-3xl font-black uppercase italic tracking-tighter text-white">{t('uploadSuccess')}</h2>
-            </div>
-          )}
-        </div>
-      </main>
-      
-      <footer className="bg-black border-t border-border-custom py-2 px-6 flex items-center justify-between text-[8px] font-black uppercase text-white/30 italic">
-        <span>sytexarchive</span>
-        <p>&copy; {new Date().getFullYear()} sytexarchive</p>
-      </footer>
-      
-      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
     </div>
   );
 };
