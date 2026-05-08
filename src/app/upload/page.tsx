@@ -70,6 +70,7 @@ const UploadPage = () => {
     try {
       if (!image || !croppedAreaPixels) return;
       const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+      if (!croppedImage) return;
       setCoverPreview(URL.createObjectURL(croppedImage));
       
       // Convert Blob to File
