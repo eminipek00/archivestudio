@@ -227,16 +227,33 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         <Link href="/" className="p-2 text-white/40 hover:text-primary transition-all">
           <Home size={22} />
         </Link>
-        <button onClick={() => { router.push('/'); setTimeout(() => document.querySelector('input')?.focus(), 100); }} className="p-2 text-white/40 hover:text-primary transition-all">
+        <button onClick={() => { router.push('/'); setTimeout(() => { const input = document.querySelector('input'); if(input) { input.focus(); input.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }, 300); }} className="p-2 text-white/40 hover:text-primary transition-all">
           <Search size={22} />
         </button>
-        <Link href="/upload" className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-black">
+        <button onClick={() => router.push('/upload')} className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-black active:scale-95 transition-all">
           <Upload size={22} />
-        </Link>
-        <button onClick={() => setShowNotifMenu(!showNotifMenu)} className={`p-2 transition-all relative ${showNotifMenu ? 'text-primary' : 'text-white/40'}`}>
-          <Bell size={22} />
-          {unreadCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full border border-black" />}
         </button>
+        <div className="relative">
+            <button onClick={() => setShowNotifMenu(!showNotifMenu)} className={`p-2 transition-all relative ${showNotifMenu ? 'text-primary' : 'text-white/40'}`}>
+                <Bell size={22} />
+                {unreadCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full border border-black" />}
+            </button>
+            {showNotifMenu && (
+                <div className="fixed bottom-[80px] left-4 right-4 bg-[#0a0a0a] border border-border-custom rounded-[2rem] p-4 shadow-2xl animate-in slide-in-from-bottom-2 duration-300 z-[7000]">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">{t('notifications')}</h3>
+                    <div className="space-y-1 max-h-[40vh] overflow-y-auto no-scrollbar">
+                        {notifications.length === 0 ? ( <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">{t('noNotifications')}</p></div> ) : (
+                            notifications.map(n => (
+                                <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group">
+                                    <p className="text-[9px] font-black text-white group-hover:text-primary transition-colors mb-1">{n.content}</p>
+                                    <p className="text-[7px] font-bold text-white/20 uppercase tracking-widest">{new Date(n.created_at).toLocaleDateString()}</p>
+                                </Link>
+                            ))
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
         <Link href={user ? "/profile" : "/login"} className="p-2 text-white/40 hover:text-primary transition-all">
           {profile?.avatar_url ? (
             <div className="w-7 h-7 rounded-lg overflow-hidden border border-white/20">
