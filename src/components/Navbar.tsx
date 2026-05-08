@@ -20,6 +20,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
@@ -56,6 +57,17 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     getUserData();
   }, [supabase]);
 
+  // LIVE SEARCH LOGIC
+  useEffect(() => {
+    const fetchResults = async () => {
+      if (localSearch.length < 2) { setSearchResults([]); return; }
+      const { data } = await supabase.from('assets').select('id, title, cover_url, category').ilike('title', `%${localSearch}%`).limit(5);
+      if (data) setSearchResults(data);
+    };
+    const timer = setTimeout(fetchResults, 300);
+    return () => clearTimeout(timer);
+  }, [localSearch, supabase]);
+
   const saveLogoSettings = () => {
     localStorage.setItem('sytexLogoSettings', JSON.stringify(logoSettings));
     setIsEditingLogo(false);
@@ -73,6 +85,11 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     const val = e.target.value;
     setLocalSearch(val);
     if (onSearch) onSearch(val);
+  };
+
+  const clearSearch = () => {
+    setLocalSearch("");
+    if (onSearch) onSearch("");
   };
 
   const handleMobileSearchToggle = () => {
@@ -110,8 +127,8 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   return (
     <>
     {/* CLICK-AWAY OVERLAY */}
-    {(showLangMenu || showUserMenu || showNotifMenu) && (
-      <div className="fixed inset-0 z-[4500] bg-black/5" onClick={closeAllMenus} />
+    {(showLangMenu || showUserMenu || showNotifMenu || (isMobileSearchActive && searchResults.length > 0)) && (
+      <div className="fixed inset-0 z-[4500] bg-black/40 backdrop-blur-sm" onClick={() => { closeAllMenus(); setSearchResults([]); }} />
     )}
 
     <nav className="fixed top-0 left-0 right-0 z-[5000] py-3 md:py-4 bg-black border-b border-white/5 shadow-2xl">
@@ -119,9 +136,9 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         
         {isMobileSearchActive ? (
           /* MOBILE ACTIVE SEARCH BAR */
-          <div className="flex-1 flex items-center gap-3 animate-in slide-in-from-left-4 duration-300">
-            <button onClick={() => { setIsMobileSearchActive(false); if(onSearch) onSearch(""); setLocalSearch(""); }} className="p-2 text-white/40 hover:text-primary transition-all">
-              <ChevronLeft size={20} />
+          <div className="flex-1 flex items-center gap-2 animate-in slide-in-from-left-4 duration-300 relative">
+            <button onClick={() => { setIsMobileSearchActive(false); clearSearch(); }} className="p-2 text-white/40 hover:text-primary transition-all">
+              <ChevronLeft size={22} />
             </button>
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" size={14} />
@@ -131,12 +148,31 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 value={localSearch} 
                 onChange={handleSearchChange} 
                 placeholder={t('searchPlaceholder')} 
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-[11px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/30"
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl py-2.5 pl-10 pr-10 text-[11px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/30 shadow-inner"
               />
+              {localSearch && (
+                <button onClick={clearSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-white/5 hover:bg-white/10 rounded-lg transition-all">
+                  <X size={12} className="text-white/40" />
+                </button>
+              )}
             </div>
-            <button onClick={() => { setIsMobileSearchActive(false); if(onSearch) onSearch(""); setLocalSearch(""); }} className="text-[9px] font-black uppercase tracking-widest text-white/20 px-2">
-              {t('cancel')}
-            </button>
+
+            {/* LIVE RESULTS DROPDOWN (MOBILE) */}
+            {searchResults.length > 0 && (
+              <div className="absolute top-[120%] left-0 right-0 bg-[#0a0a0a] border border-white/10 rounded-2xl p-2 shadow-2xl animate-in slide-in-from-top-2 duration-200 z-[6000]">
+                {searchResults.map(asset => (
+                  <button key={asset.id} onClick={() => { setIsMobileSearchActive(false); router.push(`/?asset=${asset.id}`); }} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all text-left group">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                      <img src={asset.cover_url || '/logo.png'} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[10px] font-black text-white uppercase truncate group-hover:text-primary transition-colors">{asset.title}</span>
+                      <span className="text-[7px] font-bold text-white/20 uppercase tracking-widest">{asset.category}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           /* STANDARD NAV CONTENT */
@@ -151,31 +187,24 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                       <span className="text-[6px] md:text-[7px] font-black tracking-[0.4em] text-white/30 leading-none uppercase mt-1">Professional Digital Assets</span>
                   </div>
               </Link>
-              {isAdmin && (
-                  <div className="hidden sm:flex items-center ml-2">
-                      {isEditingLogo ? (
-                          <div className="flex items-center gap-2 bg-[#0a0a0a] p-2 rounded-xl border border-primary/30 shadow-2xl animate-in zoom-in-95 duration-200">
-                              <input type="number" value={logoSettings.x} onChange={(e) => setLogoSettings({...logoSettings, x: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
-                              <input type="number" value={logoSettings.y} onChange={(e) => setLogoSettings({...logoSettings, y: parseInt(e.target.value) || 0})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
-                              <input type="number" step="0.1" value={logoSettings.scale} onChange={(e) => setLogoSettings({...logoSettings, scale: parseFloat(e.target.value) || 1})} className="w-8 bg-black text-[8px] text-white text-center rounded border border-white/10" />
-                              <button onClick={saveLogoSettings} className="p-1.5 bg-primary text-white rounded-lg"><Check size={12}/></button>
-                          </div>
-                      ) : ( <button onClick={() => setIsEditingLogo(true)} className="p-2 text-white/5 hover:text-primary transition-all rounded-lg"><Edit3 size={12}/></button> )}
-                  </div>
-              )}
           </div>
 
           {onSearch && (
             <div className="hidden lg:flex flex-1 max-w-md relative group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={16} />
-              <input id="global-search-input" type="text" value={localSearch} onChange={handleSearchChange} placeholder={t('searchPlaceholder')} className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/50 transition-all shadow-inner" />
+              <input id="global-search-input" type="text" value={localSearch} onChange={handleSearchChange} placeholder={t('searchPlaceholder')} className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-3 pl-12 pr-12 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/50 transition-all shadow-inner" />
+              {localSearch && (
+                <button onClick={clearSearch} className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all">
+                  <X size={14} className="text-white/40" />
+                </button>
+              )}
             </div>
           )}
 
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
-            {/* MOBILE LANGUAGE BUTTON (RIGHT TOP) */}
+            {/* MOBILE LANGUAGE BUTTON */}
             <div className="md:hidden relative">
-              <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className="bg-[#0a0a0a] border border-white/10 rounded-xl px-3 py-1.5 flex items-center gap-2 text-white active:scale-95 transition-all">
+              <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className="bg-[#0a0a0a] border border-white/10 rounded-xl px-3 py-1.5 flex items-center gap-2 text-white active:scale-95 transition-all shadow-xl">
                 <Globe size={16} className="text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-widest">{language.toUpperCase()}</span>
               </button>
@@ -196,30 +225,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
               <Upload size={16} className="text-primary md:w-[18px] md:h-[18px]" />
               <span>{t('upload')}</span>
             </Link>
-
-            {user && (
-              <div className="hidden md:block relative">
-                  <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowLangMenu(false); setShowUserMenu(false); }} className={`p-2.5 rounded-xl bg-white/5 border border-white/10 transition-all relative ${showNotifMenu ? 'text-primary border-primary/30' : 'text-white/40 hover:text-primary'}`}>
-                      <Bell size={18} />
-                      {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50" />}
-                  </button>
-                  {showNotifMenu && (
-                    <div className="absolute top-full right-0 mt-3 w-64 md:w-72 bg-[#0a0a0a] border border-border-custom rounded-[1.5rem] md:rounded-[2rem] p-3 md:p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
-                      <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">{t('notifications')}</h3>
-                      <div className="space-y-1">
-                          {notifications.length === 0 ? ( <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">{t('noNotifications')}</p></div> ) : (
-                              notifications.map(n => (
-                                  <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group text-left">
-                                      <p className="text-[9px] font-black text-white group-hover:text-primary transition-colors mb-1">{n.content}</p>
-                                      <p className="text-[7px] font-bold text-white/20 uppercase tracking-widest">{new Date(n.created_at).toLocaleDateString()}</p>
-                                  </Link>
-                              ))
-                          )}
-                      </div>
-                    </div>
-                  )}
-              </div>
-            )}
 
             <div className="hidden md:block relative">
               <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className={`px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-[#0a0a0a] border transition-all flex items-center gap-2 md:gap-3 ${showLangMenu ? 'border-primary/50 text-white' : 'border-white/10 text-white/60 hover:text-white hover:bg-white/5'}`}>
@@ -248,11 +253,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                         </div>
                       </div>
                       <div className="grid grid-cols-1 gap-0.5 md:gap-1 text-left">
-                        {isAdmin && (
-                          <button onClick={() => { window.dispatchEvent(new CustomEvent('toggleSiteEditor')); setShowUserMenu(false); }} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-primary hover:bg-primary/10 transition-all">
-                            <Palette size={14} className="md:w-4 md:h-4" /> {t('siteEditor').toUpperCase()}
-                          </button>
-                        )}
                         <Link href="/support" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black text-white/40 hover:text-white hover:bg-white/5 transition-all">
                           <MessageSquare size={14} className="md:w-4 md:h-4" /> {t('supportCenter').toUpperCase()}
                         </Link>
@@ -273,7 +273,6 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </Link>
               </div>
             )}
-          </div>
           </>
         )}
       </div>
