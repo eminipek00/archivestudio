@@ -97,7 +97,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[5000] py-3 md:py-4 bg-black border-b border-border-custom shadow-2xl">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between gap-2 md:gap-8">
+      <div className="max-w-7xl mx-auto px-6 md:px-6 flex items-center justify-between gap-2 md:gap-8">
         
         {/* LOGO AREA */}
         <div className="flex items-center gap-2 md:gap-6 shrink-0 text-left">
@@ -200,7 +200,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           </div>
 
           {user ? (
-            <div className="relative flex items-center">
+            <div className="relative flex items-center mr-5 md:mr-0">
                 <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLangMenu(false); setShowNotifMenu(false); }} className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden border-2 border-white/10 hover:border-primary transition-all p-0.5 bg-[#0a0a0a]">
                   <img src={profile?.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover rounded-lg" />
                 </button>
