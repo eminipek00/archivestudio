@@ -238,8 +238,11 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                             {loading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />} {t('save')}
                         </button>
                     ) : (
-                        <a href={asset.download_url} target="_blank" className="w-full bg-primary hover:bg-primary/90 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95">
-                            <Download size={20} />{t('download')}
+                        <a href={asset.download_url} target="_blank" className="w-full block">
+                          <button className="w-full py-5 bg-primary text-white rounded-[1.5rem] font-black text-xs md:text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
+                            <Download size={20} />
+                            {t('download').toUpperCase()}
+                          </button>
                         </a>
                     )}
                     <button onClick={handleShare} className="w-full bg-muted hover:bg-border-custom text-white/60 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all">

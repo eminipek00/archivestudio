@@ -4,6 +4,7 @@ export const translations: Record<Language, any> = {
   tr: {
     searchPlaceholder: "DOSYA ARA...",
     upload: "YÜKLE",
+    download: "İNDİR",
     login: "GİRİŞ YAP",
     logout: "ÇIKIŞ",
     profile: "PROFİL",
@@ -31,19 +32,16 @@ export const translations: Record<Language, any> = {
     following: "TAKİP",
     supportCenter: "DESTEK MERKEZİ",
     siteEditor: "SİTE EDİTÖRÜ",
-    tags: {
-      all: "HEPSİ",
-      scene: "SAHNE",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "KAPLAMA",
-      other: "DİĞER"
-    }
+    uploader: "YÜKLEYEN",
+    share: "PAYLAŞ",
+    follow: "TAKİP ET",
+    unfollow: "TAKİBİ BIRAK",
+    tags: { all: "HEPSİ", scene: "SAHNE", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "KAPLAMA", other: "DİĞER" }
   },
   en: {
     searchPlaceholder: "SEARCH FILES...",
     upload: "UPLOAD",
+    download: "DOWNLOAD",
     login: "LOGIN",
     logout: "LOGOUT",
     profile: "PROFILE",
@@ -71,19 +69,16 @@ export const translations: Record<Language, any> = {
     following: "FOLLOWING",
     supportCenter: "SUPPORT CENTER",
     siteEditor: "SITE EDITOR",
-    tags: {
-      all: "ALL",
-      scene: "SCENE",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "OVERLAY",
-      other: "OTHER"
-    }
+    uploader: "UPLOADER",
+    share: "SHARE",
+    follow: "FOLLOW",
+    unfollow: "UNFOLLOW",
+    tags: { all: "ALL", scene: "SCENE", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "OVERLAY", other: "OTHER" }
   },
   az: {
     searchPlaceholder: "FAYL ARA...",
     upload: "YÜKLƏ",
+    download: "YÜKLƏ",
     login: "GİRİŞ",
     logout: "ÇIXIŞ",
     profile: "PROFİL",
@@ -111,25 +106,22 @@ export const translations: Record<Language, any> = {
     following: "İZLƏNİLƏN",
     supportCenter: "DƏSTƏK MƏRKƏZİ",
     siteEditor: "SAYT EDİTORU",
-    tags: {
-      all: "HAMISI",
-      scene: "SƏHNƏ",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "KAPLAMA",
-      other: "DİGƏR"
-    }
+    uploader: "YÜKLƏYƏN",
+    share: "PAYLAŞ",
+    follow: "İZLƏ",
+    unfollow: "İZLƏMƏ",
+    tags: { all: "HAMISI", scene: "SƏHNƏ", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "KAPLAMA", other: "DİGƏR" }
   },
   es: {
     searchPlaceholder: "BUSCAR ARCHIVOS...",
     upload: "SUBIR",
+    download: "DESCARGAR",
     login: "ACCESO",
     logout: "CERRAR SESIÓN",
     profile: "PERFIL",
     settings: "AJUSTES",
     heroTitle: "ARCHIVO DIGITAL PROFESIONAL",
-    heroSubtitle: "SU DESTINO ÚNICO PARA ACTIVOS DE ALTA CALIDAD Y HERRAMIENTAS DE EDICIÓN.",
+    heroSubtitle: "SU DESTINO ÚNICO PARA ACTIVOS DE ALTA CALIDAD.",
     heroSub: "SYTEX ARCHIVE PREMIUM",
     totalAssets: "ARCHIVOS TOTALES",
     categories: "CATEGORÍAS",
@@ -151,19 +143,16 @@ export const translations: Record<Language, any> = {
     following: "SIGUIENDO",
     supportCenter: "CENTRO DE SOPORTE",
     siteEditor: "EDITOR DEL SITIO",
-    tags: {
-      all: "TODO",
-      scene: "ESCENA",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "SUPERPOSICIÓN",
-      other: "OTRO"
-    }
+    uploader: "SUBIDO POR",
+    share: "COMPARTIR",
+    follow: "SEGUIR",
+    unfollow: "DEJAR DE SEGUIR",
+    tags: { all: "TODO", scene: "ESCENA", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "SUPERPOSICIÓN", other: "OTRO" }
   },
   fr: {
     searchPlaceholder: "RECHERCHER...",
     upload: "CHARGER",
+    download: "TÉLÉCHARGER",
     login: "CONNEXION",
     logout: "DÉCONNEXION",
     profile: "PROFIL",
@@ -189,21 +178,18 @@ export const translations: Record<Language, any> = {
     noNotifications: "PAS DE NOTIFICATIONS",
     followers: "ABONNÉS",
     following: "ABONNEMENTS",
-    supportCenter: "CENTRE DE SUPPORT",
+    supportCenter: "CENTRO DE SOPORTE",
     siteEditor: "ÉDITEUR DU SITE",
-    tags: {
-      all: "TOUT",
-      scene: "SCÈNE",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "SUPERPOSITION",
-      other: "AUTRE"
-    }
+    uploader: "CHARGÉ PAR",
+    share: "PARTAGER",
+    follow: "SUIVRE",
+    unfollow: "NE PLUS SUIVRE",
+    tags: { all: "TOUT", scene: "SCÈNE", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "SUPERPOSITION", other: "AUTRE" }
   },
   de: {
     searchPlaceholder: "DATEIEN SUCHEN...",
     upload: "HOCHLADEN",
+    download: "HERUNTERLADEN",
     login: "ANMELDEN",
     logout: "ABMELDEN",
     profile: "PROFIL",
@@ -231,19 +217,16 @@ export const translations: Record<Language, any> = {
     following: "FOLGT",
     supportCenter: "SUPPORT-CENTER",
     siteEditor: "SEITEN-EDITOR",
-    tags: {
-      all: "ALLE",
-      scene: "SZENARIE",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "OVERLAY",
-      other: "ANDERE"
-    }
+    uploader: "HOCHGELADEN VON",
+    share: "TEILEN",
+    follow: "FOLGEN",
+    unfollow: "ENTFOLGEN",
+    tags: { all: "ALLE", scene: "SZENARIE", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "OVERLAY", other: "ANDERE" }
   },
   ar: {
     searchPlaceholder: "البحث عن الملفات...",
     upload: "رفع",
+    download: "تحميل",
     login: "تسجيل الدخول",
     logout: "تسجيل الخروج",
     profile: "الملف الشخصي",
@@ -271,25 +254,22 @@ export const translations: Record<Language, any> = {
     following: "متابعة",
     supportCenter: "مركز الدعم",
     siteEditor: "محرر الموقع",
-    tags: {
-      all: "الكل",
-      scene: "مشهد",
-      ae: "افتر افكت",
-      am: "الايت موشن",
-      lut: "لوتس",
-      overlay: "تراكب",
-      other: "آخر"
-    }
+    uploader: "تم الرفع بواسطة",
+    share: "مشاركة",
+    follow: "متابعة",
+    unfollow: "إلغاء المتابعة",
+    tags: { all: "الكل", scene: "مشهد", ae: "افتر افكت", am: "الايت موشن", lut: "لوتس", overlay: "تراكب", other: "آخر" }
   },
   ru: {
     searchPlaceholder: "ПОИСК ФАЙЛОВ...",
     upload: "ЗАГРУЗИТЬ",
+    download: "СКАЧАТЬ",
     login: "ВХОД",
     logout: "ВЫХОД",
     profile: "ПРОФИЛЬ",
     settings: "НАСТРОЙКИ",
     heroTitle: "ПРОФЕССИОНАЛЬНЫЙ ЦИФРОВОЙ АРХИВ",
-    heroSubtitle: "ВАШ ЕДИНЫЙ ЦЕНТР КАЧЕСТВЕННЫХ АКТИВОВ И ИНСТРУМЕНТОВ.",
+    heroSubtitle: "ВАШ ЕДИНЫЙ ЦЕНТР КАЧЕСТВЕННЫХ АКТИВОВ.",
     heroSub: "SYTEX ARCHIVE PREMIUM",
     totalAssets: "ВСЕГО ФАЙЛОВ",
     categories: "КАТЕГОРИИ",
@@ -311,19 +291,16 @@ export const translations: Record<Language, any> = {
     following: "ПОДПИСКИ",
     supportCenter: "ЦЕНТР ПОДДЕРЖКИ",
     siteEditor: "РЕДАКТОР САЙТА",
-    tags: {
-      all: "ВСЕ",
-      scene: "СЦЕНА",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "ОВЕРЛЕЙ",
-      other: "ДРУГОЕ"
-    }
+    uploader: "ЗАГРУЗИЛ",
+    share: "ПОДЕЛИТЬСЯ",
+    follow: "ПОДПИСАТЬСЯ",
+    unfollow: "ОТПИСАТЬСЯ",
+    tags: { all: "ВСЕ", scene: "СЦЕНА", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "ОВЕРЛЕЙ", other: "ДРУГОЕ" }
   },
   zh: {
     searchPlaceholder: "搜索文件...",
     upload: "上传",
+    download: "下载",
     login: "登录",
     logout: "登出",
     profile: "个人资料",
@@ -351,19 +328,16 @@ export const translations: Record<Language, any> = {
     following: "关注",
     supportCenter: "支持中心",
     siteEditor: "网站编辑器",
-    tags: {
-      all: "全部",
-      scene: "场景",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "叠加",
-      other: "其他"
-    }
+    uploader: "上传者",
+    share: "分享",
+    follow: "关注",
+    unfollow: "取消关注",
+    tags: { all: "全部", scene: "场景", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "叠加", other: "其他" }
   },
   ja: {
     searchPlaceholder: "ファイルを検索...",
     upload: "アップロード",
+    download: "ダウンロード",
     login: "ログイン",
     logout: "ログアウト",
     profile: "プロフィール",
@@ -391,19 +365,16 @@ export const translations: Record<Language, any> = {
     following: "フォロー中",
     supportCenter: "サポートセンター",
     siteEditor: "サイトエディター",
-    tags: {
-      all: "すべて",
-      scene: "シーン",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "オーバーレイ",
-      other: "その他"
-    }
+    uploader: "アップロード者",
+    share: "共有",
+    follow: "フォロー",
+    unfollow: "フォロー解除",
+    tags: { all: "すべて", scene: "シーン", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "オーバーレイ", other: "その他" }
   },
   pt: {
     searchPlaceholder: "PESQUISAR ARQUIVOS...",
     upload: "CARREGAR",
+    download: "BAIXAR",
     login: "ENTRAR",
     logout: "SAIR",
     profile: "PERFIL",
@@ -431,19 +402,16 @@ export const translations: Record<Language, any> = {
     following: "SEGUINDO",
     supportCenter: "CENTRO DE SUPORTE",
     siteEditor: "EDITOR DO SITE",
-    tags: {
-      all: "TODOS",
-      scene: "CENA",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "SOBREPOSIÇÃO",
-      other: "OUTRO"
-    }
+    uploader: "ENVIADO POR",
+    share: "COMPARTILHAR",
+    follow: "SEGUIR",
+    unfollow: "DEIXAR DE SEGUIR",
+    tags: { all: "TODOS", scene: "CENA", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "SOBREPOSIÇÃO", other: "OUTRO" }
   },
   it: {
     searchPlaceholder: "CERCA FILE...",
     upload: "CARICA",
+    download: "SCARICA",
     login: "ACCEDI",
     logout: "ESCI",
     profile: "PROFILO",
@@ -471,19 +439,16 @@ export const translations: Record<Language, any> = {
     following: "SEGUITI",
     supportCenter: "CENTRO SUPPORTO",
     siteEditor: "EDITOR SITO",
-    tags: {
-      all: "TUTTO",
-      scene: "SCENA",
-      ae: "AFTER EFFECTS",
-      am: "ALIGHT MOTION",
-      lut: "LUTS",
-      overlay: "OVERLAY",
-      other: "ALTRO"
-    }
+    uploader: "CARICATO DA",
+    share: "CONDIVIDI",
+    follow: "SEGUI",
+    unfollow: "NON SEGUIRE PIÙ",
+    tags: { all: "TUTTO", scene: "SCENA", ae: "AFTER EFFECTS", am: "ALIGHT MOTION", lut: "LUTS", overlay: "OVERLAY", other: "ALTRO" }
   },
   ko: {
     searchPlaceholder: "파일 검색...",
     upload: "업로드",
+    download: "다운로드",
     login: "로그인",
     logout: "로그아웃",
     profile: "프로필",
@@ -511,19 +476,16 @@ export const translations: Record<Language, any> = {
     following: "팔로잉",
     supportCenter: "지원 센터",
     siteEditor: "사이트 에디터",
-    tags: {
-      all: "전체",
-      scene: "장면",
-      ae: "애프터 이펙트",
-      am: "얼라이트 모션",
-      lut: "LUTS",
-      overlay: "오버레이",
-      other: "기타"
-    }
+    uploader: "업로드한 사용자",
+    share: "공유",
+    follow: "팔로우",
+    unfollow: "언팔로우",
+    tags: { all: "전체", scene: "장면", ae: "애프터 이펙트", am: "얼라이트 모션", lut: "LUTS", overlay: "오버레이", other: "기타" }
   },
   hi: {
     searchPlaceholder: "फ़ाइलें खोजें...",
     upload: "अपलोड",
+    download: "डाउनलोड",
     login: "लॉगिन",
     logout: "लॉगआउट",
     profile: "प्रोफ़ाइल",
@@ -547,18 +509,14 @@ export const translations: Record<Language, any> = {
     save: "सहेजें",
     notifications: "सूचनाएं",
     noNotifications: "कोई सूचना नहीं",
-    followers: "फ़ॉलोअर्स",
+    followers: "फ़ॉλοअर्स",
     following: "फ़ॉलो कर रहे हैं",
     supportCenter: "सहायता केंद्र",
     siteEditor: "साइट संपादक",
-    tags: {
-      all: "सभी",
-      scene: "दृश्य",
-      ae: "आफ्टर इफेक्ट्स",
-      am: "अलाइट मोशन",
-      lut: "LUTS",
-      overlay: "ओवरले",
-      other: "अन्य"
-    }
+    uploader: "अपलोडर",
+    share: "साझा करें",
+    follow: "फ़ॉलो करें",
+    unfollow: "अनफ़ॉलो करें",
+    tags: { all: "सभी", scene: "दृश्य", ae: "आफ्टर इफेक्ट्स", am: "अलाइट मोशन", lut: "LUTS", overlay: "ओवरले", other: "अन्य" }
   }
 };

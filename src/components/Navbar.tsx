@@ -171,8 +171,38 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
               <Link href="/upload" className="hidden sm:flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 bg-white/5 border border-white/10 hover:border-primary/50 text-white rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest transition-all"><Upload size={16} className="text-primary md:w-[18px] md:h-[18px]" /><span>{t('upload')}</span></Link>
 
+              {user && (
+                <div className="hidden md:block relative">
+                    <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowLangMenu(false); setShowUserMenu(false); }} className={`p-2.5 rounded-xl bg-white/5 border border-white/10 transition-all relative ${showNotifMenu ? 'text-primary border-primary/30' : 'text-white/40 hover:text-primary'}`}><Bell size={18} />{unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50" />}</button>
+                    {showNotifMenu && (
+                      <div className="absolute top-full right-0 mt-3 w-64 md:w-72 bg-[#0a0a0a] border border-border-custom rounded-[1.5rem] md:rounded-[2rem] p-3 md:p-4 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000] text-left">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-white/20 px-4 mb-4">{t('notifications')}</h3>
+                        <div className="space-y-1">
+                            {notifications.length === 0 ? ( <div className="p-8 text-center opacity-20"><Bell size={32} className="mx-auto mb-2" /><p className="text-[8px] font-black uppercase">{t('noNotifications')}</p></div> ) : (
+                                notifications.map(n => (
+                                    <Link key={n.id} href={n.link || '#'} onClick={() => setShowNotifMenu(false)} className="block p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-primary/20 transition-all group text-left">
+                                        <p className="text-[9px] font-black text-white group-hover:text-primary transition-colors mb-1">{n.content}</p>
+                                        <p className="text-[7px] font-bold text-white/20 uppercase tracking-widest">{new Date(n.created_at).toLocaleDateString()}</p>
+                                    </Link>
+                                ))
+                            )}
+                        </div>
+                      </div>
+                    )}
+                </div>
+              )}
+
               <div className="hidden md:block relative">
                 <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className={`px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-[#0a0a0a] border transition-all flex items-center gap-2 md:gap-3 ${showLangMenu ? 'border-primary/50 text-white' : 'border-white/10 text-white/60 hover:text-white hover:bg-white/5'}`}><Globe size={16} className="text-primary md:w-[18px] md:h-[18px]" /><span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">{languages.find(l => l.code === language)?.code.toUpperCase()}</span></button>
+                {showLangMenu && (
+                  <div className="absolute top-full right-0 mt-3 w-48 bg-[#0a0a0a] border border-border-custom rounded-2xl p-2 shadow-2xl animate-in zoom-in-95 duration-200 z-[6000]">
+                    <div className="grid grid-cols-1 gap-1 max-h-[300px] overflow-y-auto no-scrollbar">
+                      {languages.map((lang) => (
+                        <button key={lang.code} onClick={() => { setLanguage(lang.code); setShowLangMenu(false); }} className={`flex items-center justify-start px-3 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${language === lang.code ? 'bg-primary text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/5'}`}>{lang.name}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {user ? (
