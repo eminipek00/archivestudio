@@ -48,15 +48,19 @@ const UploadPage = () => {
   };
 
   useEffect(() => {
-    const checkAccess = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { router.push("/login"); return; }
-      const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).maybeSingle();
-      if (user.email === ADMIN_EMAIL || profile?.is_admin) { setIsAdmin(true); } 
-      else { showToast("Bu sayfaya erişim yetkiniz yok!", "error"); setTimeout(() => router.push("/"), 2000); }
-      setIsVerifying(false);
+    const checkUser = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) {
+        router.push('/login');
+        return;
+      }
+      setUser(authUser);
+      
+      const { data: profileData } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+      if (profileData) setProfile(profileData);
+      setLoading(false);
     };
-    checkAccess();
+    checkUser();
   }, [supabase, router]);
 
   const onCropComplete = useCallback((_croppedArea: any, pixelCrop: any) => {

@@ -227,7 +227,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         <Link href="/" className="p-2 text-white/40 hover:text-primary transition-all">
           <Home size={22} />
         </Link>
-        <button onClick={() => { router.push('/'); setTimeout(() => { const input = document.querySelector('input'); if(input) { input.focus(); input.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }, 300); }} className="p-2 text-white/40 hover:text-primary transition-all">
+        <button onClick={() => { if (window.location.pathname !== '/') { router.push('/'); setTimeout(() => { const input = document.querySelector('input[type="text"]'); if(input) (input as HTMLInputElement).focus(); }, 500); } else { const input = document.querySelector('input[type="text"]'); if(input) (input as HTMLInputElement).focus(); } }} className="p-2 text-white/40 hover:text-primary transition-all">
           <Search size={22} />
         </button>
         <button onClick={() => router.push('/upload')} className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-black active:scale-95 transition-all">
