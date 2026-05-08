@@ -189,8 +189,8 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 sm:p-6 lg:p-8 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl" onClick={() => { setShowModal(false); setIsEditing(false); }} />
           <div className="relative bg-card border border-border-custom w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row animate-in zoom-in slide-in-from-bottom-8 duration-500">
-            <div className="w-full md:w-3/5 aspect-video md:aspect-auto bg-muted relative group/edit">
-                <img src={isEditing ? editUrl : asset.image_url} alt={asset.title} className="w-full h-full object-cover" />
+            <div className="w-full md:w-3/5 aspect-video md:aspect-auto bg-[#050505] relative group/edit flex items-center justify-center">
+                <img src={isEditing ? editUrl : asset.image_url} alt={asset.title} className="w-full h-full object-contain transition-transform duration-700" />
                 {isEditing && (
                     <label className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-8 space-y-4 cursor-pointer hover:bg-black/80 transition-all">
                         {loading ? <Loader2 size={48} className="text-primary animate-spin" /> : <Camera size={48} className="text-primary" />}
@@ -198,15 +198,15 @@ const AssetCard = ({ asset, isAdmin, onDelete }: { asset: any, isAdmin: boolean,
                         <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
                     </label>
                 )}
-                <button onClick={() => { setShowModal(false); setIsEditing(false); }} className="absolute top-6 left-6 p-3 bg-black/50 hover:bg-black backdrop-blur-md text-white rounded-2xl md:hidden"><X size={20} /></button>
+                <button onClick={() => { setShowModal(false); setIsEditing(false); }} className="absolute top-6 left-6 p-3 bg-black/50 hover:bg-black backdrop-blur-md text-white rounded-2xl md:hidden z-20"><X size={20} /></button>
             </div>
-            <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-between space-y-8 bg-[#050505]">
+            <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-between space-y-8 bg-[#050505] relative">
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic bg-primary/5 px-4 py-2 rounded-xl border border-primary/10">{asset.category}</span>
                         <div className="flex items-center gap-2">
                             {isAdmin && !isEditing && <button onClick={() => setIsEditing(true)} className="p-2 text-primary hover:bg-primary/10 rounded-xl transition-all"><Edit3 size={20} /></button>}
-                            <button onClick={() => { setShowModal(false); setIsEditing(false); }} className="hidden md:block text-white/20 hover:text-white transition-colors"><X size={24} /></button>
+                            <button onClick={() => { setShowModal(false); setIsEditing(false); }} className="hidden md:flex p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all text-white/20 hover:text-white group"><X size={20} className="transition-transform group-hover:rotate-90" /></button>
                         </div>
                     </div>
                     {isEditing ? (
