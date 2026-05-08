@@ -23,7 +23,7 @@ const Hero = ({ activeCategory, onCategoryChange, totalAssets = 0 }: HeroProps) 
   ];
 
   return (
-    <section className="relative pt-12 pb-8 overflow-hidden">
+    <section className="relative pt-4 md:pt-12 pb-8 overflow-hidden">
       <div className="container px-4 mx-auto relative z-10 text-center">
         {/* KATEGORİ BUTONLARI (FİLTRELEME) */}
         <div className="flex flex-wrap justify-center gap-3 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">

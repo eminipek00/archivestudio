@@ -45,7 +45,7 @@ export default function Home() {
     <div className="min-h-screen w-full flex flex-col bg-background">
       <Navbar onSearch={setSearchQuery} />
       
-      <main className="flex-grow pt-24">
+      <main className="flex-grow pt-20 md:pt-24">
         <div id="assets" className="container mx-auto pb-10">
           <Hero 
             activeCategory={activeCategory} 
