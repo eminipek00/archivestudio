@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from '@/components/Navbar';
 import { createClient } from '@/utils/supabase/client';
-import { Upload, X, Check, Loader2, Image as ImageIcon, Link as LinkIcon, FileText, Plus, Info, Search, Heart, Eye } from 'lucide-react';
+import { Upload, Check, Loader2, Image as ImageIcon, Link as LinkIcon, File as FileIcon, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/utils/LanguageContext';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '@/utils/imageUtils';
-
-const ADMIN_EMAIL = 'ipekmuhammetemin@gmail.com';
 
 const UploadPage = () => {
   const [user, setUser] = useState<any>(null);
@@ -18,6 +16,8 @@ const UploadPage = () => {
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [fileUrl, setFileUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadMode, setUploadMode] = useState<'link' | 'file'>('file');
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -42,7 +42,6 @@ const UploadPage = () => {
         return;
       }
       setUser(authUser);
-      
       const { data: profileData } = await supabase.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
       if (profileData) setProfile(profileData);
       setLoading(false);
@@ -50,18 +49,13 @@ const UploadPage = () => {
     checkUser();
   }, [supabase, router]);
 
-  const onCropComplete = useCallback((_croppedArea: any, pixelCrop: any) => {
-    setCroppedAreaPixels(pixelCrop);
-  }, []);
+  const onCropComplete = useCallback((_croppedArea: any, pixelCrop: any) => { setCroppedAreaPixels(pixelCrop); }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const reader = new FileReader();
-      reader.addEventListener('load', () => {
-        setImage(reader.result as string);
-        setIsCropping(true);
-      });
+      reader.addEventListener('load', () => { setImage(reader.result as string); setIsCropping(true); });
       reader.readAsDataURL(file);
     }
   };
@@ -72,69 +66,48 @@ const UploadPage = () => {
       const croppedImage = await getCroppedImg(image, croppedAreaPixels);
       if (!croppedImage) return;
       setCoverPreview(URL.createObjectURL(croppedImage));
-      
-      // Convert Blob to File
       const file = new File([croppedImage], "cover.jpg", { type: "image/jpeg" });
       setCoverImage(file);
       setIsCropping(false);
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { console.error(e); }
   };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !category || !fileUrl || !user) return;
+    if (!title || !category || (!fileUrl && !selectedFile) || !user) return;
 
     setIsUploading(true);
     try {
       let cover_url = '';
       if (coverImage) {
-        const fileExt = coverImage.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${user.id}/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('asset-covers')
-          .upload(filePath, coverImage);
-
+        const fileName = `${Date.now()}-${Math.random()}.jpg`;
+        const { error: uploadError } = await supabase.storage.from('asset-covers').upload(`${user.id}/${fileName}`, coverImage);
         if (uploadError) throw uploadError;
+        cover_url = supabase.storage.from('asset-covers').getPublicUrl(`${user.id}/${fileName}`).data.publicUrl;
+      }
 
-        const { data } = supabase.storage
-          .from('asset-covers')
-          .getPublicUrl(filePath);
-        
-        cover_url = data.publicUrl;
+      let final_file_url = fileUrl;
+      if (uploadMode === 'file' && selectedFile) {
+        const fileName = `${Date.now()}-${selectedFile.name}`;
+        const { error: fileUploadError } = await supabase.storage.from('asset-files').upload(`${user.id}/${fileName}`, selectedFile);
+        if (fileUploadError) throw fileUploadError;
+        final_file_url = supabase.storage.from('asset-files').getPublicUrl(`${user.id}/${fileName}`).data.publicUrl;
       }
 
       const { error } = await supabase.from('assets').insert({
         title,
         category,
         tags,
-        file_url: fileUrl,
+        file_url: final_file_url,
         cover_url,
         author_id: user.id,
-        downloads: 0,
-        likes: 0,
-        views: 0
+        downloads: 0, likes: 0, views: 0
       });
 
       if (error) throw error;
       setUploadSuccess(true);
       setTimeout(() => router.push('/'), 2000);
-    } catch (error: any) {
-      alert(error.message);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const toggleTag = (tag: string) => {
-    if (tags.includes(tag)) {
-      setTags(tags.filter(t => t !== tag));
-    } else {
-      setTags([...tags, tag]);
-    }
+    } catch (error: any) { alert(error.message); } finally { setIsUploading(false); }
   };
 
   if (loading) return <div className="h-screen w-full bg-background flex items-center justify-center"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
@@ -142,115 +115,73 @@ const UploadPage = () => {
   return (
     <div className="h-screen w-full bg-background flex flex-col overflow-hidden">
       <Navbar />
-      
       <main className="flex-1 pt-20 md:pt-24 pb-20 md:pb-0 px-4 md:px-6 flex flex-col items-center overflow-y-auto md:overflow-hidden no-scrollbar">
-        <div className="w-full max-w-2xl space-y-4 md:space-y-6 flex flex-col">
+        <div className="w-full max-w-2xl space-y-4 md:space-y-6 flex flex-col pb-32 md:pb-8">
           <div className="space-y-1 text-center md:text-left">
-            <h1 className="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white leading-none">
-              {t('uploadAsset')}
-            </h1>
-            <p className="text-[8px] md:text-[10px] font-bold text-white/20 uppercase tracking-[0.3em]">
-              Sytex Archive Premium Dashboard
-            </p>
+            <h1 className="text-2xl md:text-4xl font-black uppercase italic tracking-tighter text-white leading-none">{t('uploadAsset')}</h1>
+            <p className="text-[8px] md:text-[10px] font-bold text-white/20 uppercase tracking-[0.3em]">Sytex Archive Premium Dashboard</p>
           </div>
 
           <form onSubmit={handleUpload} className="space-y-4 md:space-y-5">
-            {/* COVER IMAGE */}
-            <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">
-                {t('coverImage')} <span className="text-primary/40 italic">({t('optional')})</span>
-              </label>
-              <div 
-                className="relative aspect-video rounded-[2rem] border-2 border-dashed border-white/10 hover:border-primary/50 bg-[#0a0a0a] transition-all overflow-hidden group cursor-pointer"
-                onClick={() => document.getElementById('cover-input')?.click()}
-              >
-                {coverPreview ? (
-                  <img src={coverPreview} alt="Preview" className="w-full h-full object-cover" />
-                ) : (
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">{t('coverImage')} <span className="text-primary/40 italic">({t('optional')})</span></label>
+              <div className="relative aspect-video rounded-[1.5rem] md:rounded-[2rem] border-2 border-dashed border-white/10 hover:border-primary/50 bg-[#0a0a0a] transition-all overflow-hidden group cursor-pointer" onClick={() => document.getElementById('cover-input')?.click()}>
+                {coverPreview ? <img src={coverPreview} alt="Preview" className="w-full h-full object-cover" /> : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white/20 group-hover:text-primary transition-colors">
-                    <ImageIcon size={40} strokeWidth={1} />
-                    <span className="text-[10px] font-black uppercase mt-4 tracking-widest">{t('selectFile')}</span>
+                    <ImageIcon size={32} strokeWidth={1} />
+                    <span className="text-[9px] font-black uppercase mt-3 tracking-widest">{t('selectFile')}</span>
                   </div>
                 )}
                 <input id="cover-input" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
               </div>
             </div>
 
-            {/* TITLE & CATEGORY */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 text-left">
+              <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">{t('assetTitle')}</label>
-                <input 
-                  type="text" 
-                  value={title} 
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-4 px-6 text-xs font-black uppercase tracking-widest text-white focus:border-primary transition-all outline-none"
-                  placeholder="MY NEW EDIT PACK..."
-                />
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl md:rounded-2xl py-3 md:py-4 px-5 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest text-white focus:border-primary transition-all outline-none" placeholder="TITLE..." />
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">{t('categories')}</label>
-                <select 
-                  value={category} 
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-4 px-6 text-xs font-black uppercase tracking-widest text-white focus:border-primary transition-all outline-none appearance-none"
-                >
+                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl md:rounded-2xl py-3 md:py-4 px-5 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest text-white focus:border-primary transition-all outline-none appearance-none">
                   <option value="">{t('all')}</option>
-                  <option value="scene">SCENE</option>
-                  <option value="ae">AFTER EFFECTS</option>
-                  <option value="am">ALIGHT MOTION</option>
-                  <option value="lut">LUTS</option>
-                  <option value="overlay">OVERLAY</option>
+                  <option value="scene">SCENE</option><option value="ae">AFTER EFFECTS</option><option value="am">ALIGHT MOTION</option><option value="lut">LUTS</option><option value="overlay">OVERLAY</option>
                 </select>
               </div>
             </div>
 
-            {/* FILE URL */}
             <div className="space-y-3">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Asset {t('link')}</label>
-              <div className="relative">
-                <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20" size={18} />
-                <input 
-                  type="url" 
-                  value={fileUrl} 
-                  onChange={(e) => setFileUrl(e.target.value)}
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-4 pl-16 pr-6 text-xs font-black lowercase text-white focus:border-primary transition-all outline-none"
-                  placeholder="https://mega.nz/file/..."
-                />
+              <div className="flex items-center gap-4 ml-1">
+                <button type="button" onClick={() => setUploadMode('file')} className={`text-[9px] font-black uppercase tracking-widest transition-all ${uploadMode === 'file' ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}>{t('selectFile')}</button>
+                <button type="button" onClick={() => setUploadMode('link')} className={`text-[9px] font-black uppercase tracking-widest transition-all ${uploadMode === 'link' ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}>{t('link')}</button>
               </div>
+
+              {uploadMode === 'file' ? (
+                <div className="relative group">
+                  <div onClick={() => document.getElementById('asset-file')?.click()} className={`w-full bg-[#0a0a0a] border-2 border-dashed border-white/10 rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:border-primary/50 ${selectedFile ? 'border-primary/30 bg-primary/5' : ''}`}>
+                    {selectedFile ? <Check className="text-primary" /> : <FileIcon className="text-white/20 group-hover:text-primary transition-colors" />}
+                    <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white/40">{selectedFile ? selectedFile.name : t('selectFile')}</span>
+                  </div>
+                  <input id="asset-file" type="file" className="hidden" onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} />
+                </div>
+              ) : (
+                <div className="relative">
+                  <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20" size={16} />
+                  <input type="url" value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl md:rounded-2xl py-3 md:py-4 pl-14 pr-6 text-[10px] md:text-xs font-black lowercase text-white focus:border-primary transition-all outline-none" placeholder="https://..." />
+                </div>
+              )}
             </div>
 
-            {/* TAGS */}
-            <div className="space-y-4">
+            <div className="space-y-3">
               <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Tags</label>
               <div className="flex flex-wrap gap-2">
                 {['scene', 'ae', 'am', 'lut', 'overlay', 'other'].map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => toggleTag(tag)}
-                    className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                      tags.includes(tag) 
-                        ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' 
-                        : 'bg-white/5 text-white/30 hover:bg-white/10'
-                    }`}
-                  >
-                    {t(`tags.${tag}`)}
-                  </button>
+                  <button key={tag} type="button" onClick={() => toggleTag(tag)} className={`px-4 md:px-5 py-2.5 md:py-3 rounded-lg md:rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all ${tags.includes(tag) ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' : 'bg-white/5 text-white/30 hover:bg-white/10'}`}>{t(`tags.${tag}`)}</button>
                 ))}
               </div>
             </div>
 
-            {/* SUBMIT */}
-            <button
-              type="submit"
-              disabled={isUploading || uploadSuccess}
-              className={`w-full py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all shadow-2xl ${
-                uploadSuccess 
-                  ? 'bg-green-500 text-white' 
-                  : 'bg-primary text-white hover:scale-[1.02] active:scale-95 shadow-primary/20'
-              }`}
-            >
+            <button type="submit" disabled={isUploading || uploadSuccess} className={`w-full py-4 md:py-5 rounded-xl md:rounded-[2rem] font-black text-[10px] md:text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all shadow-2xl ${uploadSuccess ? 'bg-green-500 text-white' : 'bg-primary text-white hover:scale-[1.02] active:scale-95 shadow-primary/20'}`}>
               {isUploading ? <Loader2 className="animate-spin" /> : uploadSuccess ? <Check /> : <Upload />}
               {uploadSuccess ? t('uploadSuccess') : t('upload').toUpperCase()}
             </button>
@@ -258,19 +189,10 @@ const UploadPage = () => {
         </div>
       </main>
 
-      {/* CROP MODAL */}
       {isCropping && (
         <div className="fixed inset-0 z-[6000] bg-black/95 flex flex-col items-center justify-center p-6">
           <div className="relative w-full max-w-2xl aspect-video bg-[#0a0a0a] rounded-[2rem] overflow-hidden border border-white/10">
-            <Cropper
-              image={image!}
-              crop={crop}
-              zoom={zoom}
-              aspect={16 / 9}
-              onCropChange={setCrop}
-              onCropComplete={onCropComplete}
-              onZoomChange={setZoom}
-            />
+            <Cropper image={image!} crop={crop} zoom={zoom} aspect={16 / 9} onCropChange={setCrop} onCropComplete={onCropComplete} onZoomChange={setZoom} />
           </div>
           <div className="mt-8 flex gap-4 w-full max-w-2xl">
             <button onClick={() => setIsCropping(false)} className="flex-1 py-4 rounded-2xl bg-white/5 text-white font-black uppercase text-xs tracking-widest">{t('cancel')}</button>
