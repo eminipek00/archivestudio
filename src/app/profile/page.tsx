@@ -123,10 +123,10 @@ const ProfilePage = () => {
   const isAdmin = user?.email === 'ipekmuhammetemin@gmail.com' || profile?.is_admin;
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden bg-background">
+    <div className="h-screen w-full flex flex-col overflow-hidden bg-background md:overflow-hidden">
       <Navbar />
-      <main className="flex-grow flex flex-col items-center pt-20 md:pt-24 pb-4 overflow-hidden">
-        <div className="w-full max-w-4xl px-3 md:px-6 space-y-4 md:space-y-6 flex flex-col">
+      <main className="flex-grow flex flex-col items-center pt-20 md:pt-24 pb-4 overflow-y-auto md:overflow-hidden no-scrollbar">
+        <div className="w-full max-w-4xl px-3 md:px-6 space-y-4 md:space-y-6 flex flex-col pb-20 md:pb-0">
           
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 bg-card border border-border-custom p-4 md:p-6 rounded-[2rem] md:rounded-[3rem] shadow-2xl relative shrink-0">
             <div className="relative group shrink-0">
