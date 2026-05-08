@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare, Bell } from 'lucide-react';
+import { Globe, LogIn, UserPlus, Upload, LogOut, Settings, Search, Edit3, Check, Maximize2, Palette, MessageSquare, Bell, Home, User } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/utils/LanguageContext';
 import { Language } from '@/utils/i18n';
@@ -126,7 +126,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           </div>
         )}
 
-        <div className="flex items-center gap-2 md:gap-4 shrink-0">
+        <div className="hidden md:flex items-center gap-2 md:gap-4 shrink-0">
           <Link href="/upload" className="hidden sm:flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 bg-white/5 border border-white/10 hover:border-primary/50 text-white rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest transition-all">
             <Upload size={16} className="text-primary md:w-[18px] md:h-[18px]" />
             <span>{t('upload')}</span>
@@ -213,7 +213,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 )}
             </div>
           ) : (
-            <div className="flex items-center">
+            <div className="hidden md:flex items-center">
               <Link href="/login" className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-2.5 bg-primary text-white rounded-xl font-black text-[8px] md:text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
                 <LogIn size={12} className="md:w-[14px] md:h-[14px]" /> <span className="hidden sm:inline">{t('login').toUpperCase()}</span><span className="sm:hidden">GİRİŞ</span>
               </Link>
@@ -223,24 +223,27 @@ const Navbar = ({ onSearch }: NavbarProps) => {
       </div>
 
       {/* MOBILE BOTTOM NAV */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[6000] bg-black/80 backdrop-blur-xl border-t border-border-custom px-6 py-3 flex items-center justify-between shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[6000] bg-black/80 backdrop-blur-xl border-t border-border-custom px-4 py-3 flex items-center justify-between shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <Link href="/" className="p-2 text-white/40 hover:text-primary transition-all">
-          <Search size={22} />
+          <Home size={22} />
         </Link>
+        <button onClick={() => { router.push('/'); setTimeout(() => document.querySelector('input')?.focus(), 100); }} className="p-2 text-white/40 hover:text-primary transition-all">
+          <Search size={22} />
+        </button>
         <Link href="/upload" className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-black">
           <Upload size={22} />
         </Link>
         <button onClick={() => setShowNotifMenu(!showNotifMenu)} className={`p-2 transition-all relative ${showNotifMenu ? 'text-primary' : 'text-white/40'}`}>
           <Bell size={22} />
-          {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full" />}
+          {unreadCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full border border-black" />}
         </button>
-        <Link href="/profile" className="p-2 text-white/40 hover:text-primary transition-all">
+        <Link href={user ? "/profile" : "/login"} className="p-2 text-white/40 hover:text-primary transition-all">
           {profile?.avatar_url ? (
             <div className="w-7 h-7 rounded-lg overflow-hidden border border-white/20">
               <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <Settings size={22} />
+            user ? <Settings size={22} /> : <LogIn size={22} />
           )}
         </Link>
       </div>
