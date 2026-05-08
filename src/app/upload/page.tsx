@@ -146,22 +146,32 @@ const UploadPage = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-4 ml-1">
-                <button type="button" onClick={() => setUploadMode('file')} className={`text-[8px] font-black uppercase tracking-widest transition-all ${uploadMode === 'file' ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}>{t('selectFile')}</button>
-                <button type="button" onClick={() => setUploadMode('link')} className={`text-[8px] font-black uppercase tracking-widest transition-all ${uploadMode === 'link' ? 'text-primary' : 'text-white/20 hover:text-white/40'}`}>{t('link')}</button>
+            <div className="space-y-4">
+              <div className="flex p-1.5 bg-[#0a0a0a] border border-white/10 rounded-2xl md:rounded-[1.5rem] w-full max-w-sm mx-auto md:mx-0">
+                <button type="button" onClick={() => setUploadMode('file')} className={`flex-1 py-3 px-4 rounded-xl md:rounded-[1.2rem] text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${uploadMode === 'file' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/20 hover:text-white/40'}`}>
+                  <div className="flex items-center justify-center gap-2">
+                    <FileIcon size={14} /> {t('selectFile')}
+                  </div>
+                </button>
+                <button type="button" onClick={() => setUploadMode('link')} className={`flex-1 py-3 px-4 rounded-xl md:rounded-[1.2rem] text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${uploadMode === 'link' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-white/20 hover:text-white/40'}`}>
+                  <div className="flex items-center justify-center gap-2">
+                    <LinkIcon size={14} /> {t('link')}
+                  </div>
+                </button>
               </div>
 
               {uploadMode === 'file' ? (
-                <div onClick={() => document.getElementById('asset-file')?.click()} className={`w-full bg-[#0a0a0a] border-2 border-dashed border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:border-primary/50 ${selectedFile ? 'border-primary/30 bg-primary/5' : ''}`}>
-                  {selectedFile ? <Check className="text-primary" size={20} /> : <FileIcon className="text-white/20 group-hover:text-primary transition-colors" size={20} />}
-                  <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-white/40 truncate max-w-full px-4">{selectedFile ? selectedFile.name : t('selectFile')}</span>
+                <div onClick={() => document.getElementById('asset-file')?.click()} className={`w-full bg-[#0a0a0a] border-2 border-dashed rounded-xl md:rounded-2xl p-6 md:p-10 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:border-primary/50 ${selectedFile ? 'border-primary bg-primary/5 shadow-inner' : 'border-white/10'}`}>
+                  {selectedFile ? <Check className="text-primary animate-in zoom-in-50" size={32} /> : <FileIcon className="text-white/10 group-hover:text-primary transition-colors" size={32} strokeWidth={1} />}
+                  <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-white/40 truncate max-w-full px-6">{selectedFile ? selectedFile.name : t('selectFile')}</span>
                   <input id="asset-file" type="file" className="hidden" onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} />
                 </div>
               ) : (
-                <div className="relative">
-                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={14} />
-                  <input type="url" value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl md:rounded-2xl py-2.5 md:py-3.5 pl-10 pr-4 text-[10px] md:text-xs font-black lowercase text-white focus:border-primary transition-all outline-none" placeholder="https://..." />
+                <div className="relative group">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors">
+                    <LinkIcon size={18} />
+                  </div>
+                  <input type="url" value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl md:rounded-2xl py-4 md:py-5 pl-16 pr-6 text-[10px] md:text-xs font-black lowercase text-white focus:border-primary transition-all outline-none shadow-inner" placeholder="https://..." />
                 </div>
               )}
             </div>

@@ -74,6 +74,25 @@ const Navbar = ({ onSearch }: NavbarProps) => {
     if (onSearch) onSearch(val);
   };
 
+  const handleMobileSearch = () => {
+    if (window.location.pathname !== '/') {
+      router.push('/');
+      setTimeout(() => {
+        const input = document.getElementById('global-search-input') as HTMLInputElement;
+        if (input) { input.focus(); input.click(); }
+      }, 800);
+    } else {
+      const input = document.getElementById('global-search-input') as HTMLInputElement;
+      if (input) { input.focus(); input.click(); }
+    }
+  };
+
+  const closeAllMenus = () => {
+    setShowLangMenu(false);
+    setShowUserMenu(false);
+    setShowNotifMenu(false);
+  };
+
   const languages: { code: Language; name: string }[] = [
     { code: 'tr', name: 'Türkçe' },
     { code: 'en', name: 'English' },
@@ -92,6 +111,12 @@ const Navbar = ({ onSearch }: NavbarProps) => {
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
+    <>
+    {/* CLICK-AWAY OVERLAY */}
+    {(showLangMenu || showUserMenu || showNotifMenu) && (
+      <div className="fixed inset-0 z-[4500] bg-black/5" onClick={closeAllMenus} />
+    )}
+
     <nav className="fixed top-0 left-0 right-0 z-[5000] py-3 md:py-4 bg-black border-b border-border-custom shadow-2xl">
       <div className="max-w-7xl mx-auto px-6 md:px-6 flex items-center justify-between gap-2 md:gap-8">
         
@@ -122,7 +147,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         {onSearch && (
           <div className="hidden lg:flex flex-1 max-w-md relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-primary transition-colors" size={16} />
-            <input type="text" value={localSearch} onChange={handleSearchChange} placeholder={t('searchPlaceholder')} className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/50 transition-all shadow-inner" />
+            <input id="global-search-input" type="text" value={localSearch} onChange={handleSearchChange} placeholder={t('searchPlaceholder')} className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-primary/50 transition-all shadow-inner" />
           </div>
         )}
 
@@ -134,7 +159,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
           {user && (
             <div className="relative">
-                <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowLangMenu(false); setShowUserMenu(false); }} className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-primary transition-all relative">
+                <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowLangMenu(false); setShowUserMenu(false); }} className={`p-2.5 rounded-xl bg-white/5 border border-white/10 transition-all relative ${showNotifMenu ? 'text-primary border-primary/30' : 'text-white/40 hover:text-primary'}`}>
                     <Bell size={18} />
                     {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50" />}
                 </button>
@@ -157,7 +182,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
           )}
 
           <div className="relative">
-            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white/60 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2 md:gap-3">
+            <button onClick={() => { setShowLangMenu(!showLangMenu); setShowUserMenu(false); setShowNotifMenu(false); }} className={`px-3 md:px-5 py-2 md:py-2.5 rounded-xl bg-[#0a0a0a] border transition-all flex items-center gap-2 md:gap-3 ${showLangMenu ? 'border-primary/50 text-white' : 'border-white/10 text-white/60 hover:text-white hover:bg-white/5'}`}>
               <Globe size={16} className="text-primary md:w-[18px] md:h-[18px]" />
               <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">{languages.find(l => l.code === language)?.code.toUpperCase()}</span>
             </button>
@@ -176,7 +201,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
           {user ? (
             <div className="relative flex items-center mr-5 md:mr-0">
-                <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLangMenu(false); setShowNotifMenu(false); }} className="w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden border-2 border-white/10 hover:border-primary transition-all p-0.5 bg-[#0a0a0a]">
+                <button onClick={() => { setShowUserMenu(!showUserMenu); setShowLangMenu(false); setShowNotifMenu(false); }} className={`w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden border-2 transition-all p-0.5 bg-[#0a0a0a] ${showUserMenu ? 'border-primary' : 'border-white/10'}`}>
                   <img src={profile?.avatar_url || '/logo.png'} alt="P" className="w-full h-full object-cover rounded-lg" />
                 </button>
                 {showUserMenu && (
@@ -224,17 +249,17 @@ const Navbar = ({ onSearch }: NavbarProps) => {
 
       {/* MOBILE BOTTOM NAV */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-[6000] bg-black/80 backdrop-blur-xl border-t border-border-custom px-4 py-3 flex items-center justify-between shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-        <Link href="/" className="p-2 text-white/40 hover:text-primary transition-all">
+        <Link href="/" onClick={closeAllMenus} className="p-2 text-white/40 hover:text-primary transition-all">
           <Home size={22} />
         </Link>
-        <button onClick={() => { if (window.location.pathname !== '/') { router.push('/'); setTimeout(() => { const input = document.querySelector('input[type="text"]'); if(input) (input as HTMLInputElement).focus(); }, 500); } else { const input = document.querySelector('input[type="text"]'); if(input) (input as HTMLInputElement).focus(); } }} className="p-2 text-white/40 hover:text-primary transition-all">
+        <button onClick={handleMobileSearch} className="p-2 text-white/40 hover:text-primary transition-all">
           <Search size={22} />
         </button>
-        <button onClick={() => router.push('/upload')} className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-black active:scale-95 transition-all">
+        <button onClick={() => { closeAllMenus(); router.push('/upload'); }} className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/30 -mt-8 border-4 border-black active:scale-95 transition-all">
           <Upload size={22} />
         </button>
         <div className="relative">
-            <button onClick={() => setShowNotifMenu(!showNotifMenu)} className={`p-2 transition-all relative ${showNotifMenu ? 'text-primary' : 'text-white/40'}`}>
+            <button onClick={() => { setShowNotifMenu(!showNotifMenu); setShowUserMenu(false); setShowLangMenu(false); }} className={`p-2 transition-all relative ${showNotifMenu ? 'text-primary' : 'text-white/40'}`}>
                 <Bell size={22} />
                 {unreadCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full border border-black" />}
             </button>
@@ -254,7 +279,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
                 </div>
             )}
         </div>
-        <Link href={user ? "/profile" : "/login"} className="p-2 text-white/40 hover:text-primary transition-all">
+        <Link href={user ? "/profile" : "/login"} onClick={closeAllMenus} className="p-2 text-white/40 hover:text-primary transition-all">
           {profile?.avatar_url ? (
             <div className="w-7 h-7 rounded-lg overflow-hidden border border-white/20">
               <img src={profile.avatar_url} alt="P" className="w-full h-full object-cover" />
@@ -265,6 +290,7 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         </Link>
       </div>
     </nav>
+    </>
   );
 };
 
